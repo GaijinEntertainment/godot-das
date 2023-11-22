@@ -1,15 +1,28 @@
 # Godot-Das: daScript bindings for Godot
 
-In the future!
-
+This project is a Godot module that ~~integrates~~ will integrate [daScript](https://dascript.org/) scripting language into Godot game engine
 
 ## Download
 
-To build the project, you will need daScript repo, so download it as a submodule:
+This project is build as an engine submodule (see why not as a GDExtension in docs), so you will need to download Godot repo:
 
 ```
-git clone git@github.com:ilyabelow/godot-das.git
-cd godot-das
+git clone git@github.com:godotengine/godot.git
+```
+
+The develompent is done on Godot's master branch
+
+Next, clone this repo as a submodule in *godot/modules/*. Rename the directory to *dascript*:
+
+```
+cd godot/modules
+git clone git@github.com:ilyabelow/godot-das.git dascript
+```
+
+You will also need daScript, so download its repo as a submodule:
+
+```
+cd dascript
 git submodule update --init
 ```
 
@@ -17,28 +30,40 @@ Don't use clone with `--recurse-submodules` as it will download daScript submodu
 
 ## Bulding
 
-Don't forget to clone with `--recurse-submodules` do download daScript repo. To build, use CMake:
+First, build daScript static library:
 
 ```
+cd daScript
 cmake CMakeFiles.txt
-make
+make -j<cores>
 ```
 
-This builds daScript and its static library. Then, a dynamic library from code in *src/* is build. For now, it just runs *tutorial00.cpp* from *daScript/examples/tutorial/* on extention initialization
+The project will only need *liblibDaScript.a* and headers from *daScript/include/*, so you can delete the rest
 
-If you wish to use a newer version of Godot, you need to update *gdextension_interface.h*. For this, run
+Next, build Godot:
 
 ```
-cd gdextension
-godot --dump-gdextension-interface
+cd <godot root directory>
+scons (or pyston-scons if configured)
 ```
+
+daScript module will be enabled by default, you can disable it with `module_luascript_enabled=no` (or change `is_enabled` function in `config.py`)
+
+> Important: daScript is built with `g++` and `ld`, so make sure **not** to use `clang` or `lld` for building Godot! 
 
 ## Testing
 
 Run
 
 ```
-godot demo/project.godot
+bin/<your godot binary> modules/dascript/demo/project.godot
 ```
 
-It should print `this is nano tutorial`, which is the daScript script that is being run on initialization! After this a bunch of error will follow because I don't yet initialize gdextension properly
+It should print `this is nano tutorial`, which is the daScript script that is being run on module initialization!
+
+If you want to debug, to *daSctipt/CMakeFiles.txt* add line `set(CMAKE_BUILD_TYPE Debug)`, and to scons config add `dev_build=yes`
+
+
+## Notes
+
+[This luascript integration](https://github.com/perbone/luascript) is used as a reference

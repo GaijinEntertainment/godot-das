@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+
+Import("env")
+
+env_dascript = env.Clone()
+
+src_list = ["register_types.cpp", "src/tutorial00.cpp"]
+env_dascript.Append(CPPPATH=["src", "daScript/include"])
+env_dascript.add_source_files(env.modules_sources, src_list)
+
+ # for some reason, LIBS and LIBPATH combonation works only for absolute paths
+dascript_lib = File("daScript/liblibDaScript.a")
+env.Append(LIBS=[dascript_lib])
