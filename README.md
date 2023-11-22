@@ -1,5 +1,9 @@
 # Godot-Das: daScript bindings for Godot
 
+
+<img src="logo.png" width="200" height="200">
+
+
 This project is a Godot module that ~~integrates~~ will integrate [daScript](https://dascript.org/) scripting language into Godot game engine
 
 ## Download
