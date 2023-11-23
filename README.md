@@ -63,7 +63,7 @@ Run
 bin/<your godot binary> modules/dascript/demo/project.godot
 ```
 
-It should print `this is nano tutorial`, which is the daScript script that is being run on module initialization!
+It should print `It's ready!`, which is the result of daScript printing in `_ready` function! 
 
 If you want to debug, to *daSctipt/CMakeFiles.txt* add line `set(CMAKE_BUILD_TYPE Debug)`, and to scons config add `dev_build=yes`
 

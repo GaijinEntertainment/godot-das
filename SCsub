@@ -5,7 +5,16 @@ Import("env")
 
 env_dascript = env.Clone()
 
-src_list = ["register_types.cpp", "src/tutorial00.cpp"]
+src_list = [
+    "register_types.cpp",
+    "src/init_dascript.cpp",
+    "src/das_script.cpp",
+    "src/das_script_language.cpp",
+    "src/das_script_instance.cpp",
+    "src/das_resource_format_saver.cpp",
+    "src/das_resource_format_loader.cpp",
+]
+env_dascript.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in daScript headers
 env_dascript.Append(CPPPATH=["src", "daScript/include"])
 env_dascript.add_source_files(env.modules_sources, src_list)
 

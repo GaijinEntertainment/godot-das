@@ -11,5 +11,11 @@ config_version=5
 [application]
 
 config/name="Demo"
+run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
+
+[filesystem]
+
+; this is to stop the warning about Blender files
+import/blender/enabled=false
