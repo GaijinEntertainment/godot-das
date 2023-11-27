@@ -5,3 +5,6 @@ demo/bin/
 # build files
 *.o
 __pycache__
+
+# vscode stuff
+.vscode
