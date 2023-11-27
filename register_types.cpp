@@ -4,8 +4,6 @@
 #include "das_resource_format_loader.h"
 #include "das_resource_format_saver.h"
 
-#include "init_dascript.h"
-
 DasScriptLanguage *das_script_language = nullptr;
 Ref<DasResourceFormatLoader> das_resource_loader;
 Ref<DasResourceFormatSaver> das_resource_saver;
@@ -13,8 +11,6 @@ Ref<DasResourceFormatSaver> das_resource_saver;
 
 void initialize_dascript_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
-		initialize_dascript();
-
 		GDREGISTER_CLASS(DasScript);
 
 		das_script_language = memnew(DasScriptLanguage);
@@ -41,7 +37,5 @@ void uninitialize_dascript_module(ModuleInitializationLevel p_level) {
 
 		ResourceSaver::remove_resource_format_saver(das_resource_saver);
 		das_resource_saver.unref();
-
-		deinitialize_dascript();
 	}
 }

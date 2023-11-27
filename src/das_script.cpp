@@ -46,7 +46,7 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 
 	instance->owner->set_script_instance(instance);
 	{
-		MutexLock lock(DasScriptLanguage::singleton->mutex);
+		MutexLock lock(DasScriptLanguage::get_singleton()->get_mutex());
 		instances.insert(instance->owner);
 	}
 
@@ -70,7 +70,7 @@ PlaceHolderScriptInstance *DasScript::placeholder_instance_create(Object *p_this
 
 
 bool DasScript::instance_has(const Object *p_this) const { 
-	MutexLock lock(DasScriptLanguage::singleton->mutex);
+	MutexLock lock(DasScriptLanguage::get_singleton()->get_mutex());
 
 	return instances.has((Object *)p_this);
 }
