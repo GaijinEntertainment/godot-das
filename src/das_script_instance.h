@@ -39,10 +39,9 @@ public:
 
 	Ref<Script> get_script() const override;
 
-	//bool is_placeholder() const override;
-
-	// void property_set_fallback(const StringName &p_name, const Variant &p_value, bool *r_valid) override;
-	// Variant property_get_fallback(const StringName &p_name, bool *r_valid) override;
+	// is_placeholder, property_set_fallback and property_get_fallback
+	// are only overridden by PlaceHolderScriptInstance
+	// and should stay default by an actual ScriptInstance
 
 	const Variant get_rpc_config() const override;
 

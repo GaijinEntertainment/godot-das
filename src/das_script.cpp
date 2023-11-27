@@ -55,16 +55,18 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 	return instance;
 }
 
-#ifdef TOOLS_ENABLED
 PlaceHolderScriptInstance *DasScript::placeholder_instance_create(Object *p_this) {
+#ifdef TOOLS_ENABLED
 	// no idea how this works
 	PlaceHolderScriptInstance *instance = memnew(PlaceHolderScriptInstance(DasScriptLanguage::get_singleton(), Ref<Script>(this), p_this));
 	placeholders.insert(instance);
 	update_exports();
 
 	return instance;
-}
+#else
+	return nullptr;
 #endif
+}
 
 
 bool DasScript::instance_has(const Object *p_this) const { 
@@ -214,6 +216,10 @@ void DasScript::get_constants(HashMap<StringName, Variant> *p_constants) {
 
 void DasScript::get_members(HashSet<StringName> *p_members) {
 	// TODO
+}
+
+bool DasScript::is_placeholder_fallback_enabled() const {
+	return placeholder_fallback_enabled;
 }
 
 const Variant DasScript::get_rpc_config() const {

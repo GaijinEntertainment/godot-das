@@ -5,6 +5,7 @@
 #include "core/object/script_language.h"
 #include "daScript/daScript.h"
 
+
 class DasScript : public Script {
     GDCLASS(DasScript, Script);
 
@@ -25,6 +26,7 @@ class DasScript : public Script {
     
 #ifdef TOOLS_ENABLED
 	bool placeholder_fallback_enabled{};
+	// TODO reload stored as in _update_exports
 	HashSet<PlaceHolderScriptInstance *> placeholders{};
 #endif
 
@@ -80,17 +82,13 @@ public:
 	void get_constants(HashMap<StringName, Variant> *p_constants) override;
 	void get_members(HashSet<StringName> *p_members) override;
 #ifdef TOOLS_ENABLED
-    virtual bool is_placeholder_fallback_enabled() const override { return placeholder_fallback_enabled; }
+    bool is_placeholder_fallback_enabled() const override;
 #endif
 	const Variant get_rpc_config() const override;
 
 	Variant _new(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
 
 	Error load_source_code(const String &p_path);
-
-	bool operator()(const Ref<DasScript> &a, const Ref<DasScript> &b) const {
-		return true;
-	}
 protected:
 	static void _bind_methods();
 
