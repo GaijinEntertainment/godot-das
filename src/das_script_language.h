@@ -14,9 +14,8 @@ public:
 	DasScriptLanguage();
 	~DasScriptLanguage();
 
-	Mutex &get_mutex() { return mutex; }
-
 	_FORCE_INLINE_ static DasScriptLanguage *get_singleton() { return singleton; }
+	_FORCE_INLINE_ static MutexLock<Mutex> acquire() { return MutexLock<Mutex>(singleton->mutex); }
 	String get_name() const override { return "daScript"; }
 
 	/* LANGUAGE FUNCTIONS */

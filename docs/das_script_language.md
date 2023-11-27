@@ -36,3 +36,4 @@ Here you can find notes on implementation of DasScriptLanguage
 ## Other notes
 
 `Mutex mutex;` -  why do we need a mutex here?
+`acquire()` - I'm not sore MutexLock survives returning from a function, have to check

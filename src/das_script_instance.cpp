@@ -3,7 +3,7 @@
 #include <daScript/daScript.h>
 
 DasScriptInstance::~DasScriptInstance() {
-	MutexLock lock(DasScriptLanguage::get_singleton()->get_mutex()); // why?
+	DasScriptLanguage::get_singleton()->acquire();
 
 	if (script.is_valid() && owner) {
 		script->instances.erase(owner);
