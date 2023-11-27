@@ -62,7 +62,10 @@ bool DasScriptInstance::has_method(const StringName &p_method) const {
 Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
 	das::ContextPtr ctx = script.ptr()->ctx;
 	das::SimFunction *function = ctx->findFunction(String(p_method).utf8().get_data());
-	if (!function) return Variant(); 
+	if (!function) {
+		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
+		return Variant();
+	}
 	// TODO pass args
 	ctx->evalWithCatch(function, nullptr);
 	return Variant();
