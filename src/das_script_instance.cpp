@@ -6,7 +6,7 @@ DasScriptInstance::~DasScriptInstance() {
 	DasScriptLanguage::get_singleton()->acquire();
 
 	if (script.is_valid() && owner) {
-		script->instances.erase(owner);
+		script->erase_instance(owner);
 	}
 }
 
@@ -60,7 +60,7 @@ bool DasScriptInstance::has_method(const StringName &p_method) const {
 }
 
 Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
-	das::ContextPtr ctx = script.ptr()->ctx;
+	das::ContextPtr ctx = script->get_ctx();
 	das::SimFunction *function = ctx->findFunction(String(p_method).utf8().get_data());
 	if (!function) {
 		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;

@@ -1,16 +1,13 @@
-
 #ifndef DAS_SCRIPT_H
 #define DAS_SCRIPT_H
 
 #include "core/object/script_language.h"
 #include "daScript/daScript.h"
+#include "daScript/simulate/aot_builtin_rtti.h"
 
 
 class DasScript : public Script {
     GDCLASS(DasScript, Script);
-
-	friend class DasScriptLanguage;
-	friend class DasScriptInstance;
 
     bool valid = false;
 	bool tool = true; // tmp solution to make debugging easier
@@ -21,11 +18,7 @@ class DasScript : public Script {
 
 	das::ContextPtr ctx;
 	das::ProgramPtr program;
-
-    Dictionary rpc_config;
-    
 #ifdef TOOLS_ENABLED
-	bool placeholder_fallback_enabled{};
 	// TODO reload stored as in _update_exports
 	HashSet<PlaceHolderScriptInstance *> placeholders{};
 #endif
@@ -34,14 +27,17 @@ public:
 	DasScript();
 	~DasScript();
 
+	das::ContextPtr get_ctx() { return ctx; }
+	void erase_instance(Object *p_owner);
+
 	bool can_instantiate() const override;
 
-	Ref<Script> get_base_script() const override;
-	 StringName get_global_name() const override;
+	Ref<Script> get_base_script() const override { /* TODO */ return Ref<Script>{}; }
+	 StringName get_global_name() const override { /* TODO */ return StringName{}; }
 
-	bool inherits_script(const Ref<Script> &p_script) const override;
+	bool inherits_script(const Ref<Script> &p_script) const override { /* TODO */ return false;}
 
-	StringName get_instance_base_type() const override;
+	StringName get_instance_base_type() const override { /* TODO */ return StringName(); }
 	ScriptInstance *instance_create(Object *p_this) override;
 #ifdef TOOLS_ENABLED
 	PlaceHolderScriptInstance *placeholder_instance_create(Object *p_this) override;
@@ -54,37 +50,28 @@ public:
 	Error reload(bool p_keep_state = false) override;
 
 #ifdef TOOLS_ENABLED
-	Vector<DocData::ClassDoc> get_documentation() const override;
-	String get_class_icon_path() const override;
-	PropertyInfo get_class_category() const override;
+	Vector<DocData::ClassDoc> get_documentation() const override { /* TODO */ return Vector<DocData::ClassDoc>{}; }
+	String get_class_icon_path() const override { /* TODO */ return String(); }
 #endif
 
 	bool has_method(const StringName &p_method) const override;
 	MethodInfo get_method_info(const StringName &p_method) const override;
 
-	bool is_tool() const override;
-	bool is_valid() const override;
-	bool is_abstract() const override;
+	bool is_tool() const override { return tool; }
+	bool is_valid() const override { return valid; }
+	bool is_abstract() const override { /* TODO? */ return false; }
 
 	ScriptLanguage *get_language() const override;
 
-	bool has_script_signal(const StringName &p_signal) const override;
-	void get_script_signal_list(List<MethodInfo> *r_signals) const override;
+	bool has_script_signal(const StringName &p_signal) const override { /* TODO */ return false; }
+	void get_script_signal_list(List<MethodInfo> *r_signals) const override { /* TODO */ }
 
 	bool get_property_default_value(const StringName &p_property, Variant &r_value) const override;
 
-	void update_exports() override;
-	void get_script_method_list(List<MethodInfo> *p_list) const override;
-	void get_script_property_list(List<PropertyInfo> *p_list) const override;
+	void get_script_method_list(List<MethodInfo> *p_list) const override { /* TODO */ }
+	void get_script_property_list(List<PropertyInfo> *p_list) const override { /* TODO*/ }
 
-	int get_member_line(const StringName &p_member) const override;
-
-	void get_constants(HashMap<StringName, Variant> *p_constants) override;
-	void get_members(HashSet<StringName> *p_members) override;
-#ifdef TOOLS_ENABLED
-    bool is_placeholder_fallback_enabled() const override;
-#endif
-	const Variant get_rpc_config() const override;
+	const Variant get_rpc_config() const override { /* TODO */ return Dictionary(); }
 
 	Variant _new(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
 
@@ -95,7 +82,6 @@ protected:
 #ifdef TOOLS_ENABLED
 	void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder) override;
 #endif
-
 
 };
 

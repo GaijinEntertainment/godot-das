@@ -5,10 +5,16 @@
 
 DasScript::DasScript() {
     // TODO
+	// add to script list in DasScriptLanguage
 }
 
 DasScript::~DasScript() {
     // TODO
+	// remove from script list in DasScriptLanguage
+}
+
+void DasScript::erase_instance(Object *p_owner) {
+	instances.erase(p_owner);
 }
 
 bool DasScript::can_instantiate() const {
@@ -19,27 +25,7 @@ bool DasScript::can_instantiate() const {
 #endif
 }
 
-Ref<Script> DasScript::get_base_script() const { 
-	// TODO
-	return Ref<Script>{};
-}
-
-StringName DasScript::get_global_name() const {
-    // TODO
-	return StringName{};
-}
-
-bool DasScript::inherits_script(const Ref<Script> &p_script) const {
-    // TODO
-	return false;
-}
-
-StringName DasScript::get_instance_base_type() const {
-    // TODO
-	return StringName();
-}
-
-ScriptInstance *DasScript::instance_create(Object *p_this) { 
+ScriptInstance *DasScript::instance_create(Object *p_this) {
     DasScriptInstance *instance = memnew(DasScriptInstance);
 	instance->script = Ref<DasScript>(this);
 	instance->owner = p_this;
@@ -68,13 +54,11 @@ PlaceHolderScriptInstance *DasScript::placeholder_instance_create(Object *p_this
 #endif
 }
 
-
 bool DasScript::instance_has(const Object *p_this) const { 
 	DasScriptLanguage::get_singleton()->acquire();
 
 	return instances.has((Object *)p_this);
 }
-
 
 bool DasScript::has_source_code() const {
 	return !source.is_empty();
@@ -99,12 +83,12 @@ Error DasScript::reload(bool p_keep_state) {
 	auto source_len = uint32_t(source.size());
     auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
     fAccess->setFileInfo("dummy.das", das::move(fileInfo));
-   
-	das::TextPrinter tout;  
-	
+
+	das::TextPrinter tout;
+
 	das::ModuleGroup dummyLibGroup;
 	program = das::compileDaScript("dummy.das", fAccess, tout, dummyLibGroup);
-	
+
 	// TODO output somewhere nice
 	// also not sure compilation goes here
 	if (program->failed()) {
@@ -127,23 +111,6 @@ Error DasScript::reload(bool p_keep_state) {
 
 }
 
-#ifdef TOOLS_ENABLED
-Vector<DocData::ClassDoc> DasScript::get_documentation() const {
-    // TODO
-	return Vector<DocData::ClassDoc>{};
-} 
-
-String DasScript::get_class_icon_path() const {
-    // TODO
-	return String();
-}
-
-PropertyInfo DasScript::get_class_category() const {
-    // TODO
-	return PropertyInfo();
-}
-#endif
-
 bool DasScript::has_method(const StringName &p_method) const {
 	das::SimFunction *function = ctx->findFunction(String(p_method).utf8().get_data());
 	return function != nullptr;
@@ -151,33 +118,12 @@ bool DasScript::has_method(const StringName &p_method) const {
 
 MethodInfo DasScript::get_method_info(const StringName &p_method) const {
     // TODO
+	// convert daScript function signature to Godot MethodInfo
 	return MethodInfo{};
-}
-
-bool DasScript::is_tool() const {
-	return tool;
-}
-
-bool DasScript::is_valid() const {
-	return valid;
-}
-
-bool DasScript::is_abstract() const {
-	// TODO
-	return false;
 }
 
 ScriptLanguage *DasScript::get_language() const {
 	return DasScriptLanguage::get_singleton();
-}
-
-bool DasScript::has_script_signal(const StringName &p_signal) const {
-    // TODO
-	return false;
-}
-
-void DasScript::get_script_signal_list(List<MethodInfo> *r_signals) const {
-    // TODO
 }
 
 bool DasScript::get_property_default_value(const StringName &p_property, Variant &r_value) const {
@@ -189,43 +135,6 @@ bool DasScript::get_property_default_value(const StringName &p_property, Variant
     // nothing here
 	return false;
 }
-
-void DasScript::update_exports() {
-#ifdef TOOLS_ENABLED
-	// TODO
-#endif
-}
-
-void DasScript::get_script_method_list(List<MethodInfo> *p_list) const {
-    // TODO
-}
-
-void DasScript::get_script_property_list(List<PropertyInfo> *p_list) const {
-    // TODO
-}
-
-
-int DasScript::get_member_line(const StringName &p_member) const {
-    // TODO
-	return -1;
-}
-
-void DasScript::get_constants(HashMap<StringName, Variant> *p_constants) {
-    // TODO
-}
-
-void DasScript::get_members(HashSet<StringName> *p_members) {
-	// TODO
-}
-
-bool DasScript::is_placeholder_fallback_enabled() const {
-	return placeholder_fallback_enabled;
-}
-
-const Variant DasScript::get_rpc_config() const {
-	return rpc_config;
-} 
-
 
 Error DasScript::load_source_code(const String &p_path) {
 	Error error;
@@ -265,5 +174,6 @@ void DasScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
 
 Variant DasScript::_new(const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
     // TODO
+	// looking at GDScript implementation, this is pretty important
 	return Variant{};
 }
