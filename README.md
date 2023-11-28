@@ -30,6 +30,7 @@ cd dascript
 git submodule update --init
 ```
 
+Note that I use my own fork of daScript to support some functionality!
 Don't use clone with `--recurse-submodules` as it will download daScript submodules which are not needed
 
 ## Bulding

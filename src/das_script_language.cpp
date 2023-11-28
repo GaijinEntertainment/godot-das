@@ -2,6 +2,18 @@
 #include "das_script.h"
 #include "init_dascript.h"
 
+#include <core/os/os.h>
+#include <daScript/misc/print_forward.h>
+
+struct PrintForwardGodot : PrintForward {
+    void to_out(const char * message) const override {
+		__print_line(message);
+    }
+    void to_err(const char * message) const override {
+        print_error(message);
+    }
+};
+
 DasScriptLanguage *DasScriptLanguage::singleton = nullptr;
 
 DasScriptLanguage::DasScriptLanguage() {
@@ -21,6 +33,7 @@ DasScriptLanguage::~DasScriptLanguage() {
 
 void DasScriptLanguage::init() {
     initialize_dascript();
+    PrintForward::set(new PrintForwardGodot());
 }
 
 void DasScriptLanguage::finish() {
