@@ -2,17 +2,6 @@
 #include "das_script.h"
 #include "init_dascript.h"
 
-#include <core/os/os.h>
-#include <daScript/misc/print_forward.h>
-
-struct PrintForwardGodot : PrintForward {
-    void to_out(const char * message) const override {
-		__print_line(message);
-    }
-    void to_err(const char * message) const override {
-        print_error(message);
-    }
-};
 
 DasScriptLanguage *DasScriptLanguage::singleton = nullptr;
 
@@ -38,7 +27,6 @@ void DasScriptLanguage::add_script(SelfList<DasScript> *p_script) {
 
 void DasScriptLanguage::init() {
     initialize_dascript();
-    PrintForward::set(new PrintForwardGodot());
 }
 
 void DasScriptLanguage::finish() {
@@ -73,7 +61,7 @@ void DasScriptLanguage::get_reserved_words(List<String> *p_words) const {
 }
 
 bool DasScriptLanguage::is_control_flow_keyword(String p_keyword) const {
-    return 
+    return
         // branches
         p_keyword == "if" ||
         p_keyword == "elif" ||

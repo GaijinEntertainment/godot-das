@@ -2,6 +2,19 @@
 #include "das_script_language.h"
 #include "das_script_instance.h"
 
+#include <core/os/os.h>
+#include "daScript/simulate/debug_info.h"
+
+class GodotContext : public das::Context {
+public:
+	GodotContext(uint32_t stackSize = 16*1024, bool ph = false) : Context(stackSize, ph) { }
+	void to_out(const das::LineInfo *, const char * message) override {
+        __print_line(message);
+    }
+	void to_err(const das::LineInfo *, const char * message) override {
+        print_error(message);
+    }
+};
 
 DasScript::DasScript() : script_list(this) {
 	DasScriptLanguage::get_singleton()->acquire_lock();
@@ -106,7 +119,7 @@ Error DasScript::reload(bool p_keep_state) {
 		}
 		return OK;
 	}
-	ctx = std::make_shared<das::Context>(program->getContextStackSize());
+	ctx = std::make_shared<GodotContext>(program->getContextStackSize());
 	if ( !program->simulate(*ctx, tout) ) {
 		tout << "failed to simulate\n";
 		for ( auto & err : program->errors ) {
