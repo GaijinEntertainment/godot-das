@@ -3,7 +3,7 @@
 #include <daScript/daScript.h>
 
 DasScriptInstance::~DasScriptInstance() {
-	DasScriptLanguage::get_singleton()->acquire();
+	DasScriptLanguage::get_singleton()->acquire_lock();
 
 	if (script.is_valid() && owner) {
 		script->erase_instance(owner);

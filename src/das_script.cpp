@@ -3,14 +3,18 @@
 #include "das_script_instance.h"
 
 
-DasScript::DasScript() {
-    // TODO
-	// add to script list in DasScriptLanguage
+DasScript::DasScript() : script_list(this) {
+	DasScriptLanguage::get_singleton()->acquire_lock();
+
+	DasScriptLanguage::get_singleton()->add_script(&script_list);
+	// TODO other stuff?
 }
 
 DasScript::~DasScript() {
-    // TODO
-	// remove from script list in DasScriptLanguage
+	DasScriptLanguage::get_singleton()->acquire_lock();
+
+	script_list.remove_from_list();
+	// TODO other stuff?
 }
 
 das::ContextPtr DasScript::get_ctx() {
@@ -36,7 +40,7 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 
 	p_this->set_script_instance(instance);
 	{
-		DasScriptLanguage::get_singleton()->acquire();
+		DasScriptLanguage::get_singleton()->acquire_lock();
 		instances.insert(p_this);
 	}
 
@@ -59,7 +63,7 @@ PlaceHolderScriptInstance *DasScript::placeholder_instance_create(Object *p_this
 }
 
 bool DasScript::instance_has(const Object *p_this) const {
-	DasScriptLanguage::get_singleton()->acquire();
+	DasScriptLanguage::get_singleton()->acquire_lock();
 
 	return instances.has((Object *)p_this);
 }
@@ -111,6 +115,7 @@ Error DasScript::reload(bool p_keep_state) {
 		return OK;
 	}
 	valid = true;
+
 	return OK;
 
 }

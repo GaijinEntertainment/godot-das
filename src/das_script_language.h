@@ -2,19 +2,23 @@
 #define DAS_SCRIPT_LANGUAGE_H
 
 #include "core/object/script_language.h"
-
+#include "das_script.h"
 
 
 class DasScriptLanguage : public ScriptLanguage {
 	static DasScriptLanguage *singleton;
 
 	Mutex mutex;
+
+	SelfList<DasScript>::List script_list;
 public:
 	DasScriptLanguage();
 	~DasScriptLanguage();
 
+	void add_script(SelfList<DasScript> *p_script);
+
 	_FORCE_INLINE_ static DasScriptLanguage *get_singleton() { return singleton; }
-	_FORCE_INLINE_ static MutexLock<Mutex> acquire() { return MutexLock<Mutex>(singleton->mutex); }
+	_FORCE_INLINE_ static MutexLock<Mutex> acquire_lock() { return MutexLock<Mutex>(singleton->mutex); }
 	String get_name() const override { return "daScript"; }
 
 	/* LANGUAGE FUNCTIONS */
@@ -57,7 +61,7 @@ public:
 	Vector<StackInfo> debug_get_current_stack_info() override { /* TODO */ return Vector<StackInfo>(); }
 
 	void reload_all_scripts() override { /* TODO */ }
-	void reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) override { /* TODO */ }
+	void reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) override;
 
 	/* LOADER FUNCTIONS */
 	void get_recognized_extensions(List<String> *p_extensions) const override;

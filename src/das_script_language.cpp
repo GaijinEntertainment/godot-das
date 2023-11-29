@@ -29,6 +29,11 @@ DasScriptLanguage::~DasScriptLanguage() {
     // TODO
 }
 
+void DasScriptLanguage::add_script(SelfList<DasScript> *p_script) {
+    script_list.add(p_script);
+}
+
+
 /* LANGUAGE FUNCTIONS */
 
 void DasScriptLanguage::init() {
@@ -125,6 +130,14 @@ bool DasScriptLanguage::validate(const String &p_script, const String &p_path, L
 
 Script *DasScriptLanguage::create_script() const {
 	return memnew(DasScript);
+}
+
+void DasScriptLanguage::reload_tool_script(const Ref<Script> &p_script, bool p_soft_reload) {
+    SelfList<DasScript> *elem = script_list.first();
+    while (elem) {
+        elem->self()->reload(p_soft_reload);
+        elem = elem->next();
+    }
 }
 
 void DasScriptLanguage::get_recognized_extensions(List<String> *p_extensions) const {

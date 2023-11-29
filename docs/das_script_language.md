@@ -28,7 +28,7 @@ Here you can find notes on implementation of DasScriptLanguage
 * `add_global_constant` - integration with autoloaders
 * `debug_\*` - function for built in debugger
 * `reload_all_scripts` - used by debugger only
-* `reload_tool_script` - ??? but it's important I guess
+* `reload_tool_script` - ~~??? but it's important I guess~~ turns out this reloads scripts on save, which now works
 * `get_public_*` - ??? something to do with testing
 * `profiling_*` - profiling functions, to be supported
 * `frame` - same

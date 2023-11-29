@@ -18,6 +18,7 @@ class DasScript : public Script {
 
 	das::ContextPtr ctx;
 	das::ProgramPtr program;
+	SelfList<DasScript> script_list;
 #ifdef TOOLS_ENABLED
 	// TODO reload stored as in _update_exports
 	HashSet<PlaceHolderScriptInstance *> placeholders{};
