@@ -10,6 +10,14 @@ DasScriptInstance::~DasScriptInstance() {
 	}
 }
 
+void DasScriptInstance::set_script(Ref<DasScript> p_script) {
+	script = p_script;
+}
+
+void DasScriptInstance::set_owner(Object *p_owner) {
+	owner = p_owner;
+}
+
 void DasScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
 	script.ptr()->get_script_method_list(p_list);
 }

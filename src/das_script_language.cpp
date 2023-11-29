@@ -130,3 +130,7 @@ Script *DasScriptLanguage::create_script() const {
 void DasScriptLanguage::get_recognized_extensions(List<String> *p_extensions) const {
     p_extensions->push_back("das");
 }
+
+bool DasScriptLanguage::handles_global_class_type(const String &p_type) const {
+    return p_type == "DasScript";
+}

@@ -10,8 +10,8 @@ class DasScriptInstance : public ScriptInstance {
 public:
 	~DasScriptInstance();
 
-	void set_script(Ref<DasScript> p_script) { script = p_script; }
-	void set_owner(Object *p_owner) { owner = p_owner; }
+	void set_script(Ref<DasScript> p_script);
+	void set_owner(Object *p_owner);
 
 	bool set(const StringName &p_name, const Variant &p_value) override { /* TODO */ return false; }
 	bool get(const StringName &p_name, Variant &r_ret) const override { /* TODO */ return false; }

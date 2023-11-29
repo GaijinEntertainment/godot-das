@@ -10,7 +10,6 @@ class DasScriptLanguage : public ScriptLanguage {
 
 	Mutex mutex;
 public:
-// see notes on empty or not overriden functions in docs/das_script_language.md
 	DasScriptLanguage();
 	~DasScriptLanguage();
 
@@ -76,7 +75,7 @@ public:
 	void frame() override { /* TODO */ }
 
 	/* GLOBAL CLASSES */
-	bool handles_global_class_type(const String &p_type) const override { return p_type == "DasScript"; }
+	bool handles_global_class_type(const String &p_type) const override;
 	String get_global_class_name(const String &p_path, String *r_base_type = nullptr, String *r_icon_path = nullptr) const override { /* TODO */ return String(); }
 
 };

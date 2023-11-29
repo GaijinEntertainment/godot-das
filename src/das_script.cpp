@@ -13,6 +13,10 @@ DasScript::~DasScript() {
 	// remove from script list in DasScriptLanguage
 }
 
+das::ContextPtr DasScript::get_ctx() {
+	return ctx;
+}
+
 void DasScript::erase_instance(Object *p_owner) {
 	instances.erase(p_owner);
 }
@@ -54,7 +58,7 @@ PlaceHolderScriptInstance *DasScript::placeholder_instance_create(Object *p_this
 #endif
 }
 
-bool DasScript::instance_has(const Object *p_this) const { 
+bool DasScript::instance_has(const Object *p_this) const {
 	DasScriptLanguage::get_singleton()->acquire();
 
 	return instances.has((Object *)p_this);
@@ -120,6 +124,14 @@ MethodInfo DasScript::get_method_info(const StringName &p_method) const {
     // TODO
 	// convert daScript function signature to Godot MethodInfo
 	return MethodInfo{};
+}
+
+bool DasScript::is_tool() const {
+	return tool;
+}
+
+bool DasScript::is_valid() const {
+	return valid;
 }
 
 ScriptLanguage *DasScript::get_language() const {
