@@ -27,13 +27,13 @@ bool DasScript::can_instantiate() const {
 
 ScriptInstance *DasScript::instance_create(Object *p_this) {
     DasScriptInstance *instance = memnew(DasScriptInstance);
-	instance->script = Ref<DasScript>(this);
-	instance->owner = p_this;
+	instance->set_script(Ref<DasScript>(this));
+	instance->set_owner(p_this);
 
-	instance->owner->set_script_instance(instance);
+	p_this->set_script_instance(instance);
 	{
 		DasScriptLanguage::get_singleton()->acquire();
-		instances.insert(instance->owner);
+		instances.insert(p_this);
 	}
 
 	// TODO more stuff

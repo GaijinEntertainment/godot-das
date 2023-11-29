@@ -17,5 +17,4 @@ config/icon="res://icon.svg"
 
 [filesystem]
 
-; this is to stop the warning about Blender files
 import/blender/enabled=false
