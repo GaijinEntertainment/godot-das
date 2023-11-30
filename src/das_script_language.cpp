@@ -1,6 +1,7 @@
 #include "das_script_language.h"
 #include "das_script.h"
 #include "init_dascript.h"
+#include "das_templates.h"
 
 
 DasScriptLanguage *DasScriptLanguage::singleton = nullptr;
@@ -94,20 +95,10 @@ void DasScriptLanguage::get_string_delimiters(List<String> *p_delimiters) const 
     p_delimiters->push_back("\" \"");
 }
 
-Ref<Script> DasScriptLanguage::make_template(
-		const String &p_template,
-		const String &p_class_name,
-		const String &p_base_class_name) const {
-    // TODO
-	String _template = String() + R""""(
-[export]
-def _ready()
-    print("Hello World!")
-)"""";
-
-	Ref<DasScript> new_script;
+Ref<Script> DasScriptLanguage::make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const {
+    Ref<DasScript> new_script;
 	new_script.instantiate();
-	new_script->set_source_code(_template);
+	new_script->set_source_code(simple_template);
 	return new_script;
 }
 
