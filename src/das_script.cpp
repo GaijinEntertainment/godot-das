@@ -100,8 +100,12 @@ void DasScript::set_source_code(const String &p_code) {
 Error DasScript::reload(bool p_keep_state) {
 	valid = false;
     auto fAccess = das::make_smart<das::FsFileAccess>();
-	auto source_data = source.utf8().get_data();
-	auto source_len = uint32_t(source.size());
+	// TODO maybe read straight from file?
+	// or make more efficient string pointer extraction because String::utf8() makes a copy
+	auto source_utf8 = source.utf8();
+
+	auto source_data = source_utf8.get_data();
+	auto source_len = uint32_t(strlen(source_data));
     auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
     fAccess->setFileInfo("dummy.das", das::move(fileInfo));
 
