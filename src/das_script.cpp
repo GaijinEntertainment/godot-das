@@ -8,8 +8,6 @@
 #include "daScript/simulate/debug_info.h"
 #include "daScript/ast/ast.h"
 
-#include <filesystem>
-
 
 class GodotContext : public das::Context {
 public:
@@ -221,11 +219,8 @@ Error DasScript::load_source_code(const String &p_path) {
 
 	set_source_code(s);
 
-	// TODO use godot's means of extracting filename?
 	// TODO what will happen in case of a file rename?
-	String global_path = ProjectSettings::get_singleton()->globalize_path(p_path);
-	std::filesystem::path global_path_as_fs_path(global_path.utf8().get_data());
-	script_name = global_path_as_fs_path.stem();
+	script_name = p_path.get_file().get_basename().utf8().get_data();
 
 	return OK;
 }
