@@ -19,10 +19,13 @@ public:
 };
 
 DasScript::DasScript() : script_list(this) {
-	DasScriptLanguage::get_singleton()->acquire_lock();
+	{
+		DasScriptLanguage::get_singleton()->acquire_lock();
 
-	DasScriptLanguage::get_singleton()->add_script(&script_list);
-	// TODO other stuff?
+		DasScriptLanguage::get_singleton()->add_script(&script_list);
+	}
+
+	path = vformat("dascript://%d.gd", get_instance_id());
 }
 
 DasScript::~DasScript() {
@@ -146,12 +149,12 @@ Error DasScript::reload(bool p_keep_state) {
 	}
 
 	auto* rootModule = program->thisModule.get();
-	main_structure = rootModule->findStructure(script_name);
+	main_structure = rootModule->findStructure(class_name);
 	if (!main_structure) {
 		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
 	}
-	struct_ctor = ctx->findFunction(script_name.c_str());
+	struct_ctor = ctx->findFunction(class_name.c_str());
 	if (!struct_ctor) {
 		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, 0, "Do not remove the option at the beginning of the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
@@ -161,6 +164,14 @@ Error DasScript::reload(bool p_keep_state) {
 
 	return OK;
 
+}
+
+void DasScript::set_path(const String &p_path, bool p_take_over) {
+	// TODO more
+	path = p_path;
+	if (class_name.empty()) {
+		class_name = p_path.get_file().get_basename().utf8().get_data();
+	}
 }
 
 bool DasScript::has_method(const StringName &p_method) const {
@@ -219,9 +230,7 @@ Error DasScript::load_source_code(const String &p_path) {
 	set_source_code(s);
 
 	// TODO what will happen in case of a file rename?
-	path = p_path;
-	script_name = p_path.get_file().get_basename().utf8().get_data();
-
+	set_path(p_path);
 	return OK;
 }
 
