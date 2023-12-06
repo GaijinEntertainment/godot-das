@@ -11,10 +11,10 @@ This project is a Godot module that ~~integrates~~ will integrate [daScript](htt
 This project is build as an engine submodule (see why not as a GDExtension in docs), so you will need to download Godot repo:
 
 ```
-git clone git@github.com:godotengine/godot.git
+git clone -b 4.2 git@github.com:godotengine/godot.git
 ```
 
-The develompent is done on Godot's master branch
+The develompent is done on Godot's `4.2` branch (just for safety)
 
 Next, clone this repo as a submodule in *godot/modules/*. Rename the directory to *dascript*:
 
