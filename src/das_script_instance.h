@@ -7,11 +7,14 @@
 class DasScriptInstance : public ScriptInstance {
 	Object *owner = nullptr;
 	Ref<DasScript> script;
+
+	char* class_ptr = nullptr;
 public:
 	~DasScriptInstance();
 
 	void set_script(Ref<DasScript> p_script);
 	void set_owner(Object *p_owner);
+	void set_class_ptr(char* p_class_ptr);
 
 	bool set(const StringName &p_name, const Variant &p_value) override { /* TODO */ return false; }
 	bool get(const StringName &p_name, Variant &r_ret) const override { /* TODO */ return false; }

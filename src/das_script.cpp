@@ -3,7 +3,13 @@
 #include "das_script_instance.h"
 
 #include <core/os/os.h>
+#include <core/config/project_settings.h>
+
 #include "daScript/simulate/debug_info.h"
+#include "daScript/ast/ast.h"
+
+#include <filesystem>
+
 
 class GodotContext : public das::Context {
 public:
@@ -38,6 +44,16 @@ void DasScript::erase_instance(Object *p_owner) {
 	instances.erase(p_owner);
 }
 
+int DasScript::get_func_offset(const StringName &p_func) {
+	// TODO precompute this
+	for (auto &field : main_structure->fields) {
+		if (field.name == String(p_func).utf8().get_data()) {
+			return field.offset;
+		}
+	}
+	return -1;
+}
+
 bool DasScript::can_instantiate() const {
 #ifdef TOOLS_ENABLED
 	return valid && (tool || ScriptServer::is_scripting_enabled());
@@ -50,7 +66,10 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
     DasScriptInstance *instance = memnew(DasScriptInstance);
 	instance->set_script(Ref<DasScript>(this));
 	instance->set_owner(p_this);
-
+	char* class_ptr = (char *)das_aligned_alloc16(main_structure->getSizeOf64());
+	instance->set_class_ptr(class_ptr);
+	vec4f args[1];
+	ctx->callWithCopyOnReturn(struct_ctor, args, class_ptr, nullptr);
 	p_this->set_script_instance(instance);
 	{
 		DasScriptLanguage::get_singleton()->acquire_lock();
@@ -107,12 +126,12 @@ Error DasScript::reload(bool p_keep_state) {
 	auto source_data = source_utf8.get_data();
 	auto source_len = uint32_t(strlen(source_data));
     auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
-    fAccess->setFileInfo("dummy.das", das::move(fileInfo));
+    fAccess->setFileInfo("tmp.das", das::move(fileInfo));
 
 	das::TextPrinter tout;
 
 	das::ModuleGroup dummyLibGroup;
-	program = das::compileDaScript("dummy.das", fAccess, tout, dummyLibGroup);
+	program = das::compileDaScript("tmp.das", fAccess, tout, dummyLibGroup);
 
 	// TODO output somewhere nice
 	// also not sure compilation goes here
@@ -131,6 +150,16 @@ Error DasScript::reload(bool p_keep_state) {
 		}
 		return OK;
 	}
+
+	// FIND INSTANCE CLASS
+	auto* rootModule = program->thisModule.get();
+	main_structure = rootModule->findStructure(script_name);
+	struct_ctor = ctx->findFunction(script_name.c_str());
+	if (!main_structure || !struct_ctor) {
+		tout << "a script must contain a class with the same name as a file\n";
+		return OK;
+	}
+
 	valid = true;
 
 	return OK;
@@ -191,7 +220,13 @@ Error DasScript::load_source_code(const String &p_path) {
 	}
 
 	set_source_code(s);
-	path = p_path;
+
+	// TODO use godot's means of extracting filename?
+	// TODO what will happen in case of a file rename?
+	String global_path = ProjectSettings::get_singleton()->globalize_path(p_path);
+	std::filesystem::path global_path_as_fs_path(global_path.utf8().get_data());
+	script_name = global_path_as_fs_path.stem();
+
 	return OK;
 }
 

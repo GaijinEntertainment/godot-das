@@ -4,6 +4,7 @@
 #include "core/object/script_language.h"
 #include "daScript/daScript.h"
 #include "daScript/simulate/aot_builtin_rtti.h"
+#include <daScript/ast/ast_typedecl.h>
 
 
 class DasScript : public Script {
@@ -14,7 +15,9 @@ class DasScript : public Script {
 
     HashSet<Object *> instances{};
     String source{};
-	String path{};
+	std::string script_name;
+	das::StructurePtr main_structure;
+	das::SimFunction *struct_ctor = nullptr;
 
 	das::ContextPtr ctx;
 	das::ProgramPtr program;
@@ -30,6 +33,7 @@ public:
 
 	das::ContextPtr get_ctx();
 	void erase_instance(Object *p_owner);
+	int get_func_offset(const StringName &p_func);
 
 	bool can_instantiate() const override;
 
