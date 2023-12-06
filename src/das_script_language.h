@@ -34,7 +34,8 @@ public:
 	void get_doc_comment_delimiters(List<String> *p_delimiters) const override { /* TODO */ }
 	void get_string_delimiters(List<String> *p_delimiters) const override;
 	Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const override;
-	Vector<ScriptLanguage::ScriptTemplate> get_built_in_templates(StringName p_object) override { /* TODO */ return Vector<ScriptTemplate>(); }
+	Vector<ScriptLanguage::ScriptTemplate> get_built_in_templates(StringName p_object) override;
+	bool is_using_templates() override { return true; }
 	bool validate(const String &p_script, const String &p_path = "", List<String> *r_functions = nullptr, List<ScriptError> *r_errors = nullptr, List<Warning> *r_warnings = nullptr, HashSet<int> *r_safe_lines = nullptr) const override;
 	Script *create_script() const override;
 #ifndef DISABLE_DEPRECATED
@@ -44,6 +45,7 @@ public:
 	int find_function(const String &p_function, const String &p_code) const override { /* TODO */ return -1;}
 	String make_function(const String &p_class, const String &p_name, const PackedStringArray &p_args) const override { /* TODO */ return String();}
 
+	String _get_indentation() const;
 	void auto_indent_code(String &p_code, int p_from_line, int p_to_line) const override { /* TODO */ }
 	void add_global_constant(const StringName &p_variable, const Variant &p_value) override { /* TODO */ }
 
