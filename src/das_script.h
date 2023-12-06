@@ -75,6 +75,8 @@ public:
 	void get_script_method_list(List<MethodInfo> *p_list) const override { /* TODO */ }
 	void get_script_property_list(List<PropertyInfo> *p_list) const override { /* TODO */ }
 
+	bool is_placeholder_fallback_enabled() const override { /* TODO otherwise crash on load with errors in script */ return true; }
+
 	const Variant get_rpc_config() const override { /* TODO */ return Dictionary(); }
 
 	Variant _new(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
