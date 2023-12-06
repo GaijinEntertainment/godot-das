@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+
+    // IMPORTANT
+    // gdb is said to be slow, but I suppose that it works better with g++ builds
+    // to use lldb, visit the link below
+    // https://docs.godotengine.org/en/stable/contributing/development/configuring_an_ide/visual_studio_code.html#debugging-the-project
+
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            // Change to godot.linuxbsd.editor.dev.x86_64.llvm for llvm-based builds.
+            "program": "${workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64",
+            // Change the arguments below for the project you want to test with.
+            // To run the project instead of editing it, remove the "--editor" argument.
+            // add "--windowed" if using a large screen
+            "args": [ "--editor", "--path", "${workspaceFolder}/modules/dascript/demo"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "setupCommands":
+            [
+              {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+              }
+            ],
+            // comment this if you don't want to spend time waiting for building every time
+            "preLaunchTask": "build"
+          }
+    ]
+}
