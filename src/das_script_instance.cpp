@@ -1,7 +1,7 @@
 #include "das_script_instance.h"
+
 #include "das_script_language.h"
-#include <daScript/daScript.h>
-#include <daScript/ast/ast.h>
+
 
 DasScriptInstance::~DasScriptInstance() {
 	{

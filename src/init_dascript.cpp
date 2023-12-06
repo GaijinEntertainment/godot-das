@@ -1,14 +1,13 @@
-#include <daScript/daScript.h>
 #include "init_dascript.h"
 
-using namespace das;
+#include <daScript/daScript.h>
 
 
 void initialize_dascript() {
     NEED_ALL_DEFAULT_MODULES;
-    Module::Initialize();
+    das::Module::Initialize();
 }
 
 void deinitialize_dascript(){
-    Module::Shutdown();
+    das::Module::Shutdown();
 }

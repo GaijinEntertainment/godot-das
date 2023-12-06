@@ -1,5 +1,5 @@
 #include "das_script_language.h"
-#include "das_script.h"
+
 #include "init_dascript.h"
 #include "das_templates.h"
 

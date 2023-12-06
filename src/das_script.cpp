@@ -1,13 +1,9 @@
 #include "das_script.h"
+
 #include "das_script_language.h"
 #include "das_script_instance.h"
 
 #include <core/os/os.h>
-#include <core/config/project_settings.h>
-
-#include "daScript/simulate/debug_info.h"
-#include "daScript/ast/ast.h"
-
 
 class GodotContext : public das::Context {
 public:

@@ -1,4 +1,5 @@
 #include "register_types.h"
+
 #include "das_script_language.h"
 #include "das_script.h"
 #include "das_resource_format_loader.h"
@@ -18,7 +19,7 @@ void initialize_dascript_module(ModuleInitializationLevel p_level) {
 
 		das_resource_loader.instantiate();
 		ResourceLoader::add_resource_format_loader(das_resource_loader);
-	
+
 		das_resource_saver.instantiate();
 		ResourceSaver::add_resource_format_saver(das_resource_saver);
 	}

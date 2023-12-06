@@ -1,7 +1,6 @@
 #ifndef DAS_TEMPLATES_H
 #define DAS_TEMPLATES_H
 
-#include <core/object/object.h>
 #include <core/object/script_language.h>
 
 // TODO more and better

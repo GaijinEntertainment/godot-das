@@ -1,10 +1,9 @@
 #ifndef DAS_SCRIPT_H
 #define DAS_SCRIPT_H
 
-#include "core/object/script_language.h"
-#include "daScript/daScript.h"
-#include "daScript/simulate/aot_builtin_rtti.h"
-#include <daScript/ast/ast_typedecl.h>
+#include <core/object/script_language.h>
+
+#include <daScript/daScript.h>
 
 
 class DasScript : public Script {

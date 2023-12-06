@@ -1,8 +1,9 @@
 #ifndef DAS_SCRIPT_LANGUAGE_H
 #define DAS_SCRIPT_LANGUAGE_H
 
-#include "core/object/script_language.h"
 #include "das_script.h"
+
+#include <core/object/script_language.h>
 
 
 class DasScriptLanguage : public ScriptLanguage {
