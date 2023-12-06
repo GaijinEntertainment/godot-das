@@ -4,6 +4,8 @@
 #include "das_script_instance.h"
 
 #include <core/os/os.h>
+#include <core/error/error_macros.h>
+
 
 class GodotContext : public das::Context {
 public:
@@ -112,45 +114,46 @@ void DasScript::set_source_code(const String &p_code) {
 
 Error DasScript::reload(bool p_keep_state) {
 	valid = false;
+	// TODO wrap this code in a separate function
+	static const char* DUMMY_FILE = "dummy.das";
     auto fAccess = das::make_smart<das::FsFileAccess>();
-	// TODO maybe read straight from file?
-	// or make more efficient string pointer extraction because String::utf8() makes a copy
 	auto source_utf8 = source.utf8();
 
 	auto source_data = source_utf8.get_data();
 	auto source_len = uint32_t(strlen(source_data));
     auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
-    fAccess->setFileInfo("tmp.das", das::move(fileInfo));
+    fAccess->setFileInfo(DUMMY_FILE, das::move(fileInfo));
 
-	das::TextPrinter tout;
-
+	das::TextPrinter dummyLogs;
 	das::ModuleGroup dummyLibGroup;
-	program = das::compileDaScript("tmp.das", fAccess, tout, dummyLibGroup);
 
-	// TODO output somewhere nice
-	// also not sure compilation goes here
+	program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, dummyLibGroup);
+
+	#define BUILT_IN_OR_PATH (path.is_empty() ? "built-in" : (const char *)path.utf8().get_data())
+
 	if (program->failed()) {
-		tout << "failed to compile\n";
-		for ( auto & err : program->errors ) {
-			tout << das::reportError(err.at, err.what, err.extra, err.fixme, err.cerr );
-		}
-		return OK;
+		auto first_error = program->errors.front();
+		// TODO what about fixme and extra???
+		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, first_error.at.line, ("Parse Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
+		return ERR_PARSE_ERROR;
 	}
 	ctx = std::make_shared<GodotContext>(program->getContextStackSize());
-	if ( !program->simulate(*ctx, tout) ) {
-		tout << "failed to simulate\n";
-		for ( auto & err : program->errors ) {
-			tout << das::reportError(err.at, err.what, err.extra, err.fixme, err.cerr );
-		}
-		return OK;
+	if ( !program->simulate(*ctx, dummyLogs) ) {
+		auto first_error = program->errors.front();
+		// TODO will simulation errors appear in program->errors?
+		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, first_error.at.line, ("Simulation Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
+		return ERR_PARSE_ERROR;
 	}
 
-	// FIND INSTANCE CLASS
 	auto* rootModule = program->thisModule.get();
 	main_structure = rootModule->findStructure(script_name);
+	if (!main_structure) {
+		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
+		return OK;
+	}
 	struct_ctor = ctx->findFunction(script_name.c_str());
-	if (!main_structure || !struct_ctor) {
-		tout << "a script must contain a class with the same name as a file\n";
+	if (!struct_ctor) {
+		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, 0, "Do not remove the option at the beginning of the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
 	}
 
@@ -216,6 +219,7 @@ Error DasScript::load_source_code(const String &p_path) {
 	set_source_code(s);
 
 	// TODO what will happen in case of a file rename?
+	path = p_path;
 	script_name = p_path.get_file().get_basename().utf8().get_data();
 
 	return OK;

@@ -122,7 +122,34 @@ Vector<ScriptLanguage::ScriptTemplate> DasScriptLanguage::get_built_in_templates
 }
 
 bool DasScriptLanguage::validate(const String &p_script, const String &p_path, List<String> *r_functions, List<ScriptError> *r_errors, List<Warning> *r_warnings, HashSet<int> *r_safe_lines) const {
-    // TODO important
+    static const char* DUMMY_FILE = "dummy.das";
+
+    auto fAccess = das::make_smart<das::FsFileAccess>();
+	auto source_utf8 = p_script.utf8();
+
+	auto source_data = source_utf8.get_data();
+	auto source_len = uint32_t(strlen(source_data));
+    auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
+    fAccess->setFileInfo(DUMMY_FILE, das::move(fileInfo));
+
+	das::TextPrinter dummyLogs;
+	das::ModuleGroup dummyLibGroup;
+
+    auto program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, dummyLibGroup);
+    if (program->failed() && r_errors) {
+		for ( auto & err : program->errors ) {
+            ScriptLanguage::ScriptError e;
+            e.path = p_path;
+            e.line = err.at.line;
+            e.column = err.at.column;
+            e.message = String(err.what.c_str());
+            r_errors->push_back(e);
+		}
+		return false;
+	}
+    // TODO can simulation fail because of static errors??? add simulation if so
+    // TODO fill other lists
+
     return true;
 }
 

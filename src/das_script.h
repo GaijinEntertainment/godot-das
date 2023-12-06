@@ -14,6 +14,7 @@ class DasScript : public Script {
 
     HashSet<Object *> instances{};
     String source{};
+	String path{};
 	std::string script_name;
 	das::StructurePtr main_structure;
 	das::SimFunction *struct_ctor = nullptr;
