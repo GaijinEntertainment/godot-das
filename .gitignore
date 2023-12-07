@@ -8,3 +8,6 @@ __pycache__
 
 # vscode stuff
 .vscode
+
+# tmp headers
+*.inc

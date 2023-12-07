@@ -6,7 +6,8 @@
 class Module_Godot : public das::Module {
 public:
     Module_Godot() : Module("godot") {
-        das::addConstant(*this, "TEST", 5);
+        #include "godot.das.inc"
+        compileBuiltinModule("godot.das", src_godot_das, src_godot_das_len);
     }
 };
 

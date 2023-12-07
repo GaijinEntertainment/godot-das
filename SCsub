@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 
+import subprocess
+
+
+das_inject_list = [
+    "src/godot.das",
+]
+
+for filename in das_inject_list:
+    process = subprocess.Popen(["xxd", "-i", filename, f"{filename}.inc"], stdout=subprocess.PIPE)
+    process.wait()
 
 Import("env")
 
