@@ -132,31 +132,29 @@ Error DasScript::reload(bool p_keep_state) {
 
 	program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, dummyLibGroup);
 
-	#define BUILT_IN_OR_PATH (path.is_empty() ? "built-in" : (const char *)path.utf8().get_data())
-
 	if (program->failed()) {
 		auto first_error = program->errors.front();
 		// TODO what about fixme and extra???
-		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, first_error.at.line, ("Parse Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
+		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Parse Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
 		return ERR_PARSE_ERROR;
 	}
 	ctx = std::make_shared<GodotContext>(program->getContextStackSize());
 	if ( !program->simulate(*ctx, dummyLogs) ) {
 		auto first_error = program->errors.front();
 		// TODO will simulation errors appear in program->errors?
-		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, first_error.at.line, ("Simulation Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
+		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Simulation Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
 		return ERR_PARSE_ERROR;
 	}
 
 	auto* rootModule = program->thisModule.get();
 	main_structure = rootModule->findStructure(class_name);
 	if (!main_structure) {
-		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
+		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
 	}
 	struct_ctor = ctx->findFunction(class_name.c_str());
 	if (!struct_ctor) {
-		_err_print_error("DasScript::reload", BUILT_IN_OR_PATH, 0, "Do not remove the option at the beginning of the script", false, ERR_HANDLER_SCRIPT);
+		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), 0, "Do not remove the option at the beginning of the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
 	}
 
