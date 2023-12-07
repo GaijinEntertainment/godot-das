@@ -166,6 +166,7 @@ Error DasScript::reload(bool p_keep_state) {
 
 void DasScript::set_path(const String &p_path, bool p_take_over) {
 	// TODO more
+	Script::set_path(p_path, p_take_over);
 	path = p_path;
 	if (class_name.empty()) {
 		class_name = p_path.get_file().get_basename().utf8().get_data();
