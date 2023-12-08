@@ -1,5 +1,7 @@
+require godot
 
 class Node2D
-    x: float = 1.0
-    def hello()
-        print("world")
+    native: Node2DNative?
+
+    def rotate(radians: float): void
+        _Node2D_rotate(*native, radians)

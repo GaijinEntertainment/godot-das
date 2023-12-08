@@ -43,10 +43,10 @@ void DasScript::erase_instance(Object *p_owner) {
 	instances.erase(p_owner);
 }
 
-int DasScript::get_func_offset(const StringName &p_func) {
+int DasScript::get_field_offset(const StringName &p_field) {
 	// TODO precompute this
 	for (auto &field : main_structure->fields) {
-		if (field.name == String(p_func).utf8().get_data()) {
+		if (field.name == String(p_field).utf8().get_data()) {
 			return field.offset;
 		}
 	}
@@ -69,6 +69,11 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 	instance->set_class_ptr(class_ptr);
 	vec4f args[1];
 	ctx->callWithCopyOnReturn(struct_ctor, args, class_ptr, nullptr);
+
+	int native_offset = get_field_offset("native");
+	Object **native_obj = (Object **)(class_ptr + native_offset);
+	*native_obj = p_this;
+
 	p_this->set_script_instance(instance);
 	{
 		DasScriptLanguage::get_singleton()->acquire_lock();

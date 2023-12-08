@@ -4,8 +4,10 @@ require godot
 
 class Foo : Node2D
 	def _ready()
-		print("It's ready! {x}")
-		hello()
+		print("It's ready!")
+		rotate(1.0)
+
 
 	def _enter_tree()
 		print("It's enter tree!")
+
