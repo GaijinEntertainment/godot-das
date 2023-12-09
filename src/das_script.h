@@ -10,7 +10,7 @@ class DasScript : public Script {
     GDCLASS(DasScript, Script);
 
     bool valid = false;
-	bool tool = true; // tmp solution to make debugging easier
+	bool tool = false;
 
     HashSet<Object *> instances{};
     String source{};

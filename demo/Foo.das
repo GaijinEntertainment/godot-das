@@ -1,4 +1,5 @@
 options always_export_initializer = true
+options tool = true // so breakpoints work
 
 require godot
 

@@ -143,6 +143,7 @@ Error DasScript::reload(bool p_keep_state) {
 		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Parse Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
 		return ERR_PARSE_ERROR;
 	}
+	tool = program->options.getBoolOption("tool", false);
 	ctx = std::make_shared<GodotContext>(program->getContextStackSize());
 	if ( !program->simulate(*ctx, dummyLogs) ) {
 		auto first_error = program->errors.front();
