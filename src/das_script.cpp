@@ -43,7 +43,7 @@ void DasScript::erase_instance(Object *p_owner) {
 	instances.erase(p_owner);
 }
 
-int DasScript::get_field_offset(const StringName &p_field) {
+int DasScript::get_field_offset(const StringName &p_field) const {
 	// TODO precompute this
 	for (auto &field : main_structure->fields) {
 		if (field.name == String(p_field).utf8().get_data()) {
@@ -182,8 +182,8 @@ void DasScript::set_path(const String &p_path, bool p_take_over) {
 }
 
 bool DasScript::has_method(const StringName &p_method) const {
-	das::SimFunction *function = ctx->findFunction(String(p_method).utf8().get_data());
-	return function != nullptr;
+	// TODO precompute func search
+	return get_field_offset(p_method) != INVALID_OFFSET;
 }
 
 MethodInfo DasScript::get_method_info(const StringName &p_method) const {
