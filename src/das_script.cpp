@@ -50,7 +50,7 @@ int DasScript::get_field_offset(const StringName &p_field) {
 			return field.offset;
 		}
 	}
-	return -1;
+	return INVALID_OFFSET;
 }
 
 bool DasScript::can_instantiate() const {
@@ -71,8 +71,10 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 	ctx->callWithCopyOnReturn(struct_ctor, args, class_ptr, nullptr);
 
 	int native_offset = get_field_offset("native");
-	Object **native_obj = (Object **)(class_ptr + native_offset);
-	*native_obj = p_this;
+	if (native_offset != INVALID_OFFSET) {
+		Object **native_obj = (Object **)(class_ptr + native_offset);
+		*native_obj = p_this;
+	}
 
 	p_this->set_script_instance(instance);
 	{

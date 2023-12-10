@@ -5,6 +5,7 @@
 
 #include <daScript/daScript.h>
 
+static constexpr int INVALID_OFFSET = -1;
 
 class DasScript : public Script {
     GDCLASS(DasScript, Script);

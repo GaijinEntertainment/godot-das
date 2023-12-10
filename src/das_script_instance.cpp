@@ -39,7 +39,7 @@ bool DasScriptInstance::has_method(const StringName &p_method) const {
 Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
 	das::ContextPtr ctx = script->get_ctx();
 	int offset = script->get_field_offset(p_method);
-	if (offset == -1) {
+	if (offset == INVALID_OFFSET) {
 		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
 		return Variant();
 	}
