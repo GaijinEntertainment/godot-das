@@ -43,8 +43,20 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 		return Variant();
 	}
 	auto func = *reinterpret_cast<das::Func*>(class_ptr + offset);
-	// TODO pass args
-	das::das_invoke_function<void>::invoke<void *>(ctx.get(), nullptr, func, class_ptr);
+
+	std::vector<vec4f> arguments;
+	arguments.push_back(das::cast<void*>::from(class_ptr));
+	for (int i = 0; i < p_argcount; i++) {
+		switch (p_args[i]->get_type()) {
+			case Variant::Type::FLOAT:
+				arguments.push_back(das::cast<float>::from(p_args[i]->operator float()));
+				break;
+			default:
+				continue;
+		}
+	}
+	// TODO use evalWithCatch
+	ctx->callOrFastcall(func.PTR, arguments.data(), nullptr);
 	return Variant();
 }
 

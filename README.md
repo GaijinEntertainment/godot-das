@@ -63,7 +63,7 @@ Run
 bin/<your godot binary> modules/dascript/demo/project.godot
 ```
 
-It should print `It's enter tree!` and `It's ready!`, which is the result of daScript printing in corresponding functions inside class instance!
+It should print `It's enter tree!` and `It's ready!` and rotate! You can remove `options tool = true` to disable tool mode (so the object does nothing in editor)
 
 Add `--windowed` if using a big monitor
 
