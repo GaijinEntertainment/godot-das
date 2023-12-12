@@ -65,7 +65,8 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 	DasScriptInstance *instance = memnew(DasScriptInstance);
 	instance->set_script(Ref<DasScript>(this));
 	instance->set_owner(p_this);
-	char* class_ptr = (char *)das_aligned_alloc16(main_structure->getSizeOf64());
+
+	char* class_ptr = ctx->heap->allocate(main_structure->getSizeOf64());
 	instance->set_class_ptr(class_ptr);
 	vec4f args[1];
 	ctx->callWithCopyOnReturn(struct_ctor, args, class_ptr, nullptr);

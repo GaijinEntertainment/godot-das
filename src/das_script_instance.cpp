@@ -11,7 +11,6 @@ DasScriptInstance::~DasScriptInstance() {
 			script->erase_instance(owner);
 		}
 	}
-	das_aligned_free16(class_ptr);
 }
 
 void DasScriptInstance::set_script(Ref<DasScript> p_script) {
