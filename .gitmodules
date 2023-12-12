@@ -1,3 +1,4 @@
 [submodule "daScript"]
 	path = daScript
 	url = git@github.com:GaijinEntertainment/daScript.git
+	ignore = all
