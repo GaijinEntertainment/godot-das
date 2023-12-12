@@ -25,7 +25,7 @@ public:
         options["tool"] = das::Type::tBool;
 
         #include "godot.das.inc"
-        compileBuiltinModule("godot.das", src_godot_das, src_godot_das_len);
+        compileBuiltinModule("godot.das", modules_dascript_src_godot_das, modules_dascript_src_godot_das_len);
     }
 };
 

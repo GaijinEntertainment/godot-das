@@ -1,19 +1,28 @@
 #!/usr/bin/env python
 
-import subprocess
+Import("env")
+Import("env_modules")
 
+env_dascript = env_modules.Clone()
+
+import subprocess
+import os
+
+DASCRIPT_PATH = "daScript" #  if changing this, be sure to disable downloading submodule
+DASCRIPT_LIB_PATH = "daScript/liblibDaScript.a"
+DASCRIPT_INCLUDE_PATH = f"{DASCRIPT_PATH}/include"
+
+# CONVERT DAS MODULES TO C++ HEADER FILES
 
 das_inject_list = [
     "src/godot.das",
 ]
 
-for filename in das_inject_list:
-    process = subprocess.Popen(["xxd", "-i", filename, f"{filename}.inc"], stdout=subprocess.PIPE)
-    process.wait()
+xxd_builder = Builder(action="xxd -i $SOURCE $TARGET")
+env_modules.Append(BUILDERS={"XXD": xxd_builder})
+env_modules.XXD([f"{das_file}.inc" for das_file in das_inject_list], das_inject_list)
 
-Import("env")
-
-env_dascript = env.Clone()
+# BUILD GODOT-DAS MODULE
 
 src_list = [
     "register_types.cpp",
@@ -25,9 +34,8 @@ src_list = [
     "src/das_resource_format_loader.cpp",
 ]
 env_dascript.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in daScript headers
-env_dascript.Append(CPPPATH=["src", "daScript/include"])
+env_dascript.Append(CPPPATH=["src", DASCRIPT_INCLUDE_PATH])
 env_dascript.add_source_files(env.modules_sources, src_list)
 
- # for some reason, LIBS and LIBPATH combonation works only for absolute paths
-dascript_lib = File("daScript/liblibDaScript.a")
+dascript_lib = File(DASCRIPT_LIB_PATH)
 env.Append(LIBS=[dascript_lib])
