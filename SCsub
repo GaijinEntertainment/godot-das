@@ -9,7 +9,7 @@ import subprocess
 import os
 
 DASCRIPT_PATH = "daScript" #  if changing this, be sure to disable downloading submodule
-DASCRIPT_LIB_PATH = "daScript/liblibDaScript.a"
+DASCRIPT_LIB_PATH = "lib/liblibDaScript.a"
 DASCRIPT_INCLUDE_PATH = f"{DASCRIPT_PATH}/include"
 
 # CONVERT DAS MODULES TO C++ HEADER FILES
@@ -36,6 +36,7 @@ src_list = [
 env_dascript.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in daScript headers
 env_dascript.Append(CPPPATH=["src", DASCRIPT_INCLUDE_PATH])
 env_dascript.add_source_files(env.modules_sources, src_list)
+
 
 dascript_lib = File(DASCRIPT_LIB_PATH)
 env.Append(LIBS=[dascript_lib])

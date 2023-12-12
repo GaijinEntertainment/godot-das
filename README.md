@@ -37,12 +37,11 @@ Don't use clone with `--recurse-submodules` as it will download daScript submodu
 First, build daScript static library:
 
 ```
-cd daScript
-cmake CMakeFiles.txt
-make -j<cores>
+cmake -B __cmake_temp
+cmake --build __cmake_temp -j<cores>
 ```
 
-The project will only need *liblibDaScript.a* and headers from *daScript/include/*, so you can delete the rest
+This will put *liblibDaScript.a* in *lib* directory. The project will only need headers from *daScript/include/*, so you can delete the rest in *daScript* directory
 
 Next, build Godot:
 
@@ -67,11 +66,11 @@ It should print `It's enter tree!` and `It's ready!` and rotate! You can remove 
 
 Add `--windowed` if using a big monitor
 
-If you want to debug, to *daSctipt/CMakeFiles.txt* add line `set(CMAKE_BUILD_TYPE Debug)`, and to scons config add `dev_build=yes`
+Don't forget to add `dev_build=yes` to scons config for debugging. If you want a release build, remove `set(CMAKE_BUILD_TYPE Debug)` from *CMakeLists.txt*
 
 Build and debug jobs, as well as intellisense configuration for VSCode can be found in *vscode_files*, to use them
 
 ```
 cd <godot root directory>
-ln -s modules/dascript/vscode_files .vscode
+ln -s modules/dascript/_vscode_files .vscode
 ```
