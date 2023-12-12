@@ -20,10 +20,11 @@ class DasScript : public Script {
 	das::StructurePtr main_structure;
 	das::SimFunction *struct_ctor = nullptr;
 
-	// These tree objects hold complete state of one script
+	// These four objects hold complete state of one script
 	das::ContextPtr ctx;
 	das::ProgramPtr program;
 	std::unique_ptr<das::ModuleGroup> lib_group;
+	das::FileAccessPtr file_access; // not sure if needed, but otherwise file infos die
 
 	SelfList<DasScript> script_list;
 #ifdef TOOLS_ENABLED

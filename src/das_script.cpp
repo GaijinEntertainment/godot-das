@@ -128,19 +128,19 @@ void DasScript::set_source_code(const String &p_code) {
 Error DasScript::reload(bool p_keep_state) {
 	valid = false;
 	// TODO wrap this code in a separate function
-	static const char* DUMMY_FILE = "dummy.das";
-    auto fAccess = das::make_smart<das::FsFileAccess>();
+	static const char* file_name = path.utf8().get_data();
+    auto new_fAccess = das::make_smart<das::FsFileAccess>();
 	auto source_utf8 = source.utf8();
 
 	auto source_data = source_utf8.get_data();
 	auto source_len = uint32_t(strlen(source_data));
     auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
-    fAccess->setFileInfo(DUMMY_FILE, das::move(fileInfo));
+    new_fAccess->setFileInfo(file_name, das::move(fileInfo));
 
 	das::TextPrinter dummyLogs;
 	auto new_lib_group = std::make_unique<das::ModuleGroup>();
 
-	auto new_program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, *new_lib_group);
+	auto new_program = das::compileDaScript(file_name, new_fAccess, dummyLogs, *new_lib_group);
 
 	if (new_program->failed()) {
 		auto first_error = new_program->errors.front();
@@ -176,6 +176,7 @@ Error DasScript::reload(bool p_keep_state) {
 	program = std::move(new_program);
 	main_structure = std::move(new_main_structure);
 	struct_ctor = std::move(new_struct_ctor);
+	file_access = std::move(new_fAccess);
 	tool = new_tool;
 
 	for (auto &instance_owner : instances) {

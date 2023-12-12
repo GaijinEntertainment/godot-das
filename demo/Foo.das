@@ -23,3 +23,7 @@ class Foo : Node2D
 			seconds += 1
 			angular_speed *= -1.
 			print("{seconds} second passed")
+
+		// uncomment to test error handling
+		// var empty_ptr: int?
+		// *empty_ptr = 5

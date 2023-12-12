@@ -55,8 +55,12 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 				continue;
 		}
 	}
-	// TODO use evalWithCatch
-	ctx->callOrFastcall(func.PTR, arguments.data(), nullptr);
+	ctx->tryRestartAndLock();
+	ctx->evalWithCatch(func.PTR, arguments.data());
+	ctx->unlock();
+	if (const char* exception = ctx->getException()) {
+		_err_print_error(String(p_method).utf8().get_data(), ctx->exceptionAt.fileInfo->name.c_str(), ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
+	}
 	return Variant();
 }
 
