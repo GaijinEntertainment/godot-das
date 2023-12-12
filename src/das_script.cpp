@@ -62,7 +62,7 @@ bool DasScript::can_instantiate() const {
 }
 
 ScriptInstance *DasScript::instance_create(Object *p_this) {
-    DasScriptInstance *instance = memnew(DasScriptInstance);
+	DasScriptInstance *instance = memnew(DasScriptInstance);
 	instance->set_script(Ref<DasScript>(this));
 	instance->set_owner(p_this);
 	char* class_ptr = (char *)das_aligned_alloc16(main_structure->getSizeOf64());
@@ -75,7 +75,9 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 		Object **native_obj = (Object **)(class_ptr + native_offset);
 		*native_obj = p_this;
 	}
-
+	// Both gdscript and csharpscript have this line, but this operation seems redundant
+	// because in Object::set_script all operations are already performed
+	// Now I need this line to safely recreate script instance on reload, so don't remove it
 	p_this->set_script_instance(instance);
 	{
 		DasScriptLanguage::get_singleton()->acquire_lock();
@@ -135,38 +137,49 @@ Error DasScript::reload(bool p_keep_state) {
     fAccess->setFileInfo(DUMMY_FILE, das::move(fileInfo));
 
 	das::TextPrinter dummyLogs;
-	das::ModuleGroup dummyLibGroup;
+	auto new_lib_group = std::make_unique<das::ModuleGroup>();
 
-	program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, dummyLibGroup);
+	auto new_program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, *new_lib_group);
 
-	if (program->failed()) {
-		auto first_error = program->errors.front();
+	if (new_program->failed()) {
+		auto first_error = new_program->errors.front();
 		// TODO what about fixme and extra???
 		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Parse Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
 		return ERR_PARSE_ERROR;
 	}
-	tool = program->options.getBoolOption("tool", false);
-	ctx = std::make_shared<GodotContext>(program->getContextStackSize());
-	if ( !program->simulate(*ctx, dummyLogs) ) {
-		auto first_error = program->errors.front();
+	bool new_tool = new_program->options.getBoolOption("tool", false);
+	auto new_ctx = std::make_shared<GodotContext>(new_program->getContextStackSize());
+	if ( !new_program->simulate(*new_ctx, dummyLogs) ) {
+		auto first_error = new_program->errors.front();
 		// TODO will simulation errors appear in program->errors?
 		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Simulation Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
 		return ERR_PARSE_ERROR;
 	}
 
-	auto* rootModule = program->thisModule.get();
-	main_structure = rootModule->findStructure(class_name);
-	if (!main_structure) {
+	auto* rootModule = new_program->thisModule.get();
+	auto new_main_structure = rootModule->findStructure(class_name);
+	if (!new_main_structure) {
 		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
 	}
-	struct_ctor = ctx->findFunction(class_name.c_str());
-	if (!struct_ctor) {
+	auto new_struct_ctor = new_ctx->findFunction(class_name.c_str());
+	if (!new_struct_ctor) {
 		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), 0, "Do not remove the option at the beginning of the script", false, ERR_HANDLER_SCRIPT);
 		return OK;
 	}
 
 	valid = true;
+
+	lib_group = std::move(new_lib_group);
+	ctx = std::move(new_ctx);
+	program = std::move(new_program);
+	main_structure = std::move(new_main_structure);
+	struct_ctor = std::move(new_struct_ctor);
+	tool = new_tool;
+
+	for (auto &instance_owner : instances) {
+		instance_create(instance_owner);
+	}
 
 	return OK;
 
