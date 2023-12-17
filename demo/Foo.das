@@ -15,8 +15,12 @@ class Foo : Node2D
 	def _enter_tree()
 		print("It's enter tree!")
 
+	def get_vel(): Vector2
+		return 300. * Vector2(0.5 - timer, 0.)
+
 	def _process(dt: float)
 		rotate(dt * angular_speed)
+		translate(dt * get_vel())
 		timer += dt
 		if timer > 1.
 			timer = 0.

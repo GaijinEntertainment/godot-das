@@ -5,3 +5,6 @@ class Node2D
 
     def rotate(radians: float): void
         _Node2D_rotate(*native, radians)
+
+    def translate(offset: Vector2): void
+        _Node2D_translate(*native, offset)
