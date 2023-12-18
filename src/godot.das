@@ -8,3 +8,9 @@ class Node2D
 
     def translate(offset: Vector2): void
         *native |> _Node2D_translate(offset)
+
+    def set_position(position: Vector2): void
+        *native |> _Node2D_set_position(position)
+
+    def get_position(): Vector2
+        return *native |> _Node2D_get_position()

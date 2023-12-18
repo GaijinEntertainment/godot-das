@@ -33,6 +33,8 @@ das::addExtern<DAS_CALL_METHOD(DAS_MEMBER_NAME(CLASS, METHOD))>(*this, lib, DEFE
 
 MAKE_TYPE_FACTORY(Node2DNative, Node2D);
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
+template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
+
 
 struct Node2DAnnotation : das::ManagedStructureAnnotation<Node2D> {
     Node2DAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation("Node2DNative", ml) {
@@ -50,6 +52,8 @@ public:
 
         BIND_METHOD(Node2D, rotate)
         BIND_METHOD(Node2D, translate)
+        BIND_METHOD(Node2D, get_position)
+        BIND_METHOD(Node2D, set_position)
 
         options["tool"] = das::Type::tBool;
 
