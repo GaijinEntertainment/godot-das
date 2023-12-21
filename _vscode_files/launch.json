@@ -6,6 +6,23 @@
 
     "configurations": [
         {
+            // Faster (considerably) but less accurate (I think?)
+            "name": "Debug (lldb)",
+            "type": "lldb",
+            "request": "launch",
+            // Change to godot.linuxbsd.editor.dev.x86_64.llvm for llvm-based builds.
+            "program": "${workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64",
+            // Change the arguments below for the project you want to test with.
+            // To run the project instead of editing it, remove the "--editor" argument.
+            "args": [ "--editor", "--path", "${workspaceFolder}/modules/dascript/demo"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            // uncomment this if you want to spend time waiting for building every time
+            //"preLaunchTask": "build"
+        },
+        {
             // Slower but more accurate
             "name": "Debug (gdb)",
             "type": "cppdbg",
@@ -30,23 +47,6 @@
             ],
             // uncomment this if you want to spend time waiting for building every time
             // "preLaunchTask": "build"
-          },
-          {
-            // Faster but less accurate (I think?)
-            "name": "Debug (lldb)",
-            "type": "lldb",
-            "request": "launch",
-            // Change to godot.linuxbsd.editor.dev.x86_64.llvm for llvm-based builds.
-            "program": "${workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64",
-            // Change the arguments below for the project you want to test with.
-            // To run the project instead of editing it, remove the "--editor" argument.
-            "args": [ "--editor", "--path", "${workspaceFolder}/modules/dascript/demo" ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            // uncomment this if you want to spend time waiting for building every time
-            //"preLaunchTask": "build"
-          }
+        }
     ]
 }

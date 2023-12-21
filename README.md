@@ -50,9 +50,11 @@ cd <godot root directory>
 scons (or pyston-scons if configured)
 ```
 
-daScript module will be enabled by default, you can disable it with `module_luascript_enabled=no` (or change `is_enabled` function in `config.py`)
+daScript module will be enabled by default, you can disable it with `module_dascript_enabled=no` (or change `is_enabled` function in `config.py`)
 
-> Important: daScript is built with `g++` and `ld`, so make sure **not** to use `clang` or `lld` for building Godot!
+Use `linker=lld` or `linker=mold` because default `ld` is super slow
+
+> Important: daScript is built with `g++`, so make sure **not** to use `clang` for building Godot!
 
 ## Testing
 

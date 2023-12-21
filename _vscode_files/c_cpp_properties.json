@@ -8,6 +8,12 @@
                 "${workspaceFolder}/platform/linuxbsd",
                 "${workspaceFolder}/modules/dascript/src"
             ],
+            "defines": [
+                "DEBUG_ENABLED",
+                "TOOLS_ENABLED",
+                "DEV_ENABLED",
+                "GODOT_DAS_MODULE_PATH=\".\""
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
             "intelliSenseMode": "linux-gcc-x64",
