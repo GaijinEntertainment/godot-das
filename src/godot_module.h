@@ -5,6 +5,9 @@
 #include <scene/2d/node_2d.h>
 #include <core/math/vector2.h>
 
+#include <vector>
+#include <fstream>
+
 // taken from dagor/prog/gameLibs/publicInclude/dasModules/dasModulesCommon.h
 // typeName and das_alias do not seem to be vital but may be required in the future
 #define MAKE_TYPE_FACTORY_ALIAS(TYPE, DAS_DECL_TYPE)           \
@@ -57,8 +60,9 @@ public:
 
         options["tool"] = das::Type::tBool;
 
-        #include "godot.das.inc"
-        compileBuiltinModule("godot.das", modules_dascript_src_godot_das, modules_dascript_src_godot_das_len);
+        std::ifstream input{GODOT_DAS_MODULE_PATH"/src/godot.das", std::ios_base::binary};
+        std::vector<unsigned char> buffer{std::istreambuf_iterator< char>(input), {} };
+        compileBuiltinModule("godot.das", buffer.data(), buffer.size());
     }
 };
 
