@@ -1,6 +1,3 @@
-#ifndef GODOT_MODULE_H
-#define GODOT_MODULE_H
-
 #include <daScript/daScript.h>
 #include <scene/2d/node_2d.h>
 #include <core/math/vector2.h>
@@ -67,5 +64,3 @@ public:
 };
 
 REGISTER_MODULE(Module_Godot);
-
-#endif // GODOT_MODULE_H

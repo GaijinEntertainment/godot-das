@@ -1,7 +1,5 @@
 #include "init_dascript.h"
 
-#include "godot_module.h"
-
 #include <daScript/daScript.h>
 
 
