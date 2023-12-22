@@ -22,6 +22,8 @@ namespace das {                                                \
   };                                                           \
 }
 
+#define NAME_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE##Native, TYPE)
+
 #define STR(X) #X
 #define DEFER_STR(X) STR(X)
 #define DAS_MEMBER_NAME(CLASS, MEMBER) _##CLASS##_##MEMBER
@@ -31,15 +33,33 @@ using DAS_MEMBER_NAME(CLASS, METHOD) = DAS_CALL_MEMBER(CLASS::METHOD);\
 das::addExtern<DAS_CALL_METHOD(DAS_MEMBER_NAME(CLASS, METHOD))>(*this, lib, DEFER_STR(DAS_MEMBER_NAME(CLASS, METHOD)), das::SideEffects::modifyExternal, DAS_CALL_MEMBER_CPP(CLASS::METHOD));
 
 
-MAKE_TYPE_FACTORY(Node2DNative, Node2D);
+#define BIND_NATIVE_BASE(TYPE)\
+struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
+    TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE"Native", ml) { }\
+};\
+addAnnotation(das::make_smart<TYPE##Annotation>(lib));
+
+
+#define BIND_NATIVE_TYPE(TYPE, PARENT)\
+struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
+    das::TypeDeclPtr parentType;\
+    TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE"Native", ml) {\
+        parentType = das::makeType<PARENT>(ml);\
+    }\
+    bool canBeSubstituted(TypeAnnotation *pass_type) const override {\
+        return parentType->annotation == pass_type;\
+    }\
+};\
+addAnnotation(das::make_smart<TYPE##Annotation>(lib));
+
+
+
+NAME_NATIVE_TYPE_FACTORY(Object)
+NAME_NATIVE_TYPE_FACTORY(Node)
+NAME_NATIVE_TYPE_FACTORY(Node2D)
+
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
-
-
-struct Node2DAnnotation : das::ManagedStructureAnnotation<Node2D> {
-    Node2DAnnotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation("Node2DNative", ml) {
-    }
-};
 
 
 class Module_Godot : public das::Module {
@@ -47,13 +67,18 @@ public:
 
     Module_Godot() : Module("godot") {
         das::ModuleLibrary lib(this);
-        addAnnotation(das::make_smart<Node2DAnnotation>(lib));
-        addAlias(das::typeFactory<Vector2>::make(lib));
+
+        BIND_NATIVE_BASE(Object)
+        BIND_NATIVE_TYPE(Node, Object)
+        BIND_NATIVE_TYPE(Node2D, Node)
 
         BIND_METHOD(Node2D, rotate)
         BIND_METHOD(Node2D, translate)
         BIND_METHOD(Node2D, get_position)
         BIND_METHOD(Node2D, set_position)
+        BIND_METHOD(Node, get_parent)
+
+        addAlias(das::typeFactory<Vector2>::make(lib));
 
         options["tool"] = das::Type::tBool;
 
