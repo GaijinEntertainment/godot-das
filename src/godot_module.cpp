@@ -58,9 +58,16 @@ NAME_NATIVE_TYPE_FACTORY(Object)
 NAME_NATIVE_TYPE_FACTORY(Node)
 NAME_NATIVE_TYPE_FACTORY(Node2D)
 
+template<> struct das::ToBasicType<String>     { enum { type = das::Type::tString }; };
+
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 
+Node* fwd_Node_find_child(Node& node, const char* p_pattern, bool p_recursive = true, bool p_owned = true) {
+    // TODO embed this cast into das?
+    // or maybe make all method calls like this
+    return node.find_child(p_pattern, p_recursive, p_owned);
+}
 
 class Module_Godot : public das::Module {
 public:
@@ -77,6 +84,8 @@ public:
         BIND_METHOD(Node2D, get_position)
         BIND_METHOD(Node2D, set_position)
         BIND_METHOD(Node, get_parent)
+
+        das::addExtern<DAS_BIND_FUN(fwd_Node_find_child)>(*this, lib, "_Node_find_child", das::SideEffects::modifyExternal, "fwd_Node_find_child");
 
         addAlias(das::typeFactory<Vector2>::make(lib));
 

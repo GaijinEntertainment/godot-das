@@ -10,6 +10,9 @@ class Node : Object
     def get_parent(): Node?
         return new Node(*unsafe(reinterpret<NodeNative?>(native)) |> _Node_get_parent())
 
+    def find_child(pattern : string; recursive : bool = true; owned : bool = true): Node?
+        return new Node(*unsafe(reinterpret<NodeNative?>(native)) |> _Node_find_child(pattern, recursive, owned))
+
 class Node2D : Node
     def Node2D(_native: ObjectNative?)
         native = _native
