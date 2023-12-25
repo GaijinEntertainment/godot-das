@@ -3,6 +3,7 @@ options tool = true // set true to make breakpoints work
 
 require godot
 require math
+require Bar
 
 class Foo : Node2D
 	angular_speed: float = 6.28
@@ -14,6 +15,7 @@ class Foo : Node2D
 
 
 	def _ready()
+		print("from Bar.das: {ABRACADABRA}")
 		center = get_parent()->find_child("Center") as Node2D
 
 		let to_center = center->get_position() - get_position()
