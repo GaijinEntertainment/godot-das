@@ -4,6 +4,9 @@
 
 
 void initialize_dascript() {
+    if (das::Module::require("$")) {
+        return;
+    }
     NEED_ALL_DEFAULT_MODULES;
     NEED_MODULE(Module_Godot);
     das::Module::Initialize();
