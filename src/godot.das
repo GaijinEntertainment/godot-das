@@ -8,11 +8,11 @@ class Node : Object
     def Node(_native: ObjectNative?)
         native = _native
 
-    def get_parent(): Node?
-        return new Node(*unsafe(reinterpret<NodeNative?>(native)) |> _Node_get_parent())
+    def get_parent(): ObjectNative?
+        return *unsafe(reinterpret<NodeNative?>(native)) |> _Node_get_parent()
 
-    def find_child(pattern : string; recursive : bool = true; owned : bool = true): Node?
-        return new Node(*unsafe(reinterpret<NodeNative?>(native)) |> _Node_find_child(pattern, recursive, owned))
+    def find_child(pattern : string; recursive : bool = true; owned : bool = true): ObjectNative?
+        return *unsafe(reinterpret<NodeNative?>(native)) |> _Node_find_child(pattern, recursive, owned)
 
 class Node2D : Node
     def Node2D(_native: ObjectNative?)
@@ -29,6 +29,12 @@ class Node2D : Node
 
     def get_position(): Vector2
         return *unsafe(reinterpret<Node2DNative?>(native)) |> _Node2D_get_position()
+
+def operator as Node2D(native: ObjectNative?)
+    return new Node2D(native)
+
+def operator as Node(native: ObjectNative?)
+    return new Node(native)
 
 def operator as Node2D(obj: Object?)
     return new Node2D(obj.native)
