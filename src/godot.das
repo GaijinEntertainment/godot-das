@@ -1,4 +1,5 @@
 require godot
+require daslib/constant_expression
 
 class Object
     native: ObjectNative?
