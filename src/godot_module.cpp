@@ -54,6 +54,12 @@ struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
 };\
 addAnnotation(das::make_smart<TYPE##Annotation>(lib));
 
+template <typename T>
+bool check_godot_type(const Object* obj) {
+    return dynamic_cast<const T*>(obj) != nullptr;
+}
+
+#define BIND_TYPE_CHECKER(TYPE)  das::addExtern<DAS_BIND_FUN(check_godot_type<TYPE>)>(*this, lib, "check_godot_type_"#TYPE, das::SideEffects::none, "check_godot_type<"#TYPE">");
 
 
 NAME_NATIVE_TYPE_FACTORY(Object)
@@ -65,7 +71,7 @@ template<> struct das::ToBasicType<String>     { enum { type = das::Type::tStrin
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 
-Node* fwd_Node_find_child(Node& node, const char* p_pattern, bool p_recursive = true, bool p_owned = true) {
+Node* _Node_find_child(const Node& node, const char* p_pattern, bool p_recursive = true, bool p_owned = true) {
     // TODO embed this cast into das?
     // or maybe make all method calls like this
     return node.find_child(p_pattern, p_recursive, p_owned);
@@ -87,7 +93,10 @@ public:
         BIND_METHOD(Node2D, set_position)
         BIND_METHOD(Node, get_parent)
 
-        das::addExtern<DAS_BIND_FUN(fwd_Node_find_child)>(*this, lib, "_Node_find_child", das::SideEffects::modifyExternal, "fwd_Node_find_child");
+        BIND_TYPE_CHECKER(Node)
+        BIND_TYPE_CHECKER(Node2D)
+
+        das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "_Node_find_child", das::SideEffects::modifyExternal, "_Node_find_child");
 
         addAlias(das::typeFactory<Vector2>::make(lib));
 
