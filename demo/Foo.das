@@ -4,6 +4,7 @@ options tool = true // set true to make breakpoints work
 require godot
 require math
 require Bar
+require daslib/constant_expression
 
 class Foo : Node2D
 	angular_speed: float = 6.28
