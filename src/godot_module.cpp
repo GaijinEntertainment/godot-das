@@ -39,20 +39,27 @@ das::addExtern<DAS_CALL_METHOD(DAS_MEMBER_NAME(CLASS, METHOD))>(*this, lib, DEFE
 struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
     TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE"Native", ml) { }\
 };\
-addAnnotation(das::make_smart<TYPE##Annotation>(lib));
+das::smart_ptr<TYPE##Annotation> TYPE##ManagedStructureAnnotation = das::make_smart<TYPE##Annotation>(lib);\
+addAnnotation(TYPE##ManagedStructureAnnotation);
 
 
 #define BIND_NATIVE_TYPE(TYPE, PARENT)\
 struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
     das::TypeDeclPtr parentType;\
-    TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE"Native", ml) {\
-        parentType = das::makeType<PARENT>(ml);\
-    }\
+    das::smart_ptr<das::ManagedStructureAnnotation<PARENT>> parent_annotation;\
+    \
+    TYPE##Annotation(das::ModuleLibrary & ml,\
+                     das::smart_ptr<das::ManagedStructureAnnotation<PARENT>> parent_annotation) :\
+                     ManagedStructureAnnotation(#TYPE"Native", ml),\
+                     parent_annotation(parent_annotation),\
+                     parentType(das::makeType<PARENT>(ml)) {}\
+    \
     bool canBeSubstituted(TypeAnnotation *pass_type) const override {\
-        return parentType->annotation == pass_type;\
+        return parentType->annotation == pass_type || parent_annotation->canBeSubstituted(pass_type);\
     }\
 };\
-addAnnotation(das::make_smart<TYPE##Annotation>(lib));
+das::smart_ptr<TYPE##Annotation> TYPE##ManagedStructureAnnotation = das::make_smart<TYPE##Annotation>(lib, PARENT##ManagedStructureAnnotation);\
+addAnnotation(TYPE##ManagedStructureAnnotation);
 
 template <typename T>
 bool check_godot_type(const Object* obj) {
