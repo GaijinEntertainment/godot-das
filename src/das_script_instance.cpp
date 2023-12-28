@@ -25,6 +25,9 @@ void DasScriptInstance::set_class_ptr(char* p_class_ptr) {
 	class_ptr = p_class_ptr;
 }
 
+char* DasScriptInstance::get_class_ptr() {
+	return class_ptr;
+}
 
 void DasScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
 	script.ptr()->get_script_method_list(p_list);
@@ -67,6 +70,11 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 Ref<Script> DasScriptInstance::get_script() const {
 	return script;
 }
+
+Ref<DasScript> DasScriptInstance::get_das_script() const {
+	return script;
+}
+
 
 const Variant DasScriptInstance::get_rpc_config() const {
 	return script->get_rpc_config();

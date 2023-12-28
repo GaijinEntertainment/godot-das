@@ -15,6 +15,7 @@ public:
 	void set_script(Ref<DasScript> p_script);
 	void set_owner(Object *p_owner);
 	void set_class_ptr(char* p_class_ptr);
+	char* get_class_ptr();
 
 	bool set(const StringName &p_name, const Variant &p_value) override { /* TODO */ return false; }
 	bool get(const StringName &p_name, Variant &r_ret) const override { /* TODO */ return false; }
@@ -36,6 +37,7 @@ public:
 	void notification(int p_notification, bool p_reversed = false) override { /* TODO */ }
 
 	Ref<Script> get_script() const override;
+	Ref<DasScript> get_das_script() const;
 
 	const Variant get_rpc_config() const override;
 

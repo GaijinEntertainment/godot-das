@@ -14,8 +14,7 @@
                 "DEV_ENABLED",
                 "GODOT_DAS_MODULE_PATH=\".\""
             ],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c17",
+            "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "linux-gcc-x64",
             "cppStandard": "c++17"
         }

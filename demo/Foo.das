@@ -6,6 +6,27 @@ require math
 require Bar
 require daslib/constant_expression
 
+// TODO generate this section with macros
+def operator as Foo(native : ObjectNative?)
+    return unsafe(reinterpret<Foo>(_check_dascript_type(native, "Foo")))
+
+def operator ?as Foo(native : ObjectNative?)
+    if native != null
+        return native as Foo(native)
+    return null
+
+def operator as Foo(obj : Object?)
+	if obj != null
+    	return obj.native as Foo
+	error("cannot cast null")
+	return null
+
+def operator ?as Foo(native : ObjectNative?)
+    if native != null
+        return obj.native as Foo
+    return null
+// end of section
+
 class Foo : Node2D
 	angular_speed: float = 6.28
 

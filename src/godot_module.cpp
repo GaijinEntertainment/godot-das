@@ -1,3 +1,5 @@
+#include "das_script_instance.h"
+
 #include <daScript/daScript.h>
 #include <daScript/misc/platform.h>
 
@@ -62,12 +64,26 @@ das::smart_ptr<TYPE##Annotation> TYPE##ManagedStructureAnnotation = das::make_sm
 addAnnotation(TYPE##ManagedStructureAnnotation);
 
 template <typename T>
-bool check_godot_type(const Object* obj) {
+bool _check_native_type(const Object* obj) {
     return dynamic_cast<const T*>(obj) != nullptr;
 }
 
-#define BIND_TYPE_CHECKER(TYPE)  das::addExtern<DAS_BIND_FUN(check_godot_type<TYPE>)>(*this, lib, "check_godot_type_"#TYPE, das::SideEffects::none, "check_godot_type<"#TYPE">");
+#define BIND_TYPE_CHECKER(TYPE)  das::addExtern<DAS_BIND_FUN(_check_native_type<TYPE>)>(*this, lib, "_check_native_type_"#TYPE, das::SideEffects::none, "_check_native_type<"#TYPE">");
 
+
+char* _check_dascript_type(const Object* obj, const char* name, das::Context *ctx) {
+    if (obj == nullptr) {
+        ctx->to_err(nullptr, "cannot cast null");
+        return nullptr;
+    }
+    DasScriptInstance* instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
+    if (instance == nullptr || instance->get_das_script()->get_class_name() != name) {
+        // two cases: either the object does not have a das script instance, or the das script instance is not of the correct type
+        ctx->to_err(nullptr, (std::string("type mismatch: cannot cast to ") + std::string(name)).c_str());
+        return nullptr;
+    }
+    return instance->get_class_ptr();
+}
 
 NAME_NATIVE_TYPE_FACTORY(Object)
 NAME_NATIVE_TYPE_FACTORY(Node)
@@ -99,11 +115,11 @@ public:
         BIND_METHOD(Node2D, get_position)
         BIND_METHOD(Node2D, set_position)
         BIND_METHOD(Node, get_parent)
+        das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "_Node_find_child", das::SideEffects::modifyExternal, "_Node_find_child");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
-
-        das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "_Node_find_child", das::SideEffects::modifyExternal, "_Node_find_child");
+        das::addExtern<DAS_BIND_FUN(_check_dascript_type)>(*this, lib, "_check_dascript_type", das::SideEffects::modifyExternal, "_check_dascript_type");
 
         addAlias(das::typeFactory<Vector2>::make(lib));
 

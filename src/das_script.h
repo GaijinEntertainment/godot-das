@@ -39,6 +39,7 @@ public:
 	das::ContextPtr get_ctx();
 	void erase_instance(Object *p_owner);
 	int get_field_offset(const StringName &p_field) const;
+	const char* get_class_name() const;
 
 	bool can_instantiate() const override;
 

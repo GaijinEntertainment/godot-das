@@ -54,6 +54,10 @@ int DasScript::get_field_offset(const StringName &p_field) const {
 	return INVALID_OFFSET;
 }
 
+const char* DasScript::get_class_name() const {
+	return main_structure->name.c_str();
+}
+
 bool DasScript::can_instantiate() const {
 #ifdef TOOLS_ENABLED
 	return valid && (tool || ScriptServer::is_scripting_enabled());

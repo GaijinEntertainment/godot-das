@@ -59,7 +59,7 @@ def operator as Node2D(native: Node2DNative?)
     return null
 
 def operator as Node2D(native: ObjectNative?)
-    if check_godot_type_Node2D(native)
+    if _check_native_type_Node2D(native)
         return new Node2D(unsafe(reinterpret<Node2DNative?>(native)))
     if native == null
         error("cannot cast null")
@@ -74,7 +74,7 @@ def operator as Node(native: NodeNative?)
     return null
 
 def operator as Node(native: ObjectNative?)
-    if check_godot_type_Node(native)
+    if _check_native_type_Node(native)
         return new Node(unsafe(reinterpret<NodeNative?>(native)))
     if native == null
         error("cannot cast null")
