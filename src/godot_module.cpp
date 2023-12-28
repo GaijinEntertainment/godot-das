@@ -26,20 +26,12 @@ namespace das {                                                \
   };                                                           \
 }
 
-#define NAME_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE##Native, TYPE)
-
-#define STR(X) #X
-#define DEFER_STR(X) STR(X)
-#define DAS_MEMBER_NAME(CLASS, MEMBER) _##CLASS##_##MEMBER
-
-#define BIND_METHOD(CLASS, METHOD)\
-using DAS_MEMBER_NAME(CLASS, METHOD) = DAS_CALL_MEMBER(CLASS::METHOD);\
-das::addExtern<DAS_CALL_METHOD(DAS_MEMBER_NAME(CLASS, METHOD))>(*this, lib, DEFER_STR(DAS_MEMBER_NAME(CLASS, METHOD)), das::SideEffects::modifyExternal, DAS_CALL_MEMBER_CPP(CLASS::METHOD));
+#define NAME_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE, TYPE)
 
 
 #define BIND_NATIVE_BASE(TYPE)\
 struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
-    TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE"Native", ml) { }\
+    TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE, ml) { }\
 };\
 das::smart_ptr<TYPE##Annotation> TYPE##ManagedStructureAnnotation = das::make_smart<TYPE##Annotation>(lib);\
 addAnnotation(TYPE##ManagedStructureAnnotation);
@@ -52,7 +44,7 @@ struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
     \
     TYPE##Annotation(das::ModuleLibrary & ml,\
                      das::smart_ptr<das::ManagedStructureAnnotation<PARENT>> parent_annotation) :\
-                     ManagedStructureAnnotation(#TYPE"Native", ml),\
+                     ManagedStructureAnnotation(#TYPE, ml),\
                      parent_annotation(parent_annotation),\
                      parentType(das::makeType<PARENT>(ml)) {}\
     \
@@ -70,6 +62,9 @@ bool _check_native_type(const Object* obj) {
 
 #define BIND_TYPE_CHECKER(TYPE)  das::addExtern<DAS_BIND_FUN(_check_native_type<TYPE>)>(*this, lib, "_check_native_type_"#TYPE, das::SideEffects::none, "_check_native_type<"#TYPE">");
 
+#define CTX_AT das::Context *ctx, das::LineInfoArg *at
+#define CHECK_IF_NULL(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return {}; }
+#define CHECK_IF_NULL_VOID(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return; }
 
 char* _check_dascript_type(const Object* obj, const char* name, das::Context *ctx) {
     if (obj == nullptr) {
@@ -94,11 +89,37 @@ template<> struct das::ToBasicType<String>     { enum { type = das::Type::tStrin
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 
-Node* _Node_find_child(const Node& node, const char* p_pattern, bool p_recursive = true, bool p_owned = true) {
-    // TODO embed this cast into das?
-    // or maybe make all method calls like this
-    return node.find_child(p_pattern, p_recursive, p_owned);
+Node* _Node_find_child(const Node* node, const char* p_pattern, CTX_AT) {
+    CHECK_IF_NULL(node)
+    // TODO add p_recursive and p_owned
+    return node->find_child(p_pattern, true, true);
 }
+
+Node* _Node_get_parent(const Node* node, CTX_AT) {
+    CHECK_IF_NULL(node)
+    return node->get_parent();
+}
+
+void _Node2D_rotate(Node2D* node2d, float p_radians, CTX_AT) {
+    CHECK_IF_NULL_VOID(node2d)
+    node2d->rotate(p_radians);
+}
+
+void _Node2D_translate(Node2D* node2d, const Vector2 p_amount, CTX_AT) {
+    CHECK_IF_NULL_VOID(node2d)
+    node2d->translate(p_amount);
+}
+
+void _Node2D_set_position(Node2D* node2d, const Vector2 p_pos, CTX_AT) {
+    CHECK_IF_NULL_VOID(node2d)
+    node2d->set_position(p_pos);
+}
+
+Vector2 _Node2D_get_position(const Node2D* node2d, CTX_AT) {
+    CHECK_IF_NULL(node2d)
+    return node2d->get_position();
+}
+
 
 class Module_Godot : public das::Module {
 public:
@@ -110,12 +131,12 @@ public:
         BIND_NATIVE_TYPE(Node, Object)
         BIND_NATIVE_TYPE(Node2D, Node)
 
-        BIND_METHOD(Node2D, rotate)
-        BIND_METHOD(Node2D, translate)
-        BIND_METHOD(Node2D, get_position)
-        BIND_METHOD(Node2D, set_position)
-        BIND_METHOD(Node, get_parent)
-        das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "_Node_find_child", das::SideEffects::modifyExternal, "_Node_find_child");
+        das::addExtern<DAS_BIND_FUN(_Node2D_rotate)>(*this, lib, "rotate", das::SideEffects::modifyExternal, "_Node2D_rotate");
+        das::addExtern<DAS_BIND_FUN(_Node2D_translate)>(*this, lib, "translate", das::SideEffects::modifyExternal, "_Node2D_translate");
+        das::addExtern<DAS_BIND_FUN(_Node2D_get_position)>(*this, lib, "get_position", das::SideEffects::modifyExternal, "_Node2D_get_position");
+        das::addExtern<DAS_BIND_FUN(_Node2D_set_position)>(*this, lib, "set_position", das::SideEffects::modifyExternal, "_Node2D_set_position");
+        das::addExtern<DAS_BIND_FUN(_Node_get_parent)>(*this, lib, "get_parent", das::SideEffects::modifyExternal, "_Node_get_parent");
+        das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "find_child", das::SideEffects::modifyExternal, "_Node_find_child");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
