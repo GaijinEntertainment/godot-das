@@ -1,5 +1,5 @@
 options always_export_initializer = true
-options tool = true // set true to make breakpoints work
+options tool = false // set true to make breakpoints work
 
 require godot
 require math
@@ -31,6 +31,9 @@ class Foo
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
 		center = parent |> find_child("Center") as Node2D
+
+		print("{parent |> get_name()}, {native |> get_name()}, {center |> get_name()}")
+
 		let to_center = center |> get_position() - native |> get_position()
 		radius = length(to_center)
 		let to_center_dir = to_center / radius

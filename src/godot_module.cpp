@@ -100,6 +100,12 @@ Node* _Node_get_parent(const Node* node, CTX_AT) {
     return node->get_parent();
 }
 
+const char* _Node_get_name(const Node* node, CTX_AT) {
+    CHECK_IF_NULL(node)
+    // TODO bind StringName?
+    return ctx->stringHeap->allocateString(String(node->get_name()).utf8().get_data());
+}
+
 void _Node2D_rotate(Node2D* node2d, float p_radians, CTX_AT) {
     CHECK_IF_NULL_VOID(node2d)
     node2d->rotate(p_radians);
@@ -137,6 +143,7 @@ public:
         das::addExtern<DAS_BIND_FUN(_Node2D_set_position)>(*this, lib, "set_position", das::SideEffects::modifyExternal, "_Node2D_set_position");
         das::addExtern<DAS_BIND_FUN(_Node_get_parent)>(*this, lib, "get_parent", das::SideEffects::modifyExternal, "_Node_get_parent");
         das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "find_child", das::SideEffects::modifyExternal, "_Node_find_child");
+        das::addExtern<DAS_BIND_FUN(_Node_get_name)>(*this, lib, "get_name", das::SideEffects::modifyExternal, "_Node_get_name");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
