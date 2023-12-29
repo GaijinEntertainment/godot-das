@@ -66,3 +66,21 @@ def operator ?as Node(native: Object?)
     if native != null
         return native as Node
     return null
+
+
+// is
+
+def operator is Object(native: Object?)
+    return true
+
+def operator is Node(native: Node?)
+    return true
+
+def operator is Node2D(native: Node2D?)
+    return true
+
+def operator is Node(native: Object?)
+    return _check_native_type_Node(native)
+
+def operator is Node2D(native: Object?)
+    return _check_native_type_Node2D(native)

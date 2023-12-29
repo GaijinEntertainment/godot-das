@@ -7,13 +7,28 @@ require Bar
 
 
 // TODO generate this section with macros
+def operator as Foo(obj : Foo?)
+	if obj != null
+		return obj
+	error("cannot cast null")
+	return null
+
 def operator as Foo(native : Object?)
-	return unsafe(reinterpret<Foo?>(_check_dascript_type(native, "Foo")))
+	return unsafe(reinterpret<Foo?>(_get_dascript_type(native, "Foo")))
+
+def operator ?as Foo(obj : Foo?)
+	return obj
 
 def operator ?as Foo(native : Object?)
 	if native != null
 		return native as Foo
 	return null
+
+def operator is(obj : Foo?)
+	return true
+
+def operator is(native : Object?)
+	return _check_dascript_type(native, "Foo")
 // end of section
 
 class Foo
@@ -31,7 +46,7 @@ class Foo
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
 		center = parent |> find_child("Center") as Node2D
-
+		print("parent is Node2D={parent is Node2D}")
 		print("{parent |> get_name()}, {native |> get_name()}, {center |> get_name()}")
 
 		let to_center = center |> get_position() - native |> get_position()

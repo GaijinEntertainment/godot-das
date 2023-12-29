@@ -26,7 +26,7 @@ namespace das {                                                \
   };                                                           \
 }
 
-#define NAME_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE, TYPE)
+#define MAKE_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE, TYPE)
 
 
 #define BIND_NATIVE_BASE(TYPE)\
@@ -66,7 +66,7 @@ bool _check_native_type(const Object* obj) {
 #define CHECK_IF_NULL(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return {}; }
 #define CHECK_IF_NULL_VOID(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return; }
 
-char* _check_dascript_type(const Object* obj, const char* name, das::Context *ctx) {
+char* _get_dascript_type(const Object* obj, const char* name, das::Context *ctx) {
     if (obj == nullptr) {
         ctx->to_err(nullptr, "cannot cast null");
         return nullptr;
@@ -80,11 +80,20 @@ char* _check_dascript_type(const Object* obj, const char* name, das::Context *ct
     return instance->get_class_ptr();
 }
 
-NAME_NATIVE_TYPE_FACTORY(Object)
-NAME_NATIVE_TYPE_FACTORY(Node)
-NAME_NATIVE_TYPE_FACTORY(Node2D)
+bool _check_dascript_type(const Object* obj, const char* name) {
+    if (obj == nullptr) {
+        return false;
+    }
+    DasScriptInstance* instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
+    if (instance == nullptr || instance->get_das_script()->get_class_name() != name) {
+        return false;
+    }
+    return true;
+}
 
-template<> struct das::ToBasicType<String>     { enum { type = das::Type::tString }; };
+MAKE_NATIVE_TYPE_FACTORY(Object)
+MAKE_NATIVE_TYPE_FACTORY(Node)
+MAKE_NATIVE_TYPE_FACTORY(Node2D)
 
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
@@ -147,6 +156,7 @@ public:
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
+        das::addExtern<DAS_BIND_FUN(_get_dascript_type)>(*this, lib, "_get_dascript_type", das::SideEffects::modifyExternal, "_get_dascript_type");
         das::addExtern<DAS_BIND_FUN(_check_dascript_type)>(*this, lib, "_check_dascript_type", das::SideEffects::modifyExternal, "_check_dascript_type");
 
         addAlias(das::typeFactory<Vector2>::make(lib));
