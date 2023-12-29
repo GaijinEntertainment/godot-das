@@ -53,6 +53,10 @@ class Foo
 	def _ready()
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
+
+		for child in parent |> iterate_children()
+			child as Node2D |> translate(Vector2(300, 0))
+
 		center = parent |> find_child("Center") as Node2D
 		print("parent is Node2D={parent is Node2D}")
 		print("{parent |> get_name()}, {native |> get_name()}, {center |> get_name()}")

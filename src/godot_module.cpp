@@ -120,6 +120,18 @@ const char* _Node_get_name(const Node* node, CTX_AT) {
     return ctx->stringHeap->allocateString(String(node->get_name()).utf8().get_data());
 }
 
+Node* _Node_get_child(const Node* node, int p_index, CTX_AT) {
+    CHECK_IF_NULL(node)
+    // TODO add p_include_internal
+    return node->get_child(p_index, false);
+}
+
+int _Node_get_child_count(const Node* node, CTX_AT) {
+    CHECK_IF_NULL(node)
+    // TODO add p_include_internal
+    return node->get_child_count(false);
+}
+
 void _Node2D_rotate(Node2D* node2d, float p_radians, CTX_AT) {
     CHECK_IF_NULL_VOID(node2d)
     node2d->rotate(p_radians);
@@ -171,6 +183,8 @@ public:
         das::addExtern<DAS_BIND_FUN(_Node_get_parent)>(*this, lib, "get_parent", das::SideEffects::modifyExternal, "_Node_get_parent");
         das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "find_child", das::SideEffects::modifyExternal, "_Node_find_child");
         das::addExtern<DAS_BIND_FUN(_Node_get_name)>(*this, lib, "get_name", das::SideEffects::modifyExternal, "_Node_get_name");
+        das::addExtern<DAS_BIND_FUN(_Node_get_child)>(*this, lib, "get_child", das::SideEffects::modifyExternal, "_Node_get_child");
+        das::addExtern<DAS_BIND_FUN(_Node_get_child_count)>(*this, lib, "get_child_count", das::SideEffects::modifyExternal, "_Node_get_child_count");
         das::addExtern<DAS_BIND_FUN(_InputEventMouseButton_get_button_index)>(*this, lib, "get_button_index", das::SideEffects::modifyExternal, "_InputEventMouseButton_get_button_index");
         das::addExtern<DAS_BIND_FUN(_InputEvent_is_pressed)>(*this, lib, "is_pressed", das::SideEffects::modifyExternal, "_InputEvent_is_pressed");
 
