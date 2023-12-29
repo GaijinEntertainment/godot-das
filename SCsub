@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+COMPILE_FOR_IN_PLACE_TEST = True
+
 Import("env")
 Import("env_modules")
 
@@ -12,6 +14,19 @@ DASCRIPT_PATH = "daScript" #  if changing this, be sure to disable downloading s
 DASCRIPT_LIB_PATH = "lib/liblibDaScript.a"
 DASCRIPT_INCLUDE_PATH = f"{DASCRIPT_PATH}/include"
 
+if COMPILE_FOR_IN_PLACE_TEST:
+    # if compiling for in-place tests (e.i. godot folder is not moved after compilation), just define current path (tmp solution)
+    env_dascript.Append(CPPDEFINES=f'GODOT_DAS_MODULE_PATH=\\"{os.getcwd()}\\"')
+else:
+    # else compile godot.das into a header. The problem is that you have to rebuild the whole project if you change godot.das
+    das_inject_list = [
+        "src/godot.das",
+    ]
+    xxd_builder = Builder(action="xxd -i $SOURCE $TARGET")
+    env_modules.Append(BUILDERS={"XXD": xxd_builder})
+    env_modules.XXD([f"{das_file}.inc" for das_file in das_inject_list], das_inject_list)
+
+
 src_list = [
     "register_types.cpp",
     "src/godot_module.cpp",
@@ -22,7 +37,6 @@ src_list = [
     "src/das_resource_format_saver.cpp",
     "src/das_resource_format_loader.cpp",
 ]
-env_dascript.Append(CPPDEFINES=f'GODOT_DAS_MODULE_PATH=\\"{os.getcwd()}\\"')
 env_dascript.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in daScript headers
 env_dascript.Append(CPPPATH=["src", DASCRIPT_INCLUDE_PATH])
 env_dascript.add_source_files(env.modules_sources, src_list)

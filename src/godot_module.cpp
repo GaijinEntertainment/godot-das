@@ -197,12 +197,16 @@ public:
         addAlias(das::typeFactory<Vector2>::make(lib));
 
         options["tool"] = das::Type::tBool;
-
+#ifdef GODOT_DAS_MODULE_PATH
         const char* godot_module_full_path = GODOT_DAS_MODULE_PATH"/src/godot.das";
         std::ifstream input{godot_module_full_path, std::ios_base::binary};
         std::vector<unsigned char> buffer{std::istreambuf_iterator< char>(input), {} };
-
-        compileBuiltinModule(godot_module_full_path, buffer.data(), buffer.size());
+        unsigned char* modules_dascript_src_godot_das = buffer.data();
+        unsigned int modules_dascript_src_godot_das_len = buffer.size();
+#else
+        #include "godot.das.inc"
+#endif
+        compileBuiltinModule("godot.das", modules_dascript_src_godot_das, modules_dascript_src_godot_das_len);
     }
 };
 

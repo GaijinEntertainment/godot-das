@@ -56,6 +56,8 @@ Use `linker=lld` or `linker=mold` because default `ld` is super slow
 
 > Important: daScript is built with `g++`, so make sure **not** to use `clang` for building Godot!
 
+*Temporary solution!* if you want to move godot folder, make sure to recompile it or set `COMPILE_FOR_IN_PLACE_TEST = False` in *SCSub*. Otherwise I recommend you leaving it because it removed the nessesety to recompile Godot every time you change `godot.das`
+
 ## Testing
 
 Run
@@ -76,3 +78,4 @@ Build and debug jobs, as well as intellisense configuration for VSCode can be fo
 cd <godot root directory>
 ln -s modules/dascript/_vscode_files .vscode
 ```
+

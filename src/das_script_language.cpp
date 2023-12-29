@@ -29,7 +29,8 @@ void DasScriptLanguage::add_script(SelfList<DasScript> *p_script) {
 /* LANGUAGE FUNCTIONS */
 
 void DasScriptLanguage::init() {
-    das::setDasRoot(GODOT_DAS_MODULE_PATH"/daScript");
+    // TODO think about how to include daslib
+    // das::setDasRoot(GODOT_DAS_MODULE_PATH"/daScript");
     initialize_dascript();
 }
 
