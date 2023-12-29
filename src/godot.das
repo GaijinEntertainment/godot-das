@@ -84,3 +84,19 @@ def operator is Node(native: Object?)
 
 def operator is Node2D(native: Object?)
     return _check_native_type_Node2D(native)
+
+// okay, all operators above are for demonstration of what should be generated for every type
+// below are operators that are actually used in the code. I will not write every cast for every type
+// because it will be too much and quickly become very messy
+
+def operator is InputEventMouseButton(native: Object?)
+    return _check_native_type_InputEventMouseButton(native)
+
+def operator as InputEventMouseButton(native: Object?)
+    if _check_native_type_InputEventMouseButton(native)
+        return unsafe(reinterpret<InputEventMouseButton?>(native))
+    if native == null
+        error("cannot cast null")
+    else
+        error("type mismatch: cannot cast to InputEventMouseButton")
+    return null

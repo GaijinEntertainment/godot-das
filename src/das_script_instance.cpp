@@ -54,6 +54,9 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 			case Variant::Type::FLOAT:
 				arguments.push_back(das::cast<float>::from(p_args[i]->operator float()));
 				break;
+			case Variant::Type::OBJECT:
+				arguments.push_back(das::cast<Object*>::from(p_args[i]->operator Object*()));
+				break;
 			default:
 				continue;
 		}

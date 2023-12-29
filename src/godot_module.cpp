@@ -94,6 +94,11 @@ bool _check_dascript_type(const Object* obj, const char* name) {
 MAKE_NATIVE_TYPE_FACTORY(Object)
 MAKE_NATIVE_TYPE_FACTORY(Node)
 MAKE_NATIVE_TYPE_FACTORY(Node2D)
+MAKE_NATIVE_TYPE_FACTORY(InputEvent)
+MAKE_NATIVE_TYPE_FACTORY(InputEventMouseButton)
+
+DAS_BIND_ENUM_CAST(MouseButton)
+DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
 
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
@@ -135,6 +140,15 @@ Vector2 _Node2D_get_position(const Node2D* node2d, CTX_AT) {
     return node2d->get_position();
 }
 
+MouseButton _InputEventMouseButton_get_button_index(const InputEventMouseButton* event, CTX_AT) {
+    CHECK_IF_NULL(event)
+    return event->get_button_index();
+}
+
+bool _InputEvent_is_pressed(const InputEvent* event, CTX_AT) {
+    CHECK_IF_NULL(event)
+    return event->is_pressed();
+}
 
 class Module_Godot : public das::Module {
 public:
@@ -146,6 +160,10 @@ public:
         BIND_NATIVE_TYPE(Node, Object)
         BIND_NATIVE_TYPE(Node2D, Node)
 
+        BIND_NATIVE_TYPE(InputEvent, Object) // there is also RefCounted and Resource in between, but we don't need them for now
+        BIND_NATIVE_TYPE(InputEventMouseButton, InputEvent)
+        addEnumeration(das::make_smart<EnumerationMouseButton>());
+
         das::addExtern<DAS_BIND_FUN(_Node2D_rotate)>(*this, lib, "rotate", das::SideEffects::modifyExternal, "_Node2D_rotate");
         das::addExtern<DAS_BIND_FUN(_Node2D_translate)>(*this, lib, "translate", das::SideEffects::modifyExternal, "_Node2D_translate");
         das::addExtern<DAS_BIND_FUN(_Node2D_get_position)>(*this, lib, "get_position", das::SideEffects::modifyExternal, "_Node2D_get_position");
@@ -153,9 +171,12 @@ public:
         das::addExtern<DAS_BIND_FUN(_Node_get_parent)>(*this, lib, "get_parent", das::SideEffects::modifyExternal, "_Node_get_parent");
         das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "find_child", das::SideEffects::modifyExternal, "_Node_find_child");
         das::addExtern<DAS_BIND_FUN(_Node_get_name)>(*this, lib, "get_name", das::SideEffects::modifyExternal, "_Node_get_name");
+        das::addExtern<DAS_BIND_FUN(_InputEventMouseButton_get_button_index)>(*this, lib, "get_button_index", das::SideEffects::modifyExternal, "_InputEventMouseButton_get_button_index");
+        das::addExtern<DAS_BIND_FUN(_InputEvent_is_pressed)>(*this, lib, "is_pressed", das::SideEffects::modifyExternal, "_InputEvent_is_pressed");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
+        BIND_TYPE_CHECKER(InputEventMouseButton)
         das::addExtern<DAS_BIND_FUN(_get_dascript_type)>(*this, lib, "_get_dascript_type", das::SideEffects::modifyExternal, "_get_dascript_type");
         das::addExtern<DAS_BIND_FUN(_check_dascript_type)>(*this, lib, "_check_dascript_type", das::SideEffects::modifyExternal, "_check_dascript_type");
 

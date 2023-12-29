@@ -41,6 +41,14 @@ class Foo
 	velocity: Vector2
 	radius: float
 
+	def _input(event: InputEvent?)
+		if event is InputEventMouseButton && event |> is_pressed()
+			let mouse_event = event as InputEventMouseButton
+			if mouse_event |> get_button_index() == MouseButton LEFT
+				print("left")
+			if mouse_event |> get_button_index() == MouseButton RIGHT
+				print("right")
+
 
 	def _ready()
 		print("from Bar.das: {ABRACADABRA}")
