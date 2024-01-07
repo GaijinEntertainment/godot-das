@@ -1,6 +1,5 @@
 # Godot 4+ specific ignores
-demo/.godot/
-demo/bin/
+examples/**/.godot/
 
 # build files
 *.o

@@ -133,19 +133,19 @@ void DasScript::set_source_code(const String &p_code) {
 Error DasScript::reload(bool p_keep_state) {
 	valid = false;
 	// TODO wrap this code in a separate function
-	const char* global_file_path = ProjectSettings::get_singleton()->globalize_path(path).utf8().get_data();
+	auto global_file_path_utf8 = ProjectSettings::get_singleton()->globalize_path(path).utf8();
     auto new_fAccess = das::make_smart<das::FsFileAccess>();
 	auto source_utf8 = source.utf8();
 
 	auto source_data = source_utf8.get_data();
 	auto source_len = uint32_t(strlen(source_data));
     auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
-    new_fAccess->setFileInfo(global_file_path, das::move(fileInfo));
+    new_fAccess->setFileInfo(global_file_path_utf8.get_data(), das::move(fileInfo));
 
 	das::TextPrinter dummyLogs;
 	auto new_lib_group = std::make_unique<das::ModuleGroup>();
 
-	auto new_program = das::compileDaScript(global_file_path, new_fAccess, dummyLogs, *new_lib_group);
+	auto new_program = das::compileDaScript(global_file_path_utf8.get_data(), new_fAccess, dummyLogs, *new_lib_group);
 
 	if (new_program->failed()) {
 		auto first_error = new_program->errors.front();

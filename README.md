@@ -63,10 +63,10 @@ Use `linker=lld` or `linker=mold` because default `ld` is super slow
 Run
 
 ```
-bin/<your godot binary> modules/dascript/demo/project.godot
+bin/<your godot binary> --editor --path modules/dascript/examples/<example>
 ```
 
-It should print `It's enter tree!` and `It's ready!` and rotate! You can remove `options tool = true` to disable tool mode (so the object does nothing in editor)
+You can remove `options tool = true` to disable tool mode (so the object does nothing in editor)
 
 Add `--windowed` if using a big monitor
 
