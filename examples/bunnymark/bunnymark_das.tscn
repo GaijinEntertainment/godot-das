@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1lldyrxlk2a8"]
+
+[ext_resource type="Script" path="res://Bunnymark.das" id="1_wvtqn"]
+[ext_resource type="Script" path="res://Bunny.das" id="2_4yuqj"]
+
+[node name="BunnymarkDAS" type="Node2D"]
+script = ExtResource("1_wvtqn")
+
+[node name="FPS" type="Label" parent="."]
+z_index = 100
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 32
+
+[node name="Bunnies" type="Node2D" parent="."]
+
+[node name="FakeBunny" type="Sprite2D" parent="."]
+script = ExtResource("2_4yuqj")

@@ -1,9 +1,11 @@
 #include "das_script_instance.h"
+#include "das_script_language.h"
 
 #include <daScript/daScript.h>
 #include <daScript/misc/platform.h>
 
 #include <scene/2d/node_2d.h>
+#include <scene/2d/sprite_2d.h>
 #include <core/math/vector2.h>
 
 #include <vector>
@@ -96,6 +98,8 @@ MAKE_NATIVE_TYPE_FACTORY(Node)
 MAKE_NATIVE_TYPE_FACTORY(Node2D)
 MAKE_NATIVE_TYPE_FACTORY(InputEvent)
 MAKE_NATIVE_TYPE_FACTORY(InputEventMouseButton)
+MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
+MAKE_NATIVE_TYPE_FACTORY(DasScript)
 
 DAS_BIND_ENUM_CAST(MouseButton)
 DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
@@ -132,6 +136,11 @@ int _Node_get_child_count(const Node* node, CTX_AT) {
     return node->get_child_count(false);
 }
 
+void _Node_add_child(Node* node, Node* p_child, CTX_AT) {
+    CHECK_IF_NULL_VOID(node)
+    node->add_child(p_child);
+}
+
 void _Node2D_rotate(Node2D* node2d, float p_radians, CTX_AT) {
     CHECK_IF_NULL_VOID(node2d)
     node2d->rotate(p_radians);
@@ -162,6 +171,21 @@ bool _InputEvent_is_pressed(const InputEvent* event, CTX_AT) {
     return event->is_pressed();
 }
 
+Sprite2D* _Sprite2D_new() {
+    return memnew(Sprite2D);
+}
+
+void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
+    DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
+    if (das_script == nullptr) {
+        print_line("_promote_to_das_type");
+        ctx->throw_error_at(at, (std::string("cannot find script ") + std::string(script_name)).c_str());
+        return nullptr;
+    }
+    obj->set_script(das_script);
+    return reinterpret_cast<DasScriptInstance*>(obj->get_script_instance())->get_class_ptr();
+}
+
 class Module_Godot : public das::Module {
 public:
 
@@ -171,6 +195,8 @@ public:
         BIND_NATIVE_BASE(Object)
         BIND_NATIVE_TYPE(Node, Object)
         BIND_NATIVE_TYPE(Node2D, Node)
+        BIND_NATIVE_TYPE(Sprite2D, Node2D)
+        BIND_NATIVE_TYPE(DasScript, Object)
 
         BIND_NATIVE_TYPE(InputEvent, Object) // there is also RefCounted and Resource in between, but we don't need them for now
         BIND_NATIVE_TYPE(InputEventMouseButton, InputEvent)
@@ -185,8 +211,11 @@ public:
         das::addExtern<DAS_BIND_FUN(_Node_get_name)>(*this, lib, "get_name", das::SideEffects::modifyExternal, "_Node_get_name");
         das::addExtern<DAS_BIND_FUN(_Node_get_child)>(*this, lib, "get_child", das::SideEffects::modifyExternal, "_Node_get_child");
         das::addExtern<DAS_BIND_FUN(_Node_get_child_count)>(*this, lib, "get_child_count", das::SideEffects::modifyExternal, "_Node_get_child_count");
+        das::addExtern<DAS_BIND_FUN(_Node_add_child)>(*this, lib, "add_child", das::SideEffects::modifyExternal, "_Node_add_child");
         das::addExtern<DAS_BIND_FUN(_InputEventMouseButton_get_button_index)>(*this, lib, "get_button_index", das::SideEffects::modifyExternal, "_InputEventMouseButton_get_button_index");
         das::addExtern<DAS_BIND_FUN(_InputEvent_is_pressed)>(*this, lib, "is_pressed", das::SideEffects::modifyExternal, "_InputEvent_is_pressed");
+        das::addExtern<DAS_BIND_FUN(_Sprite2D_new)>(*this, lib, "Sprite2D_new", das::SideEffects::modifyExternal, "_Sprite2D_new");
+        das::addExtern<DAS_BIND_FUN(_promote_to_das_type)>(*this, lib, "_promote_to_das_type", das::SideEffects::modifyExternal, "_promote_to_das_type");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)

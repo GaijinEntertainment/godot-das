@@ -25,6 +25,17 @@ void DasScriptLanguage::add_script(SelfList<DasScript> *p_script) {
     script_list.add(p_script);
 }
 
+DasScript* DasScriptLanguage::get_script(const char* p_name) {
+    SelfList<DasScript> *elem = script_list.first();
+    while (elem) {
+        // TODO make this efficient
+        if (strcmp(elem->self()->get_class_name(), p_name) == 0) {
+            return elem->self();
+        }
+        elem = elem->next();
+    }
+    return nullptr;
+}
 
 /* LANGUAGE FUNCTIONS */
 

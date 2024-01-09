@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Demo"
-run/main_scene="res://bunnymark_gd.tscn"
+run/main_scene="res://bunnymark_das.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://bunny.png"
 
