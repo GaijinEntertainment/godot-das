@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvhw8nkdgodxl"]
+
+[ext_resource type="Script" path="res://Bunnymark.gd" id="1_kxwx1"]
+
+[node name="BunnymarkGD" type="Node2D"]
+script = ExtResource("1_kxwx1")
+
+[node name="FPS" type="Label" parent="."]
+z_index = 100
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 32
+
+[node name="Bunnies" type="Node2D" parent="."]
