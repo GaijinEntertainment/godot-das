@@ -74,7 +74,7 @@ char* _get_dascript_type(const Object* obj, const char* name, das::Context *ctx)
         return nullptr;
     }
     DasScriptInstance* instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
-    if (instance == nullptr || instance->get_das_script()->get_class_name() != name) {
+    if (instance == nullptr || strcmp(instance->get_das_script()->get_class_name(), name) != 0) {
         // two cases: either the object does not have a das script instance, or the das script instance is not of the correct type
         ctx->to_err(nullptr, (std::string("type mismatch: cannot cast to ") + std::string(name)).c_str());
         return nullptr;
@@ -87,7 +87,7 @@ bool _check_dascript_type(const Object* obj, const char* name) {
         return false;
     }
     DasScriptInstance* instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
-    if (instance == nullptr || instance->get_das_script()->get_class_name() != name) {
+    if (instance == nullptr || strcmp(instance->get_das_script()->get_class_name(), name) != 0) {
         return false;
     }
     return true;
