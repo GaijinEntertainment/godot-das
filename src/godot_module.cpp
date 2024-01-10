@@ -7,6 +7,7 @@
 #include <scene/2d/node_2d.h>
 #include <scene/2d/sprite_2d.h>
 #include <core/math/vector2.h>
+#include <scene/gui/label.h>
 
 #include <vector>
 #include <fstream>
@@ -99,7 +100,7 @@ MAKE_NATIVE_TYPE_FACTORY(Node2D)
 MAKE_NATIVE_TYPE_FACTORY(InputEvent)
 MAKE_NATIVE_TYPE_FACTORY(InputEventMouseButton)
 MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
-MAKE_NATIVE_TYPE_FACTORY(DasScript)
+MAKE_NATIVE_TYPE_FACTORY(Label)
 
 DAS_BIND_ENUM_CAST(MouseButton)
 DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
@@ -175,6 +176,15 @@ Sprite2D* _Sprite2D_new() {
     return memnew(Sprite2D);
 }
 
+void _Label_set_text(Label* label, const char* text, CTX_AT) {
+    CHECK_IF_NULL_VOID(label)
+    label->set_text(text);
+}
+
+float _Engine_get_frames_per_second() {
+    return Engine::get_singleton()->get_frames_per_second();
+}
+
 void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
     DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
     if (das_script == nullptr) {
@@ -196,10 +206,12 @@ public:
         BIND_NATIVE_TYPE(Node, Object)
         BIND_NATIVE_TYPE(Node2D, Node)
         BIND_NATIVE_TYPE(Sprite2D, Node2D)
-        BIND_NATIVE_TYPE(DasScript, Object)
 
         BIND_NATIVE_TYPE(InputEvent, Object) // there is also RefCounted and Resource in between, but we don't need them for now
         BIND_NATIVE_TYPE(InputEventMouseButton, InputEvent)
+
+        BIND_NATIVE_TYPE(Label, Object)
+
         addEnumeration(das::make_smart<EnumerationMouseButton>());
 
         das::addExtern<DAS_BIND_FUN(_Node2D_rotate)>(*this, lib, "rotate", das::SideEffects::modifyExternal, "_Node2D_rotate");
@@ -216,10 +228,14 @@ public:
         das::addExtern<DAS_BIND_FUN(_InputEvent_is_pressed)>(*this, lib, "is_pressed", das::SideEffects::modifyExternal, "_InputEvent_is_pressed");
         das::addExtern<DAS_BIND_FUN(_Sprite2D_new)>(*this, lib, "Sprite2D_new", das::SideEffects::modifyExternal, "_Sprite2D_new");
         das::addExtern<DAS_BIND_FUN(_promote_to_das_type)>(*this, lib, "_promote_to_das_type", das::SideEffects::modifyExternal, "_promote_to_das_type");
+        das::addExtern<DAS_BIND_FUN(_Label_set_text)>(*this, lib, "set_text", das::SideEffects::modifyExternal, "_Label_set_text");
+        das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "_Engine_get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
         BIND_TYPE_CHECKER(InputEventMouseButton)
+        BIND_TYPE_CHECKER(Label)
+
         das::addExtern<DAS_BIND_FUN(_get_dascript_type)>(*this, lib, "_get_dascript_type", das::SideEffects::modifyExternal, "_get_dascript_type");
         das::addExtern<DAS_BIND_FUN(_check_dascript_type)>(*this, lib, "_check_dascript_type", das::SideEffects::modifyExternal, "_check_dascript_type");
 

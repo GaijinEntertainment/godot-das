@@ -1,5 +1,9 @@
 require godot
 
+class Engine
+    def static get_frames_per_second(): float
+        return _Engine_get_frames_per_second()
+
 // Wrapper creation from native pointers
 //
 // "Compile time" casts that already take a corresponding type and don't perform any type change,
@@ -99,6 +103,15 @@ def operator as InputEventMouseButton(native: Object?)
         error("cannot cast null")
     else
         error("type mismatch: cannot cast to InputEventMouseButton")
+    return null
+
+def operator as Label(native: Object?)
+    if _check_native_type_Label(native)
+        return unsafe(reinterpret<Label?>(native))
+    if native == null
+        error("cannot cast null")
+    else
+        error("type mismatch: cannot cast to Label")
     return null
 
 // iteration functions

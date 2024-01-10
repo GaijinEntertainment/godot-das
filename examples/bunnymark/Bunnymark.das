@@ -14,8 +14,11 @@ class Bunnymark
 	top_left: Vector2
 	bottom_right: Vector2
 
+	fps_counter : Label?
+
 	def _ready()
 		bunnies = native |> find_child("Bunnies") as Node2D
+		fps_counter = native |> find_child("FPS") as Label
 		// top_left = bunny_texture.get_size() * 0.5
 		// bottom_right = Vector2(get_window().size) - bunny_texture.get_size() * 0.5
 
@@ -31,7 +34,7 @@ class Bunnymark
 		generation += 1
 
 	def add_bunny(position : Vector2; rotation : float)
-		var bunny = new_Bunny()
+		var bunny = Bunny`create()
 		bunny.native |> set_position(position)
 		// bunny.texture = bunny_texture
 		// bunny.modulate = colors[generation % colors.size()]
@@ -56,4 +59,4 @@ class Bunnymark
 				bunny.velocity.y *= -1.
 				new_position.y = bottom_right.y
 
-		// fps_counter.text = "FPS = %d\nBunnies = %d" % [Engine.get_frames_per_second(), bunnies.get_child_count()]
+		fps_counter |> set_text("FPS = {int(Engine`get_frames_per_second())}\nBunnies = {bunnies |> get_child_count()}")
