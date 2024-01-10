@@ -1,6 +1,9 @@
 require godot
+
 // TODO generate this section
 // TODO think of a nicer way to do it
+def operator as Bunny(native : Object?)
+	return unsafe(reinterpret<Bunny?>(_get_dascript_type(native, "Bunny")))
 
 def new_Bunny(): Bunny?
 	// creation of user type is a two step process:
@@ -13,4 +16,4 @@ def new_Bunny(): Bunny?
 
 class Bunny
 	native : Sprite2D?
-	velocity: Vector2
+	velocity : Vector2

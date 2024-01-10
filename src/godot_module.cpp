@@ -68,15 +68,15 @@ bool _check_native_type(const Object* obj) {
 #define CHECK_IF_NULL(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return {}; }
 #define CHECK_IF_NULL_VOID(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return; }
 
-char* _get_dascript_type(const Object* obj, const char* name, das::Context *ctx) {
+char* _get_dascript_type(const Object* obj, const char* name, CTX_AT) {
     if (obj == nullptr) {
-        ctx->to_err(nullptr, "cannot cast null");
+        ctx->throw_error_at(at, "cannot cast null");
         return nullptr;
     }
     DasScriptInstance* instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
     if (instance == nullptr || strcmp(instance->get_das_script()->get_class_name(), name) != 0) {
         // two cases: either the object does not have a das script instance, or the das script instance is not of the correct type
-        ctx->to_err(nullptr, (std::string("type mismatch: cannot cast to ") + std::string(name)).c_str());
+        ctx->throw_error_at(at, (std::string("type mismatch: cannot cast native type to user type ") + std::string(name)).c_str());
         return nullptr;
     }
     return instance->get_class_ptr();
