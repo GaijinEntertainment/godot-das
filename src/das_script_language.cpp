@@ -6,6 +6,9 @@
 #include <core/config/engine.h>
 #include <editor/editor_settings.h>
 
+#include <core/config/project_settings.h>
+
+
 DasScriptLanguage *DasScriptLanguage::singleton = nullptr;
 
 DasScriptLanguage::DasScriptLanguage() {
@@ -134,21 +137,27 @@ Vector<ScriptLanguage::ScriptTemplate> DasScriptLanguage::get_built_in_templates
 	return templates;
 }
 
+das::ProgramPtr DasScriptLanguage::compile_script(const String& p_source, const String& p_path, das::FileAccessPtr p_access, das::TextPrinter& p_logs, das::ModuleGroup& p_libs) {
+	CharString global_file_path_utf8 = ProjectSettings::get_singleton()->globalize_path(p_path).utf8();
+    const char* path_data = global_file_path_utf8.get_data();
+
+    // TODO inject `require godot` as well
+    // now it doesn't work because it is not injected when including from other scripts
+	CharString source_with_injection_utf8 = (p_source + "\noptions always_export_initializer = true\n").utf8();
+	const char*  source_data = source_with_injection_utf8.get_data();
+    size_t source_len = strlen(source_data);
+
+    p_access->setFileInfo(path_data,  das::make_unique<das::TextFileInfo>(source_data, source_len, false));
+
+    return das::compileDaScript(path_data, p_access, p_logs, p_libs);
+}
+
 bool DasScriptLanguage::validate(const String &p_script, const String &p_path, List<String> *r_functions, List<ScriptError> *r_errors, List<Warning> *r_warnings, HashSet<int> *r_safe_lines) const {
-    static const char* DUMMY_FILE = "dummy.das";
-
     auto fAccess = das::make_smart<das::FsFileAccess>();
-	auto source_utf8 = p_script.utf8();
-
-	auto source_data = source_utf8.get_data();
-	auto source_len = uint32_t(strlen(source_data));
-    auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
-    fAccess->setFileInfo(DUMMY_FILE, das::move(fileInfo));
-
 	das::TextPrinter dummyLogs;
 	das::ModuleGroup dummyLibGroup;
 
-    auto program = das::compileDaScript(DUMMY_FILE, fAccess, dummyLogs, dummyLibGroup);
+    auto program = compile_script(p_script, p_path, fAccess, dummyLogs, dummyLibGroup);
     if (program->failed() && r_errors) {
 		for ( auto & err : program->errors ) {
             ScriptLanguage::ScriptError e;

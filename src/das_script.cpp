@@ -132,20 +132,12 @@ void DasScript::set_source_code(const String &p_code) {
 
 Error DasScript::reload(bool p_keep_state) {
 	valid = false;
-	// TODO wrap this code in a separate function
-	auto global_file_path_utf8 = ProjectSettings::get_singleton()->globalize_path(path).utf8();
-    auto new_fAccess = das::make_smart<das::FsFileAccess>();
-	auto source_utf8 = source.utf8();
 
-	auto source_data = source_utf8.get_data();
-	auto source_len = uint32_t(strlen(source_data));
-    auto fileInfo = das::make_unique<das::TextFileInfo>(source_data, source_len, false);
-    new_fAccess->setFileInfo(global_file_path_utf8.get_data(), das::move(fileInfo));
-
-	das::TextPrinter dummyLogs;
+	auto new_file_access = das::make_smart<das::FsFileAccess>();
 	auto new_lib_group = std::make_unique<das::ModuleGroup>();
+	das::TextPrinter dummy_logs{};
 
-	auto new_program = das::compileDaScript(global_file_path_utf8.get_data(), new_fAccess, dummyLogs, *new_lib_group);
+	auto new_program = DasScriptLanguage::compile_script(source, path, new_file_access, dummy_logs, *new_lib_group);
 
 	if (new_program->failed()) {
 		auto first_error = new_program->errors.front();
@@ -155,7 +147,7 @@ Error DasScript::reload(bool p_keep_state) {
 	}
 	bool new_tool = new_program->options.getBoolOption("tool", false);
 	auto new_ctx = std::make_shared<GodotContext>(new_program->getContextStackSize());
-	if ( !new_program->simulate(*new_ctx, dummyLogs) ) {
+	if ( !new_program->simulate(*new_ctx, dummy_logs) ) {
 		auto first_error = new_program->errors.front();
 		// TODO will simulation errors appear in program->errors?
 		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Simulation Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
@@ -169,10 +161,7 @@ Error DasScript::reload(bool p_keep_state) {
 		return OK;
 	}
 	auto new_struct_ctor = new_ctx->findFunction(class_name.c_str());
-	if (!new_struct_ctor) {
-		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), 0, "Do not remove the option at the beginning of the script", false, ERR_HANDLER_SCRIPT);
-		return OK;
-	}
+	ERR_FAIL_COND_V_MSG(new_struct_ctor == nullptr, ERR_PARSE_ERROR, "Constructor of the struct is not found (TODO: understand when this could be)");
 
 	valid = true;
 
@@ -181,7 +170,7 @@ Error DasScript::reload(bool p_keep_state) {
 	program = std::move(new_program);
 	main_structure = std::move(new_main_structure);
 	struct_ctor = std::move(new_struct_ctor);
-	file_access = std::move(new_fAccess);
+	file_access = std::move(new_file_access);
 	tool = new_tool;
 
 	for (auto &instance_owner : instances) {

@@ -6,7 +6,7 @@
 // TODO more and better
 // TODO steal generation grom gdscript
 
-const char * simple_template =R""""(options always_export_initializer = true // do not remove this option
+const char * simple_template =R""""(require godot
 
 class _CLASS_
 _TS_def _ready()

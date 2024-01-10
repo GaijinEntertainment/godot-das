@@ -1,7 +1,5 @@
-options always_export_initializer = true // do not remove this option
-
-
 require godot
+
 require Bunny
 
 class Bunnymark

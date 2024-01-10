@@ -1,9 +1,4 @@
-options always_export_initializer = true // do not remove this option
-
 require godot
-
-
-
 // TODO generate this section
 // TODO think of a nicer way to do it
 

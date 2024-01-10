@@ -1,10 +1,8 @@
-options always_export_initializer = true
 options tool = false // set true to make breakpoints work
 
 require godot
 require math
 require Bar
-
 
 // TODO generate this section with macros
 def operator as Foo(obj : Foo?)
