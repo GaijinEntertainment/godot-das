@@ -8,7 +8,7 @@ This project is a Godot module that ~~integrates~~ will integrate [daScript](htt
 
 ## Download
 
-This project is build as an engine submodule (see why not as a GDExtension in docs), so you will need to download Godot repo:
+This project is build as an engine submodule, so you will need to download Godot repo:
 
 ```
 git clone -b 4.2 git@github.com:godotengine/godot.git
