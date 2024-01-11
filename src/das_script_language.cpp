@@ -1,6 +1,6 @@
 #include "das_script_language.h"
 
-#include "init_dascript.h"
+#include "init_daslang.h"
 #include "das_templates.h"
 
 #include <core/config/engine.h>
@@ -45,11 +45,11 @@ DasScript* DasScriptLanguage::get_script(const char* p_name) {
 void DasScriptLanguage::init() {
     // TODO think about how to include daslib
     // das::setDasRoot(GODOT_DAS_MODULE_PATH"/daScript");
-    initialize_dascript();
+    initialize_daslang();
 }
 
 void DasScriptLanguage::finish() {
-    deinitialize_dascript();
+    deinitialize_daslang();
 }
 
 /* EDITOR FUNCTIONS */

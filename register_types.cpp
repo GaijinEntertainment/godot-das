@@ -10,7 +10,7 @@ Ref<DasResourceFormatLoader> das_resource_loader;
 Ref<DasResourceFormatSaver> das_resource_saver;
 
 
-void initialize_dascript_module(ModuleInitializationLevel p_level) {
+void initialize_daslang_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
 		GDREGISTER_CLASS(DasScript);
 
@@ -25,7 +25,7 @@ void initialize_dascript_module(ModuleInitializationLevel p_level) {
 	}
 }
 
-void uninitialize_dascript_module(ModuleInitializationLevel p_level) {
+void uninitialize_daslang_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
 		ScriptServer::unregister_language(das_script_language);
 

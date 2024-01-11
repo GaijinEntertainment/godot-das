@@ -4,9 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}",
-                "${workspaceFolder}/modules/dascript/daScript/include",
+                "${workspaceFolder}/modules/daslang/daScript/include",
                 "${workspaceFolder}/platform/linuxbsd",
-                "${workspaceFolder}/modules/dascript/src"
+                "${workspaceFolder}/modules/daslang/src"
             ],
             "defines": [
                 "DEBUG_ENABLED",

@@ -3,7 +3,7 @@
 #include "das_script.h"
 #include "das_script_language.h"
 
-#include "init_dascript.h"
+#include "init_daslang.h"
 
 // analogically to GDScriptCache::get_full_script
 Ref<Resource> DasResourceFormatLoader::_get_full_script(const String &p_path, Error &r_error) {
@@ -16,7 +16,7 @@ Ref<Resource> DasResourceFormatLoader::_get_full_script(const String &p_path, Er
 	}
 	// in case script is loaded in a separate thread,
 	// in the main thread initialization and deinitialization is performed is DasScriptLanguage
-	initialize_dascript(); // TODO add shutdown somewhere
+	initialize_daslang(); // TODO add shutdown somewhere
 
 	new_script->set_path(p_path);
 	r_error = new_script->load_source_code(p_path);

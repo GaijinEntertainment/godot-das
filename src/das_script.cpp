@@ -26,7 +26,7 @@ DasScript::DasScript() : script_list(this) {
 		DasScriptLanguage::get_singleton()->add_script(&script_list);
 	}
 
-	path = vformat("dascript://%d.gd", get_instance_id());
+	path = vformat("das://%d.gd", get_instance_id());
 }
 
 DasScript::~DasScript() {
@@ -198,7 +198,7 @@ bool DasScript::has_method(const StringName &p_method) const {
 
 MethodInfo DasScript::get_method_info(const StringName &p_method) const {
     // TODO
-	// convert daScript function signature to Godot MethodInfo
+	// convert Daslang function signature to Godot MethodInfo
 	return MethodInfo{};
 }
 

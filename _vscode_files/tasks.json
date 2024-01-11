@@ -13,7 +13,7 @@
             "label": "run",
             "group": "run",
             "type": "shell",
-            "command": "{workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64 --path {workspaceFolder}/modules/dascript/demo",
+            "command": "{workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64 --path {workspaceFolder}/modules/daslang/demo",
         }
     ]
 }

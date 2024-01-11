@@ -14,7 +14,7 @@ Error DasResourceFormatSaver::save(const Ref<Resource> &p_resource, const String
 		Error err;
 		Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::WRITE, &err);
 
-		ERR_FAIL_COND_V_MSG(err, err, "Cannot save daScript file '" + p_path + "'.");
+		ERR_FAIL_COND_V_MSG(err, err, "Cannot save Daslang file '" + p_path + "'.");
 
 		file->store_string(source);
 		if (file->get_error() != OK && file->get_error() != ERR_FILE_EOF) {

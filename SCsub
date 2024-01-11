@@ -5,42 +5,42 @@ COMPILE_FOR_IN_PLACE_TEST = True
 Import("env")
 Import("env_modules")
 
-env_dascript = env_modules.Clone()
+env_daslang = env_modules.Clone()
 
 import subprocess
 import os
 
-DASCRIPT_PATH = "daScript" #  if changing this, be sure to disable downloading submodule
-DASCRIPT_LIB_PATH = "lib/liblibDaScript.a"
-DASCRIPT_INCLUDE_PATH = f"{DASCRIPT_PATH}/include"
+DASLANG_PATH = "daScript" #  if changing this, be sure to disable downloading submodule
+DASLANG_LIB_PATH = "lib/liblibDaScript.a"
+DASLANG_INCLUDE_PATH = f"{DASLANG_PATH}/include"
 
 if COMPILE_FOR_IN_PLACE_TEST:
     # if compiling for in-place tests (e.i. godot folder is not moved after compilation), just define current path (tmp solution)
-    env_dascript.Append(CPPDEFINES=f'GODOT_DAS_MODULE_PATH=\\"{os.getcwd()}\\"')
+    env_daslang.Append(CPPDEFINES=f'GODOT_DAS_MODULE_PATH=\\"{os.getcwd()}\\"')
 else:
     # else compile godot.das into a header. The problem is that you have to rebuild the whole project if you change godot.das
     das_inject_list = [
         "src/godot.das",
     ]
     xxd_builder = Builder(action="xxd -i $SOURCE $TARGET")
-    env_modules.Append(BUILDERS={"XXD": xxd_builder})
-    env_modules.XXD([f"{das_file}.inc" for das_file in das_inject_list], das_inject_list)
+    env_daslang.Append(BUILDERS={"XXD": xxd_builder})
+    env_daslang.XXD([f"{das_file}.inc" for das_file in das_inject_list], das_inject_list)
 
 
 src_list = [
     "register_types.cpp",
     "src/godot_module.cpp",
-    "src/init_dascript.cpp",
+    "src/init_daslang.cpp",
     "src/das_script.cpp",
     "src/das_script_language.cpp",
     "src/das_script_instance.cpp",
     "src/das_resource_format_saver.cpp",
     "src/das_resource_format_loader.cpp",
 ]
-env_dascript.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in daScript headers
-env_dascript.Append(CPPPATH=["src", DASCRIPT_INCLUDE_PATH])
-env_dascript.add_source_files(env.modules_sources, src_list)
+env_daslang.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in Daslang headers
+env_daslang.Append(CPPPATH=["src", DASLANG_INCLUDE_PATH])
+env_daslang.add_source_files(env.modules_sources, src_list)
 
 
-dascript_lib = File(DASCRIPT_LIB_PATH)
-env.Append(LIBS=[dascript_lib])
+daslang_lib = File(DASLANG_LIB_PATH)
+env.Append(LIBS=[daslang_lib])

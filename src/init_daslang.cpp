@@ -1,9 +1,9 @@
-#include "init_dascript.h"
+#include "init_daslang.h"
 
 #include <daScript/daScript.h>
 
 
-void initialize_dascript() {
+void initialize_daslang() {
     if (das::Module::require("$")) {
         return;
     }
@@ -12,6 +12,6 @@ void initialize_dascript() {
     das::Module::Initialize();
 }
 
-void deinitialize_dascript(){
+void deinitialize_daslang(){
     das::Module::Shutdown();
 }

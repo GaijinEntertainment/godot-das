@@ -14,7 +14,7 @@
             "program": "${workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64",
             // Change the arguments below for the project you want to test with.
             // To run the project instead of editing it, remove the "--editor" argument.
-            "args": [ "--editor", "--path", "${workspaceFolder}/modules/dascript/examples/bunnymark"],
+            "args": [ "--editor", "--path", "${workspaceFolder}/modules/daslang/examples/bunnymark"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -32,7 +32,7 @@
             // Change the arguments below for the project you want to test with.
             // To run the project instead of editing it, remove the "--editor" argument.
             // add "--windowed" if using a large screen
-            "args": [ "--editor", "--path", "${workspaceFolder}/modules/dascript/examples/demo"],
+            "args": [ "--editor", "--path", "${workspaceFolder}/modules/daslang/examples/demo"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

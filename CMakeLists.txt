@@ -1,4 +1,4 @@
-# This file is for convinient building of daScript
+# This file is for convinient building of Daslang
 
 cmake_minimum_required(VERSION 3.27)
 project(godot-das)

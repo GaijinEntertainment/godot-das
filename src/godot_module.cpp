@@ -74,7 +74,7 @@ bool _check_native_type(const Object* obj) {
 #define CHECK_IF_NULL(PTR) CHECK_IF_NULL_MSG(PTR, "dereferencing null pointer")
 #define CHECK_IF_NULL_VOID(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return; }
 
-char* _get_dascript_type(const Object* obj, const char* name, CTX_AT) {
+char* _get_das_type(const Object* obj, const char* name, CTX_AT) {
     if (obj == nullptr) {
         ctx->throw_error_at(at, "cannot cast null");
         return nullptr;
@@ -88,7 +88,7 @@ char* _get_dascript_type(const Object* obj, const char* name, CTX_AT) {
     return instance->get_class_ptr();
 }
 
-bool _check_dascript_type(const Object* obj, const char* name) {
+bool _check_das_type(const Object* obj, const char* name) {
     if (obj == nullptr) {
         return false;
     }
@@ -319,8 +319,8 @@ public:
         BIND_TYPE_CHECKER(Label)
         BIND_TYPE_CHECKER(Texture2D)
 
-        das::addExtern<DAS_BIND_FUN(_get_dascript_type)>(*this, lib, "_get_dascript_type", das::SideEffects::modifyExternal, "_get_dascript_type");
-        das::addExtern<DAS_BIND_FUN(_check_dascript_type)>(*this, lib, "_check_dascript_type", das::SideEffects::modifyExternal, "_check_dascript_type");
+        das::addExtern<DAS_BIND_FUN(_get_das_type)>(*this, lib, "_get_das_type", das::SideEffects::modifyExternal, "_get_das_type");
+        das::addExtern<DAS_BIND_FUN(_check_das_type)>(*this, lib, "_check_das_type", das::SideEffects::modifyExternal, "_check_das_type");
 
         addAlias(das::typeFactory<Vector2>::make(lib));
 
@@ -329,12 +329,12 @@ public:
         const char* godot_module_full_path = GODOT_DAS_MODULE_PATH"/src/godot.das";
         std::ifstream input{godot_module_full_path, std::ios_base::binary};
         std::vector<unsigned char> buffer{std::istreambuf_iterator< char>(input), {} };
-        unsigned char* modules_dascript_src_godot_das = buffer.data();
-        unsigned int modules_dascript_src_godot_das_len = buffer.size();
+        unsigned char* modules_daslang_src_godot_das = buffer.data();
+        unsigned int modules_daslang_src_godot_das_len = buffer.size();
 #else
         #include "godot.das.inc"
 #endif
-        compileBuiltinModule("godot.das", modules_dascript_src_godot_das, modules_dascript_src_godot_das_len);
+        compileBuiltinModule("godot.das", modules_daslang_src_godot_das, modules_daslang_src_godot_das_len);
     }
 };
 

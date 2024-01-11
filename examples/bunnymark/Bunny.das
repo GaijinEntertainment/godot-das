@@ -2,7 +2,7 @@ require godot
 
 // TODO generate this section
 def operator as Bunny(native : Object?)
-	return unsafe(reinterpret<Bunny?>(_get_dascript_type(native, "Bunny")))
+	return unsafe(reinterpret<Bunny?>(_get_das_type(native, "Bunny")))
 // end of section
 
 class Bunny

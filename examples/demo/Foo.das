@@ -12,7 +12,7 @@ def operator as Foo(obj : Foo?)
 	return null
 
 def operator as Foo(native : Object?)
-	return unsafe(reinterpret<Foo?>(_get_dascript_type(native, "Foo")))
+	return unsafe(reinterpret<Foo?>(_get_das_type(native, "Foo")))
 
 def operator ?as Foo(obj : Foo?)
 	return obj
@@ -26,7 +26,7 @@ def operator is(obj : Foo?)
 	return true
 
 def operator is(native : Object?)
-	return _check_dascript_type(native, "Foo")
+	return _check_das_type(native, "Foo")
 // end of section
 
 class Foo
