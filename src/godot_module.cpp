@@ -113,6 +113,7 @@ MAKE_NATIVE_TYPE_FACTORY(Node2D)
 MAKE_NATIVE_TYPE_FACTORY(Label)
 MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
 MAKE_NATIVE_TYPE_FACTORY(Window)
+MAKE_NATIVE_TYPE_FACTORY(Color)
 
 
 MAKE_NATIVE_TYPE_FACTORY(Resource)
@@ -125,6 +126,16 @@ DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
 
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
+template <> struct das::cast<Color> : das::cast_fVec<Color> {};
+
+struct ColorAnnotation : das::ManagedStructureAnnotation<Color> {
+    ColorAnnotation(das::ModuleLibrary &ml) :  ManagedStructureAnnotation("Color", ml) {}
+
+    bool hasNonTrivialCtor() const override {
+        // TODO create a pull request so Color supports is_trivially_constructible<>
+        return false;
+    }
+};
 
 Resource* _load(Object* obj, const char* p_path, CTX_AT) {
     CHECK_IF_NULL_MSG(obj, "cannot bind resource to null object");
@@ -227,6 +238,11 @@ void _Sprite2D_set_texture(Sprite2D* sprite, Texture2D* texture, CTX_AT) {
     sprite->set_texture(texture);
 }
 
+void _Sprite2D_set_modulate(Sprite2D* sprite, const Color& modulate, CTX_AT) {
+    CHECK_IF_NULL_VOID(sprite)
+    sprite->set_modulate(modulate);
+}
+
 Vector2 _Texture2D_get_size(Texture2D* texture, CTX_AT) {
     CHECK_IF_NULL(texture)
     return texture->get_size();
@@ -241,6 +257,10 @@ Vector2 _Window_get_size(Window* window, CTX_AT) {
 Vector2 _CanvasItem_get_global_mouse_position(CanvasItem* canvas_item, CTX_AT) {
     CHECK_IF_NULL(canvas_item)
     return canvas_item->get_global_mouse_position();
+}
+
+Color _named_color(const char* name, CTX_AT) {
+    return Color::named(StringName(name));
 }
 
 class Module_Godot : public das::Module {
@@ -262,6 +282,9 @@ public:
         BIND_NATIVE_TYPE(InputEvent, Resource)
         BIND_NATIVE_TYPE(InputEventMouseButton, InputEvent)
 
+
+		addAnnotation(das::make_smart<ColorAnnotation>(lib));
+
 		addEnumeration(das::make_smart<EnumerationMouseButton>());
 
         das::addExtern<DAS_BIND_FUN(_Node2D_rotate)>(*this, lib, "rotate", das::SideEffects::modifyExternal, "_Node2D_rotate");
@@ -282,6 +305,8 @@ public:
         das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "_Engine_get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
         das::addExtern<DAS_BIND_FUN(_load)>(*this, lib, "load", das::SideEffects::modifyExternal, "_load");
         das::addExtern<DAS_BIND_FUN(_Sprite2D_set_texture)>(*this, lib, "set_texture", das::SideEffects::modifyExternal, "_Sprite2D_set_texture");
+        das::addExtern<DAS_BIND_FUN(_Sprite2D_set_modulate)>(*this, lib, "set_modulate", das::SideEffects::modifyExternal, "_Sprite2D_set_modulate");
+        das::addExtern<DAS_BIND_FUN(_named_color), das::SimNode_ExtFuncCallAndCopyOrMove>(*this, lib, "named_color", das::SideEffects::modifyExternal, "_named_color");
         das::addExtern<DAS_BIND_FUN(_Texture2D_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Texture2D_get_size");
         das::addExtern<DAS_BIND_FUN(_Node_get_window)>(*this, lib, "get_window", das::SideEffects::modifyExternal, "_Node_get_window");
         das::addExtern<DAS_BIND_FUN(_Window_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Window_get_size");

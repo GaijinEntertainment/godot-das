@@ -6,6 +6,15 @@ require Bunny
 let BUNNY_VELOCITY = 200.
 let BUNNIES_PER_CLICK = 100
 
+let colors : array<Color> <- [{Color named_color("WHITE");
+							 named_color("AQUA");
+							 named_color("VIOLET");
+							 named_color("DEEP_PINK");
+							 named_color("SEA_GREEN");
+							 named_color("NAVY_BLUE");
+							 named_color("GOLD");
+						 	 named_color("SALMON")}]
+
 
 class Bunnymark
 	native : Node2D?
@@ -27,7 +36,6 @@ class Bunnymark
 		bunny_texture = native |> load("res://bunny.png") as Texture2D
 		top_left = bunny_texture |> get_size() * 0.5
 		bottom_right = native |> get_window() |> get_size() - bunny_texture |> get_size() * 0.5
-		print("top_left = {top_left} bottom_right = {bottom_right}")
 
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
@@ -44,7 +52,7 @@ class Bunnymark
 		var bunny = Bunny`create()
 		bunny.native |> set_position(position)
 		bunny.native |> set_texture(bunny_texture)
-		// bunny.modulate = colors[generation % colors.size()]
+		bunny.native |> set_modulate(colors[generation % colors |> length()])
 		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5d, 1.5d))
 		bunnies |> add_child(bunny.native)
 
