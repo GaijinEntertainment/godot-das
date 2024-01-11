@@ -97,6 +97,14 @@ bool _check_dascript_type(const Object* obj, const char* name) {
     }
     return true;
 }
+
+void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
+    DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
+    CHECK_IF_NULL_MSG(das_script, (std::string("cannot find script ") + std::string(script_name)).c_str());
+    obj->set_script(das_script);
+    return reinterpret_cast<DasScriptInstance*>(obj->get_script_instance())->get_class_ptr();
+}
+
 MAKE_NATIVE_TYPE_FACTORY(Object)
 MAKE_NATIVE_TYPE_FACTORY(Node)
 MAKE_NATIVE_TYPE_FACTORY(CanvasItem)
@@ -232,17 +240,6 @@ Vector2 _Window_get_size(Window* window, CTX_AT) {
 Vector2 _CanvasItem_get_global_mouse_position(CanvasItem* canvas_item, CTX_AT) {
     CHECK_IF_NULL(canvas_item)
     return canvas_item->get_global_mouse_position();
-}
-
-void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
-    DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
-    if (das_script == nullptr) {
-        print_line("_promote_to_das_type");
-        ctx->throw_error_at(at, (std::string("cannot find script ") + std::string(script_name)).c_str());
-        return nullptr;
-    }
-    obj->set_script(das_script);
-    return reinterpret_cast<DasScriptInstance*>(obj->get_script_instance())->get_class_ptr();
 }
 
 class Module_Godot : public das::Module {
