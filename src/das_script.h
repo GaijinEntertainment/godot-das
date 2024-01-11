@@ -32,13 +32,14 @@ class DasScript : public Script {
 	HashSet<PlaceHolderScriptInstance *> placeholders{};
 #endif
 
+	HashMap<StringName, size_t> offsets{};
 public:
 	DasScript();
 	~DasScript();
 
-	das::ContextPtr get_ctx();
+	das::ContextPtr get_ctx() const;
 	void erase_instance(Object *p_owner);
-	int get_field_offset(const StringName &p_field) const;
+	size_t get_field_offset(const StringName &p_field) const;
 	const char* get_class_name() const;
 
 	bool can_instantiate() const override;

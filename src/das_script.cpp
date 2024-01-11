@@ -36,7 +36,7 @@ DasScript::~DasScript() {
 	// TODO other stuff?
 }
 
-das::ContextPtr DasScript::get_ctx() {
+das::ContextPtr DasScript::get_ctx() const {
 	return ctx;
 }
 
@@ -44,15 +44,12 @@ void DasScript::erase_instance(Object *p_owner) {
 	instances.erase(p_owner);
 }
 
-int DasScript::get_field_offset(const StringName &p_field) const {
-	// TODO precompute this
-	for (auto &field : main_structure->fields) {
-		if (field.name == String(p_field).utf8().get_data()) {
-			return field.offset;
-		}
-	}
-	return INVALID_OFFSET;
+size_t DasScript::get_field_offset(const StringName &p_field) const {
+	// getptr because it's safe and calls `_lookup_pos` only once
+	auto ptr = offsets.getptr(p_field);
+	return ptr ? *ptr : INVALID_OFFSET;
 }
+
 
 const char* DasScript::get_class_name() const {
 	return main_structure->name.c_str();
@@ -172,6 +169,10 @@ Error DasScript::reload(bool p_keep_state) {
 	struct_ctor = std::move(new_struct_ctor);
 	file_access = std::move(new_file_access);
 	tool = new_tool;
+
+	for (auto& field : main_structure->fields) {
+		offsets[StringName(field.name.c_str())] = field.offset;
+	}
 
 	for (auto &instance_owner : instances) {
 		instance_create(instance_owner);

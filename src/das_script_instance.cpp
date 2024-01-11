@@ -51,7 +51,7 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
 		return Variant();
 	}
-	auto func = *reinterpret_cast<das::Func*>(class_ptr + offset);
+	auto func_ptr = reinterpret_cast<das::Func*>(class_ptr + offset)->PTR;
 
 	std::vector<vec4f> arguments;
 	arguments.push_back(das::cast<void*>::from(class_ptr));
@@ -68,7 +68,7 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 		}
 	}
 	ctx->tryRestartAndLock();
-	ctx->evalWithCatch(func.PTR, arguments.data());
+	ctx->evalWithCatch(func_ptr, arguments.data());
 	ctx->unlock();
 	if (const char* exception = ctx->getException()) {
 		_err_print_error(String(p_method).utf8().get_data(), ctx->exceptionAt.fileInfo->name.c_str(), ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
