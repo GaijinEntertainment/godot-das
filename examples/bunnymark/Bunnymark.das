@@ -21,7 +21,6 @@ class Bunnymark
 		fps_counter = native |> find_child("FPS") as Label
 
 		bunny_texture = native |> load("res://bunny.png") as Texture2D
-		add_bunnies(5, Vector2(100, 100))
 		top_left = bunny_texture |> get_size() * 0.5
 		bottom_right = native |> get_window() |> get_size() - bunny_texture |> get_size() * 0.5
 		print("top_left = {top_left} bottom_right = {bottom_right}")
@@ -30,7 +29,7 @@ class Bunnymark
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton
 			if mouse_event |> get_button_index() == MouseButton LEFT
-				add_bunnies(5, Vector2(100, 100))
+				add_bunnies(5, native |> get_global_mouse_position())
 
 	def add_bunnies(count : int; position : Vector2)
 		for i in range(count)

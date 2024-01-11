@@ -99,6 +99,7 @@ bool _check_dascript_type(const Object* obj, const char* name) {
 }
 MAKE_NATIVE_TYPE_FACTORY(Object)
 MAKE_NATIVE_TYPE_FACTORY(Node)
+MAKE_NATIVE_TYPE_FACTORY(CanvasItem)
 MAKE_NATIVE_TYPE_FACTORY(Node2D)
 MAKE_NATIVE_TYPE_FACTORY(Label)
 MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
@@ -227,6 +228,12 @@ Vector2 _Window_get_size(Window* window, CTX_AT) {
     return Vector2{window->get_size()}; // returning Vector2 instead of Vector2i
 }
 
+// get_global_mouse_position
+Vector2 _CanvasItem_get_global_mouse_position(CanvasItem* canvas_item, CTX_AT) {
+    CHECK_IF_NULL(canvas_item)
+    return canvas_item->get_global_mouse_position();
+}
+
 void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
     DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
     if (das_script == nullptr) {
@@ -246,9 +253,10 @@ public:
 
         BIND_NATIVE_BASE(Object)
         BIND_NATIVE_TYPE(Node, Object)
-        BIND_NATIVE_TYPE(Node2D, Node)
+        BIND_NATIVE_TYPE(CanvasItem, Node)
+        BIND_NATIVE_TYPE(Node2D, CanvasItem)
         BIND_NATIVE_TYPE(Sprite2D, Node2D)
-        BIND_NATIVE_TYPE(Label, Node)
+        BIND_NATIVE_TYPE(Label, CanvasItem)
         BIND_NATIVE_TYPE(Window, Node)
 
         BIND_NATIVE_TYPE(Resource, Object)
@@ -279,6 +287,7 @@ public:
         das::addExtern<DAS_BIND_FUN(_Texture2D_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Texture2D_get_size");
         das::addExtern<DAS_BIND_FUN(_Node_get_window)>(*this, lib, "get_window", das::SideEffects::modifyExternal, "_Node_get_window");
         das::addExtern<DAS_BIND_FUN(_Window_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Window_get_size");
+        das::addExtern<DAS_BIND_FUN(_CanvasItem_get_global_mouse_position)>(*this, lib, "get_global_mouse_position", das::SideEffects::modifyExternal, "_CanvasItem_get_global_mouse_position");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
