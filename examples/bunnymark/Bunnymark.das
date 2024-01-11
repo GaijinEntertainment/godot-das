@@ -3,6 +3,10 @@ require godot
 require math
 require Bunny
 
+let BUNNY_VELOCITY = 200.
+let BUNNIES_PER_CLICK = 100
+
+
 class Bunnymark
 	native : Node2D?
 	bunnies : Node2D?
@@ -29,7 +33,7 @@ class Bunnymark
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton
 			if mouse_event |> get_button_index() == MouseButton LEFT
-				add_bunnies(5, native |> get_global_mouse_position())
+				add_bunnies(BUNNIES_PER_CLICK, native |> get_global_mouse_position())
 
 	def add_bunnies(count : int; position : Vector2)
 		for i in range(count)
@@ -41,7 +45,7 @@ class Bunnymark
 		bunny.native |> set_position(position)
 		bunny.native |> set_texture(bunny_texture)
 		// bunny.modulate = colors[generation % colors.size()]
-		// bunny.velocity = Vector2.ONE.rotated(rotation) * BUNNY_VELOCITY * randf_range(0.5, 1.5)
+		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5d, 1.5d))
 		bunnies |> add_child(bunny.native)
 
 	def _process(delta: float)
@@ -61,5 +65,6 @@ class Bunnymark
 			if new_position.y > bottom_right.y
 				bunny.velocity.y *= -1.
 				new_position.y = bottom_right.y
+			bunny.native |> set_position(new_position)
 
 		fps_counter |> set_text("FPS = {int(Engine`get_frames_per_second())}\nBunnies = {bunnies |> get_child_count()}")

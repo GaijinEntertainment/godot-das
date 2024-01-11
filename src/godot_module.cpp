@@ -11,6 +11,7 @@
 #include <core/io/resource_loader.h>
 #include <scene/main/window.h>
 #include <scene/resources/texture.h>
+#include <core/variant/variant_utility.h>
 
 #include <vector>
 #include <fstream>
@@ -285,6 +286,7 @@ public:
         das::addExtern<DAS_BIND_FUN(_Node_get_window)>(*this, lib, "get_window", das::SideEffects::modifyExternal, "_Node_get_window");
         das::addExtern<DAS_BIND_FUN(_Window_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Window_get_size");
         das::addExtern<DAS_BIND_FUN(_CanvasItem_get_global_mouse_position)>(*this, lib, "get_global_mouse_position", das::SideEffects::modifyExternal, "_CanvasItem_get_global_mouse_position");
+        das::addExtern<DAS_BIND_FUN(VariantUtilityFunctions::randf_range)>(*this, lib, "randf_range", das::SideEffects::modifyExternal, "VariantUtilityFunctions::randf_range");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
