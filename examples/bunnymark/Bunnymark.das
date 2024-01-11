@@ -1,5 +1,3 @@
-options tool = true
-
 require godot
 
 require math
@@ -16,11 +14,17 @@ class Bunnymark
 
 	fps_counter : Label?
 
+	bunny_texture : Texture2D?
+
 	def _ready()
 		bunnies = native |> find_child("Bunnies") as Node2D
 		fps_counter = native |> find_child("FPS") as Label
-		// top_left = bunny_texture.get_size() * 0.5
-		// bottom_right = Vector2(get_window().size) - bunny_texture.get_size() * 0.5
+
+		bunny_texture = native |> load("res://bunny.png") as Texture2D
+		add_bunnies(5, Vector2(100, 100))
+		top_left = bunny_texture |> get_size() * 0.5
+		bottom_right = native |> get_window() |> get_size() - bunny_texture |> get_size() * 0.5
+		print("top_left = {top_left} bottom_right = {bottom_right}")
 
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
@@ -36,7 +40,7 @@ class Bunnymark
 	def add_bunny(position : Vector2; rotation : float)
 		var bunny = Bunny`create()
 		bunny.native |> set_position(position)
-		// bunny.texture = bunny_texture
+		bunny.native |> set_texture(bunny_texture)
 		// bunny.modulate = colors[generation % colors.size()]
 		// bunny.velocity = Vector2.ONE.rotated(rotation) * BUNNY_VELOCITY * randf_range(0.5, 1.5)
 		bunnies |> add_child(bunny.native)

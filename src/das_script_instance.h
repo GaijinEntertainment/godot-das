@@ -7,16 +7,20 @@
 class DasScriptInstance : public ScriptInstance {
 	Object *owner = nullptr;
 	Ref<DasScript> script;
+	Vector<Ref<Resource>> bound_resources; // tmp solution
 
 	char* class_ptr = nullptr;
 public:
 	~DasScriptInstance();
 
+	// DasScriptInstance-specific methods
 	void set_script(Ref<DasScript> p_script);
 	void set_owner(Object *p_owner);
 	void set_class_ptr(char* p_class_ptr);
 	char* get_class_ptr();
+	void bind_resource(Ref<Resource> p_resource);
 
+	// ScriptInstance methods
 	bool set(const StringName &p_name, const Variant &p_value) override { /* TODO */ return false; }
 	bool get(const StringName &p_name, Variant &r_ret) const override { /* TODO */ return false; }
 	void get_property_list(List<PropertyInfo> *p_properties) const override { /* TODO */ }

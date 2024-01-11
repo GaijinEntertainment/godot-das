@@ -114,6 +114,15 @@ def operator as Label(native: Object?)
         error("type mismatch: cannot cast to Label")
     return null
 
+def operator as Texture2D(native: Object?)
+    if _check_native_type_Texture2D(native)
+        return unsafe(reinterpret<Texture2D?>(native))
+    if native == null
+        error("cannot cast null")
+    else
+        error("type mismatch: cannot cast to Label")
+    return null
+
 // iteration functions
 // note that iterate_children will break if you add/remove children during iteration
 

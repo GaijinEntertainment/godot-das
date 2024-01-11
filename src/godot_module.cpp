@@ -8,6 +8,9 @@
 #include <scene/2d/sprite_2d.h>
 #include <core/math/vector2.h>
 #include <scene/gui/label.h>
+#include <core/io/resource_loader.h>
+#include <scene/main/window.h>
+#include <scene/resources/texture.h>
 
 #include <vector>
 #include <fstream>
@@ -66,7 +69,8 @@ bool _check_native_type(const Object* obj) {
 #define BIND_TYPE_CHECKER(TYPE)  das::addExtern<DAS_BIND_FUN(_check_native_type<TYPE>)>(*this, lib, "_check_native_type_"#TYPE, das::SideEffects::none, "_check_native_type<"#TYPE">");
 
 #define CTX_AT das::Context *ctx, das::LineInfoArg *at
-#define CHECK_IF_NULL(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return {}; }
+#define CHECK_IF_NULL_MSG(PTR, MSG) if (PTR == nullptr) { ctx->throw_error_at(at, MSG); return {}; }
+#define CHECK_IF_NULL(PTR) CHECK_IF_NULL_MSG(PTR, "dereferencing null pointer")
 #define CHECK_IF_NULL_VOID(PTR) if (PTR == nullptr) { ctx->throw_error_at(at, "dereferencing null pointer"); return; }
 
 char* _get_dascript_type(const Object* obj, const char* name, CTX_AT) {
@@ -93,20 +97,38 @@ bool _check_dascript_type(const Object* obj, const char* name) {
     }
     return true;
 }
-
 MAKE_NATIVE_TYPE_FACTORY(Object)
 MAKE_NATIVE_TYPE_FACTORY(Node)
 MAKE_NATIVE_TYPE_FACTORY(Node2D)
+MAKE_NATIVE_TYPE_FACTORY(Label)
+MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
+MAKE_NATIVE_TYPE_FACTORY(Window)
+
+
+MAKE_NATIVE_TYPE_FACTORY(Resource)
+MAKE_NATIVE_TYPE_FACTORY(Texture2D)
 MAKE_NATIVE_TYPE_FACTORY(InputEvent)
 MAKE_NATIVE_TYPE_FACTORY(InputEventMouseButton)
-MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
-MAKE_NATIVE_TYPE_FACTORY(Label)
 
 DAS_BIND_ENUM_CAST(MouseButton)
 DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
 
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
+
+Resource* _load(Object* obj, const char* p_path, CTX_AT) {
+    CHECK_IF_NULL_MSG(obj, "cannot bind resource to null object");
+    auto script_instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
+    CHECK_IF_NULL_MSG(script_instance, "cannot bind resource to non-das object");
+    Ref<Resource> res = ResourceLoader::load(p_path);
+    if (res.is_valid()) {
+        // tmp solution
+        // TODO support das::smart_ptr<Resource> or Ref<Resource> in das
+        // so ref counting is handled by das
+        script_instance->bind_resource(res);
+    }
+    return res.ptr();
+}
 
 Node* _Node_find_child(const Node* node, const char* p_pattern, CTX_AT) {
     CHECK_IF_NULL(node)
@@ -140,6 +162,11 @@ int _Node_get_child_count(const Node* node, CTX_AT) {
 void _Node_add_child(Node* node, Node* p_child, CTX_AT) {
     CHECK_IF_NULL_VOID(node)
     node->add_child(p_child);
+}
+
+Window* _Node_get_window(const Node* node, CTX_AT) {
+    CHECK_IF_NULL(node)
+    return node->get_window();
 }
 
 void _Node2D_rotate(Node2D* node2d, float p_radians, CTX_AT) {
@@ -185,6 +212,21 @@ float _Engine_get_frames_per_second() {
     return Engine::get_singleton()->get_frames_per_second();
 }
 
+void _Sprite2D_set_texture(Sprite2D* sprite, Texture2D* texture, CTX_AT) {
+    CHECK_IF_NULL_VOID(sprite)
+    sprite->set_texture(texture);
+}
+
+Vector2 _Texture2D_get_size(Texture2D* texture, CTX_AT) {
+    CHECK_IF_NULL(texture)
+    return texture->get_size();
+}
+
+Vector2 _Window_get_size(Window* window, CTX_AT) {
+    CHECK_IF_NULL(window)
+    return Vector2{window->get_size()}; // returning Vector2 instead of Vector2i
+}
+
 void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
     DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
     if (das_script == nullptr) {
@@ -206,13 +248,15 @@ public:
         BIND_NATIVE_TYPE(Node, Object)
         BIND_NATIVE_TYPE(Node2D, Node)
         BIND_NATIVE_TYPE(Sprite2D, Node2D)
+        BIND_NATIVE_TYPE(Label, Node)
+        BIND_NATIVE_TYPE(Window, Node)
 
-        BIND_NATIVE_TYPE(InputEvent, Object) // there is also RefCounted and Resource in between, but we don't need them for now
+        BIND_NATIVE_TYPE(Resource, Object)
+        BIND_NATIVE_TYPE(Texture2D, Resource)
+        BIND_NATIVE_TYPE(InputEvent, Resource)
         BIND_NATIVE_TYPE(InputEventMouseButton, InputEvent)
 
-        BIND_NATIVE_TYPE(Label, Object)
-
-        addEnumeration(das::make_smart<EnumerationMouseButton>());
+		addEnumeration(das::make_smart<EnumerationMouseButton>());
 
         das::addExtern<DAS_BIND_FUN(_Node2D_rotate)>(*this, lib, "rotate", das::SideEffects::modifyExternal, "_Node2D_rotate");
         das::addExtern<DAS_BIND_FUN(_Node2D_translate)>(*this, lib, "translate", das::SideEffects::modifyExternal, "_Node2D_translate");
@@ -230,11 +274,17 @@ public:
         das::addExtern<DAS_BIND_FUN(_promote_to_das_type)>(*this, lib, "_promote_to_das_type", das::SideEffects::modifyExternal, "_promote_to_das_type");
         das::addExtern<DAS_BIND_FUN(_Label_set_text)>(*this, lib, "set_text", das::SideEffects::modifyExternal, "_Label_set_text");
         das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "_Engine_get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
+        das::addExtern<DAS_BIND_FUN(_load)>(*this, lib, "load", das::SideEffects::modifyExternal, "_load");
+        das::addExtern<DAS_BIND_FUN(_Sprite2D_set_texture)>(*this, lib, "set_texture", das::SideEffects::modifyExternal, "_Sprite2D_set_texture");
+        das::addExtern<DAS_BIND_FUN(_Texture2D_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Texture2D_get_size");
+        das::addExtern<DAS_BIND_FUN(_Node_get_window)>(*this, lib, "get_window", das::SideEffects::modifyExternal, "_Node_get_window");
+        das::addExtern<DAS_BIND_FUN(_Window_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Window_get_size");
 
         BIND_TYPE_CHECKER(Node)
         BIND_TYPE_CHECKER(Node2D)
         BIND_TYPE_CHECKER(InputEventMouseButton)
         BIND_TYPE_CHECKER(Label)
+        BIND_TYPE_CHECKER(Texture2D)
 
         das::addExtern<DAS_BIND_FUN(_get_dascript_type)>(*this, lib, "_get_dascript_type", das::SideEffects::modifyExternal, "_get_dascript_type");
         das::addExtern<DAS_BIND_FUN(_check_dascript_type)>(*this, lib, "_check_dascript_type", das::SideEffects::modifyExternal, "_check_dascript_type");
