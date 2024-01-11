@@ -1,7 +1,7 @@
 # Godot-Das: Daslang bindings for Godot
 
 
-<img src="logo.png" width="200" height="200">
+<img src="logo.svg" width="128" height="128">
 
 
 This project is a Godot module that ~~integrates~~ will integrate [Daslang (former daScript)](https://dascript.org/) language into Godot game engine
