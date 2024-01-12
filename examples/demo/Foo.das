@@ -1,6 +1,6 @@
 options tool = false // set true to make breakpoints work
 
-require godot
+require boost/godot
 require math
 require Bar
 

@@ -266,7 +266,7 @@ Color _named_color(const char* name, CTX_AT) {
 class Module_Godot : public das::Module {
 public:
 
-    Module_Godot() : Module("godot") {
+    Module_Godot() : Module("godot_core") {
         das::ModuleLibrary lib(this);
 
         BIND_NATIVE_BASE(Object)
@@ -302,7 +302,7 @@ public:
         das::addExtern<DAS_BIND_FUN(_Sprite2D_new)>(*this, lib, "Sprite2D_new", das::SideEffects::modifyExternal, "_Sprite2D_new");
         das::addExtern<DAS_BIND_FUN(_promote_to_das_type)>(*this, lib, "_promote_to_das_type", das::SideEffects::modifyExternal, "_promote_to_das_type");
         das::addExtern<DAS_BIND_FUN(_Label_set_text)>(*this, lib, "set_text", das::SideEffects::modifyExternal, "_Label_set_text");
-        das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "_Engine_get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
+        das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "Engine`get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
         das::addExtern<DAS_BIND_FUN(_load)>(*this, lib, "load", das::SideEffects::modifyExternal, "_load");
         das::addExtern<DAS_BIND_FUN(_Sprite2D_set_texture)>(*this, lib, "set_texture", das::SideEffects::modifyExternal, "_Sprite2D_set_texture");
         das::addExtern<DAS_BIND_FUN(_Sprite2D_set_modulate)>(*this, lib, "set_modulate", das::SideEffects::modifyExternal, "_Sprite2D_set_modulate");
@@ -325,16 +325,6 @@ public:
         addAlias(das::typeFactory<Vector2>::make(lib));
 
         options["tool"] = das::Type::tBool;
-#ifdef GODOT_DAS_MODULE_PATH
-        const char* godot_module_full_path = GODOT_DAS_MODULE_PATH"/src/godot.das";
-        std::ifstream input{godot_module_full_path, std::ios_base::binary};
-        std::vector<unsigned char> buffer{std::istreambuf_iterator< char>(input), {} };
-        unsigned char* modules_daslang_src_godot_das = buffer.data();
-        unsigned int modules_daslang_src_godot_das_len = buffer.size();
-#else
-        #include "godot.das.inc"
-#endif
-        compileBuiltinModule("godot.das", modules_daslang_src_godot_das, modules_daslang_src_godot_das_len);
     }
 };
 

@@ -1,11 +1,5 @@
-require godot
+require godot_core
 
-class Engine
-    def static get_frames_per_second(): float
-        return _Engine_get_frames_per_second()
-
-// Wrapper creation from native pointers
-//
 // "Compile time" casts that already take a corresponding type and don't perform any type change,
 // e.g. operator as Node(native: Node?), are required in cases when the function returns
 // correct type and we just need to wrap it into a wrapper class - e.g. get_parent() as Node
@@ -122,21 +116,3 @@ def operator as Texture2D(native: Object?)
     else
         error("type mismatch: cannot cast to Label")
     return null
-
-// iteration functions
-// note that iterate_children will break if you add/remove children during iteration
-
-def get_children(node: Node?)
-    let child_count = node |> get_child_count()
-    var children: array<Node?>
-    children |> reserve(child_count)
-    for i in range(0, child_count)
-        children |> push(node |> get_child(i))
-    return <- children
-
-def iterate_children(node: Node?)
-    return <- generator<Node?> () <|
-        let child_count = node |> get_child_count()
-        for i in range(0, child_count)
-            yield node |> get_child(i)
-        return false

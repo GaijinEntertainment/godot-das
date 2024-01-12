@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-COMPILE_FOR_IN_PLACE_TEST = True
-
 Import("env")
 Import("env_modules")
 
@@ -14,22 +12,12 @@ DASLANG_PATH = "daScript" #  if changing this, be sure to disable downloading su
 DASLANG_LIB_PATH = "lib/liblibDaScript.a"
 DASLANG_INCLUDE_PATH = f"{DASLANG_PATH}/include"
 
-if COMPILE_FOR_IN_PLACE_TEST:
-    # if compiling for in-place tests (e.i. godot folder is not moved after compilation), just define current path (tmp solution)
-    env_daslang.Append(CPPDEFINES=f'GODOT_DAS_MODULE_PATH=\\"{os.getcwd()}\\"')
-else:
-    # else compile godot.das into a header. The problem is that you have to rebuild the whole project if you change godot.das
-    das_inject_list = [
-        "src/godot.das",
-    ]
-    xxd_builder = Builder(action="xxd -i $SOURCE $TARGET")
-    env_daslang.Append(BUILDERS={"XXD": xxd_builder})
-    env_daslang.XXD([f"{das_file}.inc" for das_file in das_inject_list], das_inject_list)
-
 
 src_list = [
     "register_types.cpp",
-    "src/godot_module.cpp",
+    "src/godot_types_gen.cpp",
+    "src/godot_functions_gen.cpp",
+    "src/godot_utils.cpp",
     "src/init_daslang.cpp",
     "src/das_script.cpp",
     "src/das_script_language.cpp",

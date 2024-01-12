@@ -1,4 +1,4 @@
-require godot
+require boost/godot
 
 require math
 require Bunny

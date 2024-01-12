@@ -1,4 +1,4 @@
-require godot
+require boost/godot
 
 // TODO generate this section
 def operator as Bunny(native : Object?)
