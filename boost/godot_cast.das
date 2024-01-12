@@ -1,4 +1,6 @@
-require godot_core
+require godot_native
+
+// The contents of this file sould be generated, taking Node or Node2D as an example
 
 // "Compile time" casts that already take a corresponding type and don't perform any type change,
 // e.g. operator as Node(native: Node?), are required in cases when the function returns

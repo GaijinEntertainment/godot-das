@@ -1,4 +1,4 @@
-require godot_core
+require godot_native
 
 def get_children(node: Node?)
     let child_count = node |> get_child_count()
