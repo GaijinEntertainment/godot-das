@@ -1,12 +1,26 @@
 #include "das_script_language.h"
 
 #include "init_daslang.h"
-#include "das_templates.h"
 
-#include <core/config/engine.h>
-#include <editor/editor_settings.h>
+#include "core/config/engine.h"
+#include "editor/editor_settings.h"
+#include "core/config/project_settings.h"
 
-#include <core/config/project_settings.h>
+const char * simple_template =R""""(require godot
+
+class _CLASS_
+_TS_def _ready()
+_TS__TS_print("It's ready!")
+
+_TS_def _enter_tree()
+_TS__TS_print("It's enter tree!")
+)"""";
+
+static const int DAS_TEMPLATES_ARRAY_SIZE = 1;
+
+static const struct ScriptLanguage::ScriptTemplate DAS_TEMPLATES[DAS_TEMPLATES_ARRAY_SIZE] = {
+	{ String("Node"), String("Default"),  String("Base template for Node with default Godot cycle methods"),  String(simple_template) },
+};
 
 
 DasScriptLanguage *DasScriptLanguage::singleton = nullptr;

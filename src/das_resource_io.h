@@ -1,7 +1,7 @@
 #ifndef DAS_RESOURCE_FORMAT_H
 #define DAS_RESOURCE_FORMAT_H
 
-#include <core/io/resource_loader.h>
+#include "core/io/resource_loader.h"
 
 
 class DasResourceFormatLoader : public ResourceFormatLoader {

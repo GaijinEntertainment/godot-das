@@ -3,9 +3,9 @@
 #include "das_script_language.h"
 #include "das_script_instance.h"
 
-#include <core/os/os.h>
-#include <core/error/error_macros.h>
-#include <core/config/project_settings.h>
+#include "core/os/os.h"
+#include "core/error/error_macros.h"
+#include "core/config/project_settings.h"
 
 
 class GodotContext : public das::Context {

@@ -3,8 +3,6 @@
 
 #include "das_script.h"
 
-#include <core/object/script_language.h>
-
 
 class DasScriptLanguage : public ScriptLanguage {
 	static DasScriptLanguage *singleton;

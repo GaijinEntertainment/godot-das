@@ -1,7 +1,7 @@
 #ifndef DAS_SCRIPT_H
 #define DAS_SCRIPT_H
 
-#include <core/object/script_language.h>
+#include "core/object/script_language.h"
 
 #include <daScript/daScript.h>
 
