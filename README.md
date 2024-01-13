@@ -62,7 +62,7 @@ Use `linker=lld` or `linker=mold` because default `ld` is super slow
 
 ## Testing
 
-For now, all Daslang code for Godot - casts, macros, utils - as well as *daslib*, are located in *boost* directory. This directory should be copied or linked inside every Godot project that use Daslang (links are already in place for examples). Later all this code will be embedded into the binary
+For now, all Daslang code for Godot - casts, macros, utils - are located in *boost* directory. Also, *daslib* should be there too, for now soft link to *daScript/daslib* is created. *boost* directory should be copied or linked inside every Godot project that use Daslang (links are already in place for examples). Later all this code will be embedded into the binary
 
 Finally, to run an example, from Godot root directory run
 

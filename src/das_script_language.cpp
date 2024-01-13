@@ -43,8 +43,6 @@ DasScript* DasScriptLanguage::get_script(const char* p_name) {
 /* LANGUAGE FUNCTIONS */
 
 void DasScriptLanguage::init() {
-    // TODO think about how to include daslib
-    // das::setDasRoot(GODOT_DAS_MODULE_PATH"/daScript");
     initialize_daslang();
 }
 

@@ -11,8 +11,7 @@
             "defines": [
                 "DEBUG_ENABLED",
                 "TOOLS_ENABLED",
-                "DEV_ENABLED",
-                "GODOT_DAS_MODULE_PATH=\".\""
+                "DEV_ENABLED"
             ],
             "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "linux-gcc-x64",
