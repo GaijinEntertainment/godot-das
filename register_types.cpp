@@ -2,8 +2,7 @@
 
 #include "das_script_language.h"
 #include "das_script.h"
-#include "das_resource_format_loader.h"
-#include "das_resource_format_saver.h"
+#include "das_resource_io.h"
 
 DasScriptLanguage *das_script_language = nullptr;
 Ref<DasResourceFormatLoader> das_resource_loader;

@@ -22,8 +22,7 @@ src_list = [
     "src/das_script.cpp",
     "src/das_script_language.cpp",
     "src/das_script_instance.cpp",
-    "src/das_resource_format_saver.cpp",
-    "src/das_resource_format_loader.cpp",
+    "src/das_resource_io.cpp",
 ]
 env_daslang.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in Daslang headers
 env_daslang.Append(CPPPATH=["src", DASLANG_INCLUDE_PATH])
