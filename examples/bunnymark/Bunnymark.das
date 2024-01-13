@@ -49,7 +49,7 @@ class Bunnymark
 		generation += 1
 
 	def add_bunny(position : Vector2; rotation : float)
-		var bunny = Bunny`create()
+		var bunny = Bunny`new()
 		bunny.native |> set_position(position)
 		bunny.native |> set_texture(bunny_texture)
 		bunny.native |> set_modulate(colors[generation % colors |> length()])

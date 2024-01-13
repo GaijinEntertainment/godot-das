@@ -1,34 +1,9 @@
-options tool = false // set true to make breakpoints work
-
 require boost/godot
 require math
 require Bar
 
-// TODO generate this section with macros
-def operator as Foo(obj : Foo?)
-	if obj != null
-		return obj
-	error("cannot cast null")
-	return null
 
-def operator as Foo(native : Object?)
-	return unsafe(reinterpret<Foo?>(_get_das_type(native, "Foo")))
-
-def operator ?as Foo(obj : Foo?)
-	return obj
-
-def operator ?as Foo(native : Object?)
-	if native != null
-		return native as Foo
-	return null
-
-def operator is(obj : Foo?)
-	return true
-
-def operator is(native : Object?)
-	return _check_das_type(native, "Foo")
-// end of section
-
+[godot_class]
 class Foo
 	native: Node2D?
 
