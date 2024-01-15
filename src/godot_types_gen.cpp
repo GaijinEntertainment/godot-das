@@ -20,4 +20,6 @@ void Module_Godot::bind_types(das::ModuleLibrary & lib) {
     addAlias(das::typeFactory<Vector2>::make(lib));
 
     addEnumeration(das::make_smart<EnumerationMouseButton>());
+    addEnumeration(das::make_smart<EnumerationNode_InternalMode>());
+
 }

@@ -6,14 +6,14 @@ require Bunny
 let BUNNY_VELOCITY = 200.
 let BUNNIES_PER_CLICK = 100
 
-let colors : array<Color> <- [{Color named_color("WHITE");
-							 named_color("AQUA");
-							 named_color("VIOLET");
-							 named_color("DEEP_PINK");
-							 named_color("SEA_GREEN");
-							 named_color("NAVY_BLUE");
-							 named_color("GOLD");
-						 	 named_color("SALMON")}]
+let colors : array<Color> <- [{Color Color`named("WHITE");
+							 Color`named("AQUA");
+							 Color`named("VIOLET");
+							 Color`named("DEEP_PINK");
+							 Color`named("SEA_GREEN");
+							 Color`named("NAVY_BLUE");
+							 Color`named("GOLD");
+						 	 Color`named("SALMON")}]
 
 
 class Bunnymark
@@ -30,8 +30,8 @@ class Bunnymark
 	bunny_texture : Texture2D?
 
 	def _ready()
-		bunnies = native |> find_child("Bunnies") as Node2D
-		fps_counter = native |> find_child("FPS") as Label
+		bunnies = native |> find_child("Bunnies", false, false) as Node2D
+		fps_counter = native |> find_child("FPS", false, false) as Label
 
 		bunny_texture = native |> load("res://bunny.png") as Texture2D
 		top_left = bunny_texture |> get_size() * 0.5
@@ -54,7 +54,7 @@ class Bunnymark
 		bunny.native |> set_texture(bunny_texture)
 		bunny.native |> set_modulate(colors[generation % colors |> length()])
 		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5d, 1.5d))
-		bunnies |> add_child(bunny.native)
+		bunnies |> add_child(bunny.native, false, Node_InternalMode INTERNAL_MODE_DISABLED)
 
 	def _process(delta: float)
 		for node in bunnies |> get_children()
@@ -75,4 +75,4 @@ class Bunnymark
 				new_position.y = bottom_right.y
 			bunny.native |> set_position(new_position)
 
-		fps_counter |> set_text("FPS = {int(Engine`get_frames_per_second())}\nBunnies = {bunnies |> get_child_count()}")
+		fps_counter |> set_text("FPS = {int(Engine`get_frames_per_second())}\nBunnies = {bunnies |> get_child_count(false)}")

@@ -3,134 +3,7 @@
 
 #include "godot_module.h"
 #include "godot_types_gen.h"
-#include "godot_functions_macro.h"
-
-// Node
-
-Node* _Node_find_child(const Node* node, const char* p_pattern, CTX_AT) {
-    CHECK_IF_NULL(node)
-    // TODO add p_recursive and p_owned
-    return node->find_child(p_pattern, true, true);
-}
-
-Node* _Node_get_parent(const Node* node, CTX_AT) {
-    CHECK_IF_NULL(node)
-    return node->get_parent();
-}
-
-const char* _Node_get_name(const Node* node, CTX_AT) {
-    CHECK_IF_NULL(node)
-    // TODO bind StringName?
-    return ctx->stringHeap->allocateString(String(node->get_name()).utf8().get_data());
-}
-
-Node* _Node_get_child(const Node* node, int p_index, CTX_AT) {
-    CHECK_IF_NULL(node)
-    // TODO add p_include_internal
-    return node->get_child(p_index, false);
-}
-
-int _Node_get_child_count(const Node* node, CTX_AT) {
-    CHECK_IF_NULL(node)
-    // TODO add p_include_internal
-    return node->get_child_count(false);
-}
-
-void _Node_add_child(Node* node, Node* p_child, CTX_AT) {
-    CHECK_IF_NULL_VOID(node)
-    node->add_child(p_child);
-}
-
-Window* _Node_get_window(const Node* node, CTX_AT) {
-    CHECK_IF_NULL(node)
-    return node->get_window();
-}
-
-// CanvasItem
-
-Vector2 _CanvasItem_get_global_mouse_position(CanvasItem* canvas_item, CTX_AT) {
-    CHECK_IF_NULL(canvas_item)
-    return canvas_item->get_global_mouse_position();
-}
-
-// Note2D
-
-void _Node2D_rotate(Node2D* node2d, float p_radians, CTX_AT) {
-    CHECK_IF_NULL_VOID(node2d)
-    node2d->rotate(p_radians);
-}
-
-void _Node2D_translate(Node2D* node2d, const Vector2 p_amount, CTX_AT) {
-    CHECK_IF_NULL_VOID(node2d)
-    node2d->translate(p_amount);
-}
-
-void _Node2D_set_position(Node2D* node2d, const Vector2 p_pos, CTX_AT) {
-    CHECK_IF_NULL_VOID(node2d)
-    node2d->set_position(p_pos);
-}
-
-Vector2 _Node2D_get_position(const Node2D* node2d, CTX_AT) {
-    CHECK_IF_NULL(node2d)
-    return node2d->get_position();
-}
-
-// InputEvent
-
-bool _InputEvent_is_pressed(const InputEvent* event, CTX_AT) {
-    CHECK_IF_NULL(event)
-    return event->is_pressed();
-}
-
-// InputEventMouseButton
-
-MouseButton _InputEventMouseButton_get_button_index(const InputEventMouseButton* event, CTX_AT) {
-    CHECK_IF_NULL(event)
-    return event->get_button_index();
-}
-
-// Sprite2D
-
-Sprite2D* _Sprite2D_new() {
-    return memnew(Sprite2D);
-}
-
-void _Sprite2D_set_texture(Sprite2D* sprite, Texture2D* texture, CTX_AT) {
-    CHECK_IF_NULL_VOID(sprite)
-    sprite->set_texture(texture);
-}
-
-void _Sprite2D_set_modulate(Sprite2D* sprite, const Color& modulate, CTX_AT) {
-    CHECK_IF_NULL_VOID(sprite)
-    sprite->set_modulate(modulate);
-}
-
-// Texture2D
-
-Vector2 _Texture2D_get_size(Texture2D* texture, CTX_AT) {
-    CHECK_IF_NULL(texture)
-    return texture->get_size();
-}
-
-// Window
-
-Vector2 _Window_get_size(Window* window, CTX_AT) {
-    CHECK_IF_NULL(window)
-    return Vector2{window->get_size()}; // returning Vector2 instead of Vector2i
-}
-
-// Label
-
-void _Label_set_text(Label* label, const char* text, CTX_AT) {
-    CHECK_IF_NULL_VOID(label)
-    label->set_text(text);
-}
-
-// Color
-
-Color _named_color(const char* name, CTX_AT) {
-    return Color::named(StringName(name));
-}
+#include "godot_functions_wrapper.h"
 
 // builtin
 
@@ -142,39 +15,65 @@ float _Engine_get_frames_per_second() {
 
 
 void Module_Godot::bind_functions(das::ModuleLibrary & lib) {
+    // Object
+    das::addExtern<DAS_BIND_FUN(creator<Object>)>(*this, lib, "Object`new", das::SideEffects::modifyExternal, "creator<Object>");
     // Node
-    das::addExtern<DAS_BIND_FUN(_Node_get_parent)>(*this, lib, "get_parent", das::SideEffects::modifyExternal, "_Node_get_parent");
-    das::addExtern<DAS_BIND_FUN(_Node_find_child)>(*this, lib, "find_child", das::SideEffects::modifyExternal, "_Node_find_child");
-    das::addExtern<DAS_BIND_FUN(_Node_get_name)>(*this, lib, "get_name", das::SideEffects::modifyExternal, "_Node_get_name");
-    das::addExtern<DAS_BIND_FUN(_Node_get_child)>(*this, lib, "get_child", das::SideEffects::modifyExternal, "_Node_get_child");
-    das::addExtern<DAS_BIND_FUN(_Node_get_child_count)>(*this, lib, "get_child_count", das::SideEffects::modifyExternal, "_Node_get_child_count");
-    das::addExtern<DAS_BIND_FUN(_Node_add_child)>(*this, lib, "add_child", das::SideEffects::modifyExternal, "_Node_add_child");
-    das::addExtern<DAS_BIND_FUN(_Node_get_window)>(*this, lib, "get_window", das::SideEffects::modifyExternal, "_Node_get_window");
+    das::addExtern<DAS_BIND_FUN(creator<Node>)>(*this, lib, "Node`new", das::SideEffects::modifyExternal, "creator<Node>");
+    using _Node_find_child = DAS_CALL_GODOT_MEMBER(Node::find_child);
+    das::addExtern<DAS_BIND_FUN(_Node_find_child::invoke)>(*this, lib, "find_child", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::find_child));
+    using _Node_get_name = DAS_CALL_GODOT_MEMBER(Node::get_name);
+    das::addExtern<DAS_BIND_FUN(_Node_get_name::invoke)>(*this, lib, "get_name", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::get_name));
+    using _Node_get_parent = DAS_CALL_GODOT_MEMBER(Node::get_parent);
+    das::addExtern<DAS_BIND_FUN(_Node_get_parent::invoke)>(*this, lib, "get_parent", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::get_parent));
+    using _Node_get_child = DAS_CALL_GODOT_MEMBER(Node::get_child);
+    das::addExtern<DAS_BIND_FUN(_Node_get_child::invoke)>(*this, lib, "get_child", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::get_child));
+    using _Node_get_child_count = DAS_CALL_GODOT_MEMBER(Node::get_child_count);
+    das::addExtern<DAS_BIND_FUN(_Node_get_child_count::invoke)>(*this, lib, "get_child_count", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::get_child_count));
+    using _Node_add_child = DAS_CALL_GODOT_MEMBER(Node::add_child);
+    das::addExtern<DAS_BIND_FUN(_Node_add_child::invoke)>(*this, lib, "add_child", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::add_child));
+    using _Node_get_window = DAS_CALL_GODOT_MEMBER(Node::get_window);
+    das::addExtern<DAS_BIND_FUN(_Node_get_window::invoke)>(*this, lib, "get_window", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node::get_window));
     // CanvasItem
-    das::addExtern<DAS_BIND_FUN(_CanvasItem_get_global_mouse_position)>(*this, lib, "get_global_mouse_position", das::SideEffects::modifyExternal, "_CanvasItem_get_global_mouse_position");
+    // note: cannot be created
+    using _CanvasItem_get_global_mouse_position = DAS_CALL_GODOT_MEMBER(CanvasItem::get_global_mouse_position);
+    das::addExtern<DAS_BIND_FUN(_CanvasItem_get_global_mouse_position::invoke)>(*this, lib, "get_global_mouse_position", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(CanvasItem::get_global_mouse_position));
     // Node2D
-    das::addExtern<DAS_BIND_FUN(_Node2D_rotate)>(*this, lib, "rotate", das::SideEffects::modifyExternal, "_Node2D_rotate");
-    das::addExtern<DAS_BIND_FUN(_Node2D_translate)>(*this, lib, "translate", das::SideEffects::modifyExternal, "_Node2D_translate");
-    das::addExtern<DAS_BIND_FUN(_Node2D_get_position)>(*this, lib, "get_position", das::SideEffects::modifyExternal, "_Node2D_get_position");
-    das::addExtern<DAS_BIND_FUN(_Node2D_set_position)>(*this, lib, "set_position", das::SideEffects::modifyExternal, "_Node2D_set_position");
+    das::addExtern<DAS_BIND_FUN(creator<Node2D>)>(*this, lib, "Node2D`new", das::SideEffects::modifyExternal, "creator<Node2D>");
+    using _Node2D_rotate = DAS_CALL_GODOT_MEMBER(Node2D::rotate);
+    das::addExtern<DAS_BIND_FUN(_Node2D_rotate::invoke)>(*this, lib, "rotate", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node2D::rotate));
+    using _Node2D_translate = DAS_CALL_GODOT_MEMBER(Node2D::translate);
+    das::addExtern<DAS_BIND_FUN(_Node2D_translate::invoke)>(*this, lib, "translate", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node2D::translate));
+    using _Node2D_get_position = DAS_CALL_GODOT_MEMBER(Node2D::get_position);
+    das::addExtern<DAS_BIND_FUN(_Node2D_get_position::invoke)>(*this, lib, "get_position", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node2D::get_position));
+    using _Node2D_set_position = DAS_CALL_GODOT_MEMBER(Node2D::set_position);
+    das::addExtern<DAS_BIND_FUN(_Node2D_set_position::invoke)>(*this, lib, "set_position", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Node2D::set_position));
     // Sprite2D
-    das::addExtern<DAS_BIND_FUN(_Sprite2D_new)>(*this, lib, "Sprite2D`new", das::SideEffects::modifyExternal, "_Sprite2D_new");
-    das::addExtern<DAS_BIND_FUN(_Sprite2D_set_texture)>(*this, lib, "set_texture", das::SideEffects::modifyExternal, "_Sprite2D_set_texture");
-    das::addExtern<DAS_BIND_FUN(_Sprite2D_set_modulate)>(*this, lib, "set_modulate", das::SideEffects::modifyExternal, "_Sprite2D_set_modulate");
+    das::addExtern<DAS_BIND_FUN(creator<Sprite2D>)>(*this, lib, "Sprite2D`new", das::SideEffects::modifyExternal, "creator<Sprite2D>");
+    using _Sprite2D_set_texture = DAS_CALL_GODOT_MEMBER(Sprite2D::set_texture);
+    das::addExtern<DAS_BIND_FUN(_Sprite2D_set_texture::invoke)>(*this, lib, "set_texture", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Sprite2D::set_texture));
+    using _Sprite2D_set_modulate = DAS_CALL_GODOT_MEMBER(Sprite2D::set_modulate);
+    das::addExtern<DAS_BIND_FUN(_Sprite2D_set_modulate::invoke)>(*this, lib, "set_modulate", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Sprite2D::set_modulate));
     // Label
-    das::addExtern<DAS_BIND_FUN(_Label_set_text)>(*this, lib, "set_text", das::SideEffects::modifyExternal, "_Label_set_text");
+    using _Label_set_text = DAS_CALL_GODOT_MEMBER(Label::set_text);
+    das::addExtern<DAS_BIND_FUN(_Label_set_text::invoke)>(*this, lib, "set_text", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Label::set_text));
     // Window
-    das::addExtern<DAS_BIND_FUN(_Window_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Window_get_size");
+    using _Window_get_size = DAS_CALL_GODOT_MEMBER(Window::get_size);
+    das::addExtern<DAS_BIND_FUN(_Window_get_size::invoke)>(*this, lib, "get_size", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Window::get_size));
     // Texture2D
-    das::addExtern<DAS_BIND_FUN(_Texture2D_get_size)>(*this, lib, "get_size", das::SideEffects::modifyExternal, "_Texture2D_get_size");
+    using _Texture2D_get_size = DAS_CALL_GODOT_MEMBER(Texture2D::get_size);
+    das::addExtern<DAS_BIND_FUN(_Texture2D_get_size::invoke)>(*this, lib, "get_size", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(Texture2D::get_size));
     // InputEvent
-    das::addExtern<DAS_BIND_FUN(_InputEvent_is_pressed)>(*this, lib, "is_pressed", das::SideEffects::modifyExternal, "_InputEvent_is_pressed");
+    using _InputEvent_is_pressed = DAS_CALL_GODOT_MEMBER(InputEvent::is_pressed);
+    das::addExtern<DAS_BIND_FUN(_InputEvent_is_pressed::invoke)>(*this, lib, "is_pressed", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(InputEvent::is_pressed));
     // InputEventMouseButton
-    das::addExtern<DAS_BIND_FUN(_InputEventMouseButton_get_button_index)>(*this, lib, "get_button_index", das::SideEffects::modifyExternal, "_InputEventMouseButton_get_button_index");
+    using _InputEventMouseButton_get_button_index = DAS_CALL_GODOT_MEMBER(InputEventMouseButton::get_button_index);
+    das::addExtern<DAS_BIND_FUN(_InputEventMouseButton_get_button_index::invoke)>(*this, lib, "get_button_index", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(InputEventMouseButton::get_button_index));
     // Color
-    das::addExtern<DAS_BIND_FUN(_named_color), das::SimNode_ExtFuncCallAndCopyOrMove>(*this, lib, "named_color", das::SideEffects::modifyExternal, "_named_color");
+    // named is overloaded, hmmm, what to do?
+    using _Color_named = DAS_CALL_GODOT_STATIC_MEMBER(*static_cast<Color (*)(const String &)>(&Color::named));
+    das::addExtern<DAS_BIND_FUN(_Color_named::invoke), das::SimNode_ExtFuncCallAndCopyOrMove>(*this, lib, "Color`named", das::SideEffects::modifyExternal, DAS_CALL_GODOT_STATIC_MEMBER_CPP(*static_cast<Color (*)(const String &)>(&Color::named)));
 
-    // builtin
+    // builtin , das::SimNode_ExtFuncCallAndCopyOrMove
     das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "Engine`get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
     das::addExtern<DAS_BIND_FUN(VariantUtilityFunctions::randf_range)>(*this, lib, "randf_range", das::SideEffects::modifyExternal, "VariantUtilityFunctions::randf_range");
 }

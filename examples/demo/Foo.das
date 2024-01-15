@@ -28,9 +28,10 @@ class Foo
 		var parent = native |> get_parent() as Node
 
 		for child in parent |> iterate_children()
-			child as Node2D |> translate(Vector2(300, 0))
+			let translation = Vector2(300, 0)
+			child as Node2D |> translate(translation)
 
-		center = parent |> find_child("Center") as Node2D
+		center = parent |> find_child("Center", true, true) as Node2D
 		print("parent is Node2D={parent is Node2D}")
 		print("{parent |> get_name()}, {native |> get_name()}, {center |> get_name()}")
 
@@ -49,7 +50,8 @@ class Foo
 	def _process(dt: float)
 		native |> rotate(dt * angular_speed)
 		velocity += get_acc() * dt
-		native |> translate(dt * velocity)
+		let translation = dt * velocity
+		native |> translate(translation)
 
 	// call to see error hadling
 	def i_am_error()

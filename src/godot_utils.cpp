@@ -7,13 +7,11 @@
 
 char* _get_das_type(const Object* obj, const char* name, CTX_AT) {
     if (obj == nullptr) {
-        ctx->throw_error_at(at, "cannot cast null");
         return nullptr;
     }
     DasScriptInstance* instance = dynamic_cast<DasScriptInstance*>(obj->get_script_instance());
     if (instance == nullptr || strcmp(instance->get_das_script()->get_class_name(), name) != 0) {
         // two cases: either the object does not have a das script instance, or the das script instance is not of the correct type
-        ctx->throw_error_at(at, (std::string("type mismatch: cannot cast native type to user type ") + std::string(name)).c_str());
         return nullptr;
     }
     return instance->get_class_ptr();
