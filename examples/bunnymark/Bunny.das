@@ -1,7 +1,6 @@
 require boost/godot
 
 
-[godot_class]
+[godot_class(Sprite2D)]
 class Bunny
-	native : Sprite2D?
 	velocity : Vector2

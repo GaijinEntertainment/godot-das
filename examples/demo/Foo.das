@@ -3,10 +3,8 @@ require math
 require Bar
 
 
-[godot_class]
+[godot_class(Node2D)]
 class Foo
-	native: Node2D?
-
 	angular_speed: float = 6.28
 
 	center: Node2D?

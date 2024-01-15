@@ -15,9 +15,8 @@ let colors : array<Color> <- [{Color Color`named("WHITE");
 							 Color`named("GOLD");
 						 	 Color`named("SALMON")}]
 
-
+[godot_class(Node2D)]
 class Bunnymark
-	native : Node2D?
 	bunnies : Node2D?
 
 	generation : int = 0
