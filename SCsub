@@ -17,6 +17,7 @@ src_list = [
     "register_types.cpp",
     "src/godot_types_gen.cpp",
     "src/godot_functions_gen.cpp",
+    "src/godot_functions_extra.cpp",
     "src/godot_utils.cpp",
     "src/init_daslang.cpp",
     "src/das_script.cpp",

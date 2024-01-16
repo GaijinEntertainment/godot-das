@@ -62,5 +62,7 @@ DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
 DAS_BIND_ENUM_CAST(Node::InternalMode)
 DAS_BASE_BIND_ENUM(Node::InternalMode, Node_InternalMode, INTERNAL_MODE_DISABLED, INTERNAL_MODE_FRONT, INTERNAL_MODE_BACK)
 
+#include "core/variant/variant_utility.h"
+#include "core/config/engine.h"
 
 #endif // GODOT_TYPES_GEN_H
