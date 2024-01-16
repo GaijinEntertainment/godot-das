@@ -70,22 +70,27 @@ struct escape<StringName> {
     }
 };
 
+#define RETURN(V) return escape<decltype(V)>::ret(V, ctx);
+#define ESCAPE(T) typename escape<T>::type
+#define ESCAPE_R ESCAPE(R)
+// this is done because VSCode doesn't like `ESCAPE(Args)...` in function declaration for some reason
+#define ESCAPE_ARGS ESCAPE(Args)...
 
 
 // no const, return
 template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) >
 struct das_call_godot_member < R (CC::*)(Args...),  func> {
-    static typename escape<R>::type invoke ( CC * THIS, typename escape<Args>::type... args, CTX_AT) {
+    static ESCAPE_R invoke ( CC * THIS, ESCAPE_ARGS args, CTX_AT) {
         CHECK_IF_NULL(THIS)
         return escape<R>::ret( ((*THIS).*(func)) ( args... ) );
     }
 };
 
-//no const, no return
+// no const, no return
 
 template <typename CC, typename ...Args, void (CC::*func)(Args...) >
 struct das_call_godot_member < void (CC::*)(Args...),  func> {
-    static void invoke ( CC * THIS, typename escape<Args>::type... args, CTX_AT) {
+    static void invoke ( CC * THIS, ESCAPE_ARGS args, CTX_AT) {
         CHECK_IF_NULL_VOID(THIS)
         ((*THIS).*(func)) ( args... );
     }
@@ -95,7 +100,7 @@ struct das_call_godot_member < void (CC::*)(Args...),  func> {
 
 template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) const>
 struct das_call_godot_member < R (CC::*)(Args...) const,  func> {
-    static typename escape<R>::type invoke ( const CC * THIS, typename escape<Args>::type... args, CTX_AT) {
+    static ESCAPE_R invoke ( const CC * THIS, ESCAPE_ARGS args, CTX_AT) {
         CHECK_IF_NULL(THIS)
         return escape<R>::ret( ((*THIS).*(func)) ( args... ), ctx);
     }
@@ -105,7 +110,7 @@ struct das_call_godot_member < R (CC::*)(Args...) const,  func> {
 
 template <typename CC, typename ...Args, void (CC::*func)(Args...) const>
 struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
-    static void invoke ( const CC * THIS, typename escape<Args>::type... args, CTX_AT) {
+    static void invoke ( const CC * THIS, ESCAPE_ARGS args, CTX_AT) {
         CHECK_IF_NULL_VOID(THIS)
         ((*THIS).*(func)) ( args... );
     }
@@ -115,9 +120,19 @@ struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
 
 template <typename R, typename ...Args, R (*func)(Args...) >
 struct das_call_godot_static_member < R (*)(Args...), func> {
-    static typename escape<R>::type invoke (typename escape<Args>::type... args, CTX_AT) {
+    static ESCAPE_R invoke (ESCAPE_ARGS args, CTX_AT) {
         return escape<R>::ret( (*func) ( args... ), ctx );
     }
 };
+
+// singleton variant
+
+template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) const>
+struct das_call_godot_singleton_member < R (CC::*)(Args...) const,  func> {
+    static ESCAPE_R invoke (ESCAPE_ARGS args, CTX_AT) {
+        RETURN( (CC::get_singleton()->*(func)) ( args... ) );
+    }
+};
+
 
 #endif // GODOT_FUNCTIONS_WRAPPER_H

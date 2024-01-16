@@ -5,14 +5,8 @@
 #include "godot_types_gen.h"
 #include "godot_functions_wrapper.h"
 
-// builtin
-
-float _Engine_get_frames_per_second() {
-    return Engine::get_singleton()->get_frames_per_second();
-}
-
 #include "core/variant/variant_utility.h"
-
+#include "core/config/engine.h"
 
 void Module_Godot::bind_functions(das::ModuleLibrary & lib) {
     // Object
@@ -69,12 +63,12 @@ void Module_Godot::bind_functions(das::ModuleLibrary & lib) {
     using _InputEventMouseButton_get_button_index = DAS_CALL_GODOT_MEMBER(InputEventMouseButton::get_button_index);
     das::addExtern<DAS_BIND_FUN(_InputEventMouseButton_get_button_index::invoke)>(*this, lib, "get_button_index", das::SideEffects::modifyExternal, DAS_CALL_GODOT_MEMBER_CPP(InputEventMouseButton::get_button_index));
     // Color
-    // named is overloaded, hmmm, what to do?
+    // CANNOT BE GENERATED FROM CLASSDB
     using _Color_named = DAS_CALL_GODOT_STATIC_MEMBER(*static_cast<Color (*)(const String &)>(&Color::named));
     das::addExtern<DAS_BIND_FUN(_Color_named::invoke), das::SimNode_ExtFuncCallAndCopyOrMove>(*this, lib, "Color`named", das::SideEffects::modifyExternal, DAS_CALL_GODOT_STATIC_MEMBER_CPP(*static_cast<Color (*)(const String &)>(&Color::named)));
 
-    // builtin , das::SimNode_ExtFuncCallAndCopyOrMove
-    das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second)>(*this, lib, "Engine`get_frames_per_second", das::SideEffects::modifyExternal, "_Engine_get_frames_per_second");
+    using _Engine_get_frames_per_second = DAS_CALL_GODOT_SINGLETON_MEMBER(Engine::get_frames_per_second);
+    das::addExtern<DAS_BIND_FUN(_Engine_get_frames_per_second::invoke)>(*this, lib, "Engine`get_frames_per_second", das::SideEffects::modifyExternal, DAS_CALL_GODOT_SINGLETON_MEMBER_CPP(Engine::get_frames_per_second));
+    // doesn't need a wrapper
     das::addExtern<DAS_BIND_FUN(VariantUtilityFunctions::randf_range)>(*this, lib, "randf_range", das::SideEffects::modifyExternal, "VariantUtilityFunctions::randf_range");
 }
-
