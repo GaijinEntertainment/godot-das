@@ -67,4 +67,4 @@ func _process(delta: float) -> void:
 			bunny.velocity.y *= -1
 			bunny.position.y = bottom_right.y
 
-	fps_counter.text = "FPS = %d\nBunnies = %d" % [Engine.get_frames_per_second(), bunnies.get_child_count()]
+	fps_counter.text = "I'm GDScript!\nFPS = %d\nBunnies = %d" % [Engine.get_frames_per_second(), bunnies.get_child_count()]

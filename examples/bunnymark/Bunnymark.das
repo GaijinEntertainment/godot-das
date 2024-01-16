@@ -74,4 +74,4 @@ class Bunnymark
 				new_position.y = bottom_right.y
 			bunny.native |> set_position(new_position)
 
-		fps_counter |> set_text("FPS = {int(Engine`get_frames_per_second())}\nBunnies = {bunnies |> get_child_count(false)}")
+		fps_counter |> set_text("I'm Daslang!\nFPS = {int(Engine`get_frames_per_second())}\nBunnies = {bunnies |> get_child_count(false)}")
