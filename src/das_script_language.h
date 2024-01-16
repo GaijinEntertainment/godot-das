@@ -15,7 +15,6 @@ public:
 	~DasScriptLanguage();
 
 	void add_script(SelfList<DasScript> *p_script);
-	DasScript* get_script(const char* p_name);
 
 	_FORCE_INLINE_ static DasScriptLanguage *get_singleton() { return singleton; }
 	_FORCE_INLINE_ static MutexLock<Mutex> acquire_lock() { return MutexLock<Mutex>(singleton->mutex); }

@@ -51,10 +51,11 @@ class GodotClassAnnotation : AstStructureAnnotation
         st |> add_structure_field("native", nativeTypePtr, [[ExpressionPtr]])
 
         let nativeCtor = "{nativeType.annotation.name}`new"
+        let scriptPath = st.at.fileInfo.name |> string()
 
         var inscope newFn <- qmacro_function("{st.name}`new") <| $() : $t(st)?
             var native = $c(nativeCtor)()
-            var promoted = _promote_to_das_type(native, $v(typeName))
+            var promoted = _promote_to_das_type(native, $v(scriptPath))
             return unsafe(reinterpret<$t(st)?>(promoted))
 
         newFn.flags |= FunctionFlags generated

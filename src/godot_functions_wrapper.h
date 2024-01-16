@@ -6,6 +6,10 @@
 #include "core/typedefs.h"
 
 
+// This is a separate file because
+// 1. godot_functions_macro.h can be used elsewhere (it was used in godot_utils.cpp originally)
+// 2. if this file was merged into godot_functions_macro.h it would be too cluttered
+
 template <typename T>
 struct default_return {
     _FORCE_INLINE_ static T&& ret(T&& t, das::Context *ctx) {

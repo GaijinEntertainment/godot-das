@@ -1,11 +1,10 @@
 #include "godot_module.h"
-#include "godot_functions_macro.h"
 #include "godot_types_gen.h"
 
 #include "das_script_instance.h"
 #include "das_script_language.h"
 
-char* _get_das_type(const Object* obj, const char* name, CTX_AT) {
+char* _get_das_type(const Object* obj, const char* name) {
     if (obj == nullptr) {
         return nullptr;
     }
@@ -28,11 +27,15 @@ bool _check_das_type(const Object* obj, const char* name) {
     return true;
 }
 
-void* _promote_to_das_type(Object* obj, const char* script_name, CTX_AT) {
-    DasScript* das_script = DasScriptLanguage::get_singleton()->get_script(script_name);
-    CHECK_IF_NULL_MSG(das_script, (std::string("cannot find script ") + std::string(script_name)).c_str());
+void* _promote_to_das_type(Object* obj, const char* script_path) {
+    Ref<DasScript> das_script = ResourceLoader::load(script_path);
+    if (das_script.is_null()) {
+        // should never be here
+        CRASH_NOW_MSG(String("File ") + String(script_path) + String(" not found"));
+    }
     obj->set_script(das_script);
-    return reinterpret_cast<DasScriptInstance*>(obj->get_script_instance())->get_class_ptr();
+    DasScriptInstance* instance = reinterpret_cast<DasScriptInstance*>(obj->get_script_instance());
+    return instance->get_class_ptr();
 }
 
 
