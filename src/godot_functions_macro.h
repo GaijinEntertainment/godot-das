@@ -30,5 +30,21 @@ T *creator() {
     return memnew(T);
 }
 
+#define BIND_GODOT_MEMBER(CLASS, FUN)\
+    using _##CLASS##_##FUN = DAS_CALL_GODOT_MEMBER(CLASS::FUN);\
+    das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));
+
+#define BIND_GODOT_CTOR(CLASS)\
+    das::addExtern<DAS_BIND_FUN(creator<CLASS>)>(*this, lib, #CLASS"`new", das::SideEffects::modifyExternal, "creator<"#CLASS">");
+
+#define BIND_GODOT_SINGLETON_MEMBER(CLASS, FUN)\
+    using _##CLASS##_##FUN = DAS_CALL_GODOT_SINGLETON_MEMBER(CLASS::FUN);\
+    das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #CLASS"`"#FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_SINGLETON_MEMBER_CPP(CLASS::FUN));
+
+// more examples of usage are needed
+#define BIND_GODOT_BUILTIN_FUNCTION(CLASS, FUN)\
+    using _##CLASS##_##FUN = DAS_CALL_GODOT_STATIC_MEMBER(CLASS::FUN);\
+    das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_STATIC_MEMBER_CPP(CLASS::FUN));
+
 
 #endif // GODOT_FUNCTIONS_MACRO_H

@@ -76,6 +76,7 @@ struct escape<StringName> {
 // this is done because VSCode doesn't like `ESCAPE(Args)...` in function declaration for some reason
 #define ESCAPE_ARGS ESCAPE(Args)...
 
+// TODO maybe some functions should have modufyExternal??
 
 // no const, return
 template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) >
@@ -84,6 +85,7 @@ struct das_call_godot_member < R (CC::*)(Args...),  func> {
         CHECK_IF_NULL(THIS)
         return escape<R>::ret( ((*THIS).*(func)) ( args... ) );
     }
+    constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
 };
 
 // no const, no return
@@ -94,6 +96,7 @@ struct das_call_godot_member < void (CC::*)(Args...),  func> {
         CHECK_IF_NULL_VOID(THIS)
         ((*THIS).*(func)) ( args... );
     }
+    constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
 };
 
 // const, return
@@ -104,6 +107,7 @@ struct das_call_godot_member < R (CC::*)(Args...) const,  func> {
         CHECK_IF_NULL(THIS)
         return escape<R>::ret( ((*THIS).*(func)) ( args... ), ctx);
     }
+    constexpr static das::SideEffects effects = das::SideEffects::none;
 };
 
 // const, no return
@@ -114,6 +118,7 @@ struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
         CHECK_IF_NULL_VOID(THIS)
         ((*THIS).*(func)) ( args... );
     }
+    constexpr static das::SideEffects effects = das::SideEffects::none;
 };
 
 // static variant
@@ -123,6 +128,8 @@ struct das_call_godot_static_member < R (*)(Args...), func> {
     static ESCAPE_R invoke (ESCAPE_ARGS args, CTX_AT) {
         return escape<R>::ret( (*func) ( args... ), ctx );
     }
+    // modifyExternal - because, for example, random changes global random generator
+    constexpr static das::SideEffects effects = das::SideEffects::modifyExternal;
 };
 
 // singleton variant
@@ -132,6 +139,7 @@ struct das_call_godot_singleton_member < R (CC::*)(Args...) const,  func> {
     static ESCAPE_R invoke (ESCAPE_ARGS args, CTX_AT) {
         RETURN( (CC::get_singleton()->*(func)) ( args... ) );
     }
+    constexpr static das::SideEffects effects = das::SideEffects::accessExternal;
 };
 
 
