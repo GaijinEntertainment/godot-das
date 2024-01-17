@@ -5,6 +5,11 @@
 #include "core/config/engine.h"
 #include "editor/editor_settings.h"
 #include "core/config/project_settings.h"
+#include "core/os/os.h"
+
+#ifdef DEV_ENABLED
+#include "generate_bindings.h"
+#endif
 
 const char * simple_template =R""""(require godot
 
@@ -45,6 +50,14 @@ void DasScriptLanguage::add_script(SelfList<DasScript> *p_script) {
 /* LANGUAGE FUNCTIONS */
 
 void DasScriptLanguage::init() {
+#ifdef DEV_ENABLED
+    // TODO make this in a better place (but after Main::setup2)
+    if (OS::get_singleton()->get_cmdline_user_args().find("--bind-das")) {
+        generate_godot_module_code();
+        print_line("Code generation complete, now rebuild please");
+        std::abort();
+    }
+#endif
     initialize_daslang();
 }
 

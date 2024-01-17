@@ -3,7 +3,7 @@
 #include "godot_module.h"
 #include "godot_types_gen.h"
 
-void Module_Godot::bind_types(das::ModuleLibrary & lib) {
+void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {
     BIND_NATIVE_BASE(Object)
     BIND_NATIVE_TYPE(Node, Object)
     BIND_NATIVE_TYPE(CanvasItem, Node)
@@ -15,11 +15,4 @@ void Module_Godot::bind_types(das::ModuleLibrary & lib) {
     BIND_NATIVE_TYPE(Texture2D, Resource)
     BIND_NATIVE_TYPE(InputEvent, Resource)
     BIND_NATIVE_TYPE(InputEventMouseButton, InputEvent)
-    BIND_NATIVE_BASE(Color)
-
-    addAlias(das::typeFactory<Vector2>::make(lib));
-
-    addEnumeration(das::make_smart<EnumerationMouseButton>());
-    addEnumeration(das::make_smart<EnumerationNode_InternalMode>());
-
 }

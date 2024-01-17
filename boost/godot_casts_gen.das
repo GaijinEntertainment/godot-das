@@ -4,6 +4,8 @@
 // e.g. operator as Node(native: Node?), are required in cases when the function returns
 // correct type and we just need to wrap it into a wrapper class - e.g. get_parent() as Node
 
+// Compile time casts for base classes like Object or Color should be generated in a special way or not generated at all
+
 // For now, as operates as GDScript as - return null if cast fail, and return null if casting null
 
 require godot_native
@@ -12,9 +14,6 @@ require godot_native
 
 def operator as Object(native: Object?)
     return native
-
-def operator is Object(native: Object?)
-    return true
 
 // Node
 

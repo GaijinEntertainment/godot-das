@@ -12,8 +12,6 @@ struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
 };\
 das::smart_ptr<TYPE##Annotation> TYPE##ManagedStructureAnnotation = das::make_smart<TYPE##Annotation>(lib);\
 addAnnotation(TYPE##ManagedStructureAnnotation);\
-struct type_checker_##TYPE {static bool check(const Object* obj) { return dynamic_cast<const TYPE*>(obj) != nullptr; }};\
-das::addExtern<DAS_BIND_FUN(type_checker_##TYPE::check)>(*this, lib, "_check_native_type_"#TYPE, das::SideEffects::none, "type_checker_"#TYPE"::check");
 
 #define BIND_NATIVE_TYPE(TYPE, PARENT)\
 struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
