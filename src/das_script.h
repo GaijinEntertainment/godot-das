@@ -89,11 +89,8 @@ public:
 
 	const Variant get_rpc_config() const override { /* TODO */ return Dictionary(); }
 
-	Variant _new(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
-
 	Error load_source_code(const String &p_path);
 protected:
-	static void _bind_methods();
 
 #ifdef TOOLS_ENABLED
 	void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder) override;

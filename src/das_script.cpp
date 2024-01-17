@@ -251,19 +251,8 @@ Error DasScript::load_source_code(const String &p_path) {
 	return OK;
 }
 
-void DasScript::_bind_methods() {
-	ClassDB::bind_vararg_method(METHOD_FLAGS_DEFAULT, "new", &DasScript::_new, MethodInfo("new"));
-}
-
-
 #ifdef TOOLS_ENABLED
 void DasScript::_placeholder_erased(PlaceHolderScriptInstance *p_placeholder) {
 	this->placeholders.erase(p_placeholder);
 }
 #endif
-
-Variant DasScript::_new(const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
-    // TODO
-	// looking at GDScript implementation, this is pretty important
-	return Variant{};
-}
