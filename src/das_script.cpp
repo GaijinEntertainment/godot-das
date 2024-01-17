@@ -126,6 +126,18 @@ void DasScript::set_source_code(const String &p_code) {
 	source = p_code;
 }
 
+void DasScript::_print_errors(das::ProgramPtr p_program, const char* p_msg_begin) const {
+	CharString path_utf8 = path.utf8();
+	for (auto &err : p_program->errors) {
+		std::string err_msg = p_msg_begin + err.what;
+		if (!err.fixme.empty())
+			err_msg += "; " + err.fixme;
+		if (!err.extra.empty())
+			err_msg += "; " + err.extra;
+		_err_print_error("DasScript::reload", path_utf8.get_data(), err.at.line, err_msg.c_str(), false, ERR_HANDLER_SCRIPT);
+	}
+}
+
 
 Error DasScript::reload(bool p_keep_state) {
 	valid = false;
@@ -135,30 +147,25 @@ Error DasScript::reload(bool p_keep_state) {
 	das::TextPrinter dummy_logs{};
 
 	auto new_program = DasScriptLanguage::compile_script(source, path, new_file_access, dummy_logs, *new_lib_group);
-
 	if (new_program->failed()) {
-		auto first_error = new_program->errors.front();
-		// TODO what about fixme and extra???
-		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Parse Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
+		_print_errors(new_program, "Compilation Error: ");
 		return ERR_PARSE_ERROR;
 	}
-	bool new_tool = new_program->options.getBoolOption("tool", false);
+
 	auto new_ctx = std::make_shared<GodotContext>(new_program->getContextStackSize());
-	if ( !new_program->simulate(*new_ctx, dummy_logs) ) {
-		auto first_error = new_program->errors.front();
-		// TODO will simulation errors appear in program->errors?
-		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), first_error.at.line, ("Simulation Error: " + first_error.what).c_str(), false, ERR_HANDLER_SCRIPT);
+	bool simulation_ok = new_program->simulate(*new_ctx, dummy_logs);
+	if (!simulation_ok) {
+		_print_errors(new_program, "Simulation Error: ");
 		return ERR_PARSE_ERROR;
 	}
 
 	auto* rootModule = new_program->thisModule.get();
 	auto new_main_structure = rootModule->findStructure(class_name);
 	if (!new_main_structure) {
-		_err_print_error("DasScript::reload", (const char *)path.utf8().get_data(), 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
-		return OK;
+		CharString path_utf8 = path.utf8();
+		_err_print_error("DasScript::reload", path_utf8.get_data(), 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
+		return ERR_PARSE_ERROR;
 	}
-	auto new_struct_ctor = new_ctx->findFunction(class_name.c_str());
-	ERR_FAIL_COND_V_MSG(new_struct_ctor == nullptr, ERR_PARSE_ERROR, "Constructor of the struct is not found (TODO: understand when this could be)");
 
 	valid = true;
 
@@ -166,9 +173,10 @@ Error DasScript::reload(bool p_keep_state) {
 	ctx = std::move(new_ctx);
 	program = std::move(new_program);
 	main_structure = std::move(new_main_structure);
-	struct_ctor = std::move(new_struct_ctor);
 	file_access = std::move(new_file_access);
-	tool = new_tool;
+
+	struct_ctor = ctx->findFunction(class_name.c_str());
+	tool = program->options.getBoolOption("tool", false);
 
 	for (auto& field : main_structure->fields) {
 		offsets[StringName(field.name.c_str())] = field.offset;

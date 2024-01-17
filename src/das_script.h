@@ -91,7 +91,7 @@ public:
 
 	Error load_source_code(const String &p_path);
 protected:
-
+	void _print_errors(das::ProgramPtr p_program, const char* p_msg_begin) const;
 #ifdef TOOLS_ENABLED
 	void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder) override;
 #endif
