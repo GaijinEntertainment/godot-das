@@ -9,23 +9,58 @@
 
 // Always run from godot root!
 #define SRC_PATH "modules/daslang/src/"
+#define BOOST_PATH "modules/daslang/boost/"
 
 // TODO generate these automatically? How?
+// all these types should inherit from Object
 static std::vector<const char*> types = {
-    "Object",
-        "Node",
-            "CanvasItem",
-                "Node2D",
-                    "Sprite2D",
-                "Control",
-                    "Label",
-            "Viewport",
-                "Window",
-        "Resource",
-            "InputEvent",
-                "InputEventMouseButton",
-            "Texture2D"
+    "Node",
+        "CanvasItem",
+            "Node2D",
+                "Sprite2D",
+            "Control",
+                "Label",
+        "Viewport",
+            "Window",
+    "Resource",
+        "InputEvent",
+            "InputEventMouseButton",
+        "Texture2D"
 };
+
+void generate_godot_casts_gen_das() {
+    std::ofstream code(BOOST_PATH"godot_casts_gen.das", std::ios::out | std::ios::trunc);
+    // For now, as operates as GDScript as - return null if cast fail, and return null if casting null
+    code << "// This file is complitely generated\n";
+    code << "\n";
+    code << "// Object\n";
+    code << "\n";
+    code << "def operator as Object(native: Object?)\n";
+    code << "    return native\n";
+    code << "\n";
+    code << "def operator is Object(native: Object?)\n";
+    code << "    return true\n";
+    code << "\n";
+    for (auto& type : types) {
+        code << "// " << type << "\n";
+        code << "\n";
+        code << "def operator as " << type << "(native: " << type << "?)\n";
+        code << "    return native\n";
+        code << "\n";
+        code << "def operator as " << type << "(native: Object?)\n";
+        code << "    if _check_native_type_" << type << "(native)\n";
+        code << "        return unsafe(reinterpret<" << type << "?>(native))\n";
+        code << "    return null\n";
+        code << "\n";
+        code << "def operator is " << type << "(native: " << type << "?)\n";
+        code << "    return true\n";
+        code << "\n";
+        code << "def operator is " << type << "(native: Object?)\n";
+        code << "    return _check_native_type_" << type << "(native)\n";
+        code << "\n";
+    }
+    code.close();
+}
 
 
 void generate_godot_types_gen_h() {
@@ -39,8 +74,10 @@ void generate_godot_types_gen_h() {
     code << "#include \"godot_types_macro.h\"\n";
     code << "#include \"godot_all_includes.h\"\n";
     code << "\n";
+    code << "MAKE_NATIVE_TYPE_FACTORY(Object)\n";
+    code << "\n";
 
-   for (auto& type : types) {
+    for (auto& type : types) {
         code << "MAKE_NATIVE_TYPE_FACTORY(" << type << ")\n";
         code << "\n";
     }
@@ -61,20 +98,16 @@ void generate_godot_types_gen_cpp() {
     code << "void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {\n";
 
     HashSet<StringName> added;
-
+    code << "    BIND_NATIVE_BASE(Object)\n";
+    added.insert("Object");
     for (auto& type : types) {
         StringName parent = ClassDB::get_parent_class(type);
-        if (parent == "") {
-            code << "    BIND_NATIVE_BASE(" << type << ")\n";
-            added.insert(type);
-        } else {
-            // this allows to not bind types in the inheritance chain that are not needed
-            while (!added.has(parent)) {
-                parent = ClassDB::get_parent_class(parent);
-            }
-            code << "    BIND_NATIVE_TYPE(" << type << ", " << String(parent).utf8().get_data() << ")\n";
-            added.insert(type);
+        // this allows to not bind types in the inheritance chain that are not needed
+        while (!added.has(parent)) {
+            parent = ClassDB::get_parent_class(parent);
         }
+        code << "    BIND_NATIVE_TYPE(" << type << ", " << String(parent).utf8().get_data() << ")\n";
+        added.insert(type);
     }
 
     code << "}\n";
@@ -98,4 +131,5 @@ void generate_godot_module_code() {
     check_types();
     generate_godot_types_gen_h();
     generate_godot_types_gen_cpp();
+    generate_godot_casts_gen_das();
 }
