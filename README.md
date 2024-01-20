@@ -58,7 +58,15 @@ Use `linker=lld` or `linker=mold` because default `ld` is super slow
 
 **Important**: Daslang is built with `g++`, so make sure **not** to use `clang` for building Godot!
 
-*Temporary solution!* if you want to move godot folder, make sure to recompile it or set `COMPILE_FOR_IN_PLACE_TEST = False` in *SCSub*. Otherwise I recommend you leaving it because it removed the nessesety to recompile Godot every time you change `godot.das`
+### Code generation
+
+All files named *\*_gen.\** are generated. To regenerate them, run the binary with `--bind-das` option (place it after `--`):
+
+```
+bin/<your godot binary> -- --bind-das
+```
+
+Change `types` variable in *src/generate_bindings.cpp* to generate bindings for required types (tmp solution)
 
 ## Testing
 

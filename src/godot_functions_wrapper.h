@@ -36,8 +36,10 @@ struct escape<T*> {
 template <typename T>
 struct escape<const Ref<T>&> {
     typedef T* type;
-    _FORCE_INLINE_ static T* ret(T* t, das::Context *) {
-        return t;
+    _FORCE_INLINE_ static T* ret(Ref<T> t, das::Context *) {
+        // TODO THIS SOLUTION IS SUPER HACKY AND WILL CAUSE MEMORY LEAKS
+        t->reference();
+        return t.ptr();
     }
 };
 

@@ -26,6 +26,10 @@ src_list = [
     "src/das_script_instance.cpp",
     "src/das_resource_io.cpp",
 ]
+
+if "DEV_ENABLED" in env["CPPDEFINES"]:
+    src_list.append("src/generate_bindings.cpp")
+
 env_daslang.Append(CCFLAGS=["-w"]) # TODO suspend only warnings in Daslang headers
 env_daslang.Append(CPPPATH=["src", DASLANG_INCLUDE_PATH])
 env_daslang.add_source_files(env.modules_sources, src_list)

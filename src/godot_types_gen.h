@@ -1,47 +1,36 @@
-// This file should be complitely generated
+// This file is complitely generated
 
 #ifndef GODOT_TYPES_GEN_H
 #define GODOT_TYPES_GEN_H
 
 #include "godot_types_macro.h"
-
-
-#include "core/object/object.h"
+#include "godot_all_includes.h"
 
 MAKE_NATIVE_TYPE_FACTORY(Object)
 
-#include "scene/main/node.h"
-
 MAKE_NATIVE_TYPE_FACTORY(Node)
-
-#include "scene/main/canvas_item.h"
 
 MAKE_NATIVE_TYPE_FACTORY(CanvasItem)
 
-#include "scene/2d/node_2d.h"
-
 MAKE_NATIVE_TYPE_FACTORY(Node2D)
 
-#include "core/input/input.h"
-
-MAKE_NATIVE_TYPE_FACTORY(InputEvent)
-MAKE_NATIVE_TYPE_FACTORY(InputEventMouseButton)
-
-#include "scene/2d/sprite_2d.h"
 MAKE_NATIVE_TYPE_FACTORY(Sprite2D)
 
-#include "scene/resources/texture.h"
+MAKE_NATIVE_TYPE_FACTORY(Control)
 
-MAKE_NATIVE_TYPE_FACTORY(Resource)
-MAKE_NATIVE_TYPE_FACTORY(Texture2D)
+MAKE_NATIVE_TYPE_FACTORY(Label)
 
-#include "scene/main/window.h"
+MAKE_NATIVE_TYPE_FACTORY(Viewport)
 
 MAKE_NATIVE_TYPE_FACTORY(Window)
 
-#include "scene/gui/label.h"
+MAKE_NATIVE_TYPE_FACTORY(Resource)
 
-MAKE_NATIVE_TYPE_FACTORY(Label)
+MAKE_NATIVE_TYPE_FACTORY(InputEvent)
+
+MAKE_NATIVE_TYPE_FACTORY(InputEventMouseButton)
+
+MAKE_NATIVE_TYPE_FACTORY(Texture2D)
 
 
 #endif // GODOT_TYPES_GEN_H
