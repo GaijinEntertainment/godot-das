@@ -1,5 +1,7 @@
 // This file is complitely generated
 
+require godot_native
+
 // Object
 
 def operator as Object(native: Object?)

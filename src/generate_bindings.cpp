@@ -33,6 +33,8 @@ void generate_godot_casts_gen_das() {
     // For now, as operates as GDScript as - return null if cast fail, and return null if casting null
     code << "// This file is complitely generated\n";
     code << "\n";
+    code << "require godot_native\n";
+    code << "\n";
     code << "// Object\n";
     code << "\n";
     code << "def operator as Object(native: Object?)\n";
