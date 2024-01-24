@@ -48,19 +48,29 @@ T *creator() {
     das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_STATIC_MEMBER_CPP(CLASS::FUN));
 
 
-#define SET_DEFAULT_ARG_ENUM(CLASS, FUN, POSITION, TYPE, VALUE)\
-    _##CLASS##_##FUN##_func->arg_init(POSITION, das::make_smart<das::ExprConstEnumeration>(TYPE::INTERNAL_MODE_DISABLED, das::typeFactory<TYPE>::make(lib)));
-
 template <typename T>
-struct ExprConstTyped {};
+struct ExprConstTyped { };
 
 template <>
-struct ExprConstTyped<bool> {
-    typedef das::ExprConstBool type;
+struct ExprConstTyped<bool> { typedef das::ExprConstBool type; };
+
+template <typename T>
+struct ExprConstMakerEnum {
+    static auto make(T value, das::ModuleLibrary &lib) { return das::make_smart<das::ExprConstEnumeration>(value, das::typeFactory<T>::make(lib)); }
 };
 
-#define SET_DEFAULT_ARG_BASE(CLASS, FUN, POSITION, VALUE)\
-    _##CLASS##_##FUN##_func->arg_init(POSITION, das::make_smart<ExprConstTyped<decltype(VALUE)>::type>(VALUE));
+template <typename T>
+struct ExprConstMaker {
+    static auto make(T value, das::ModuleLibrary &) { return das::make_smart<typename ExprConstTyped<T>::type>(value); }
+};
+
+template <typename T>
+using ExprConstMakerCond = std::conditional_t<std::is_enum_v<T>, ExprConstMakerEnum<T>, ExprConstMaker<T>>;
+
+
+#define SET_DEFAULT_ARG(CLASS, FUN, POSITION, VALUE)\
+using  _##CLASS##_##FUN##_##POSITION = std::tuple_element_t<POSITION, _##CLASS##_##FUN::args>;\
+_##CLASS##_##FUN##_func->arg_init(POSITION, ExprConstMakerCond<_##CLASS##_##FUN##_##POSITION>::make(static_cast<_##CLASS##_##FUN##_##POSITION>(VALUE), lib));
 
 
 

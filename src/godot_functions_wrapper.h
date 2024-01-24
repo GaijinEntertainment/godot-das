@@ -92,6 +92,7 @@ struct das_call_godot_member < R (CC::*)(Args...),  func> {
         return escape<R>::ret( ((*THIS).*(func)) ( args... ) );
     }
     constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
+    typedef std::tuple<CC, Args...> args;
 };
 
 // no const, no return
@@ -103,6 +104,7 @@ struct das_call_godot_member < void (CC::*)(Args...),  func> {
         ((*THIS).*(func)) ( args... );
     }
     constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
+    typedef std::tuple<CC, Args...> args;
 };
 
 // const, return
@@ -114,6 +116,7 @@ struct das_call_godot_member < R (CC::*)(Args...) const,  func> {
         return escape<R>::ret( ((*THIS).*(func)) ( args... ), ctx);
     }
     constexpr static das::SideEffects effects = das::SideEffects::none;
+    typedef std::tuple<CC, Args...> args;
 };
 
 // const, no return
@@ -125,6 +128,7 @@ struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
         ((*THIS).*(func)) ( args... );
     }
     constexpr static das::SideEffects effects = das::SideEffects::none;
+    typedef std::tuple<CC, Args...> args;
 };
 
 // static variant
@@ -136,6 +140,7 @@ struct das_call_godot_static_member < R (*)(Args...), func> {
     }
     // modifyExternal - because, for example, random changes global random generator
     constexpr static das::SideEffects effects = das::SideEffects::modifyExternal;
+    typedef std::tuple<Args...> args;
 };
 
 // singleton variant
@@ -146,6 +151,7 @@ struct das_call_godot_singleton_member < R (CC::*)(Args...) const,  func> {
         RETURN( (CC::get_singleton()->*(func)) ( args... ) );
     }
     constexpr static das::SideEffects effects = das::SideEffects::accessExternal;
+    typedef std::tuple<Args...> args;
 };
 
 
