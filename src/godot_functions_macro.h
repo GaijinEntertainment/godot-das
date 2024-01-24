@@ -30,9 +30,10 @@ T *creator() {
     return memnew(T);
 }
 
-#define BIND_GODOT_MEMBER(CLASS, FUN)\
+#define BIND_GODOT_MEMBER(CLASS, FUN, ...)\
     using _##CLASS##_##FUN = DAS_CALL_GODOT_MEMBER(CLASS::FUN);\
-    das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));
+    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));\
+     _##CLASS##_##FUN##_func->args({"this", ##__VA_ARGS__, "ctx", "at"});
 
 #define BIND_GODOT_CTOR(CLASS)\
     das::addExtern<DAS_BIND_FUN(creator<CLASS>)>(*this, lib, #CLASS"`new", das::SideEffects::modifyExternal, "creator<"#CLASS">");
