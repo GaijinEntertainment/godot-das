@@ -48,4 +48,20 @@ T *creator() {
     das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_STATIC_MEMBER_CPP(CLASS::FUN));
 
 
+#define SET_DEFAULT_ARG_ENUM(CLASS, FUN, POSITION, TYPE, VALUE)\
+    _##CLASS##_##FUN##_func->arg_init(POSITION, das::make_smart<das::ExprConstEnumeration>(TYPE::INTERNAL_MODE_DISABLED, das::typeFactory<TYPE>::make(lib)));
+
+template <typename T>
+struct ExprConstTyped {};
+
+template <>
+struct ExprConstTyped<bool> {
+    typedef das::ExprConstBool type;
+};
+
+#define SET_DEFAULT_ARG_BASE(CLASS, FUN, POSITION, VALUE)\
+    _##CLASS##_##FUN##_func->arg_init(POSITION, das::make_smart<ExprConstTyped<decltype(VALUE)>::type>(VALUE));
+
+
+
 #endif // GODOT_FUNCTIONS_MACRO_H

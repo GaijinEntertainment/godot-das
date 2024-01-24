@@ -34,15 +34,4 @@ void Module_Godot::bind_functions_extra(das::ModuleLibrary & lib) {
     BIND_GODOT_SINGLETON_MEMBER(Engine, get_frames_per_second)
     BIND_GODOT_BUILTIN_FUNCTION(VariantUtilityFunctions, randf_range)
 
-	using _Node_add_child = DAS_CALL_GODOT_MEMBER(Node::add_child);
-	auto func = das::addExtern<DAS_BIND_FUN(_Node_add_child::invoke)>(*this, lib, "add_child", _Node_add_child::effects, DAS_CALL_GODOT_MEMBER_CPP(Node::add_child));
-    func->args({"this", "child","force_readable_name", "internal", "ctx", "at"})
-		->arg_init(2, das::make_smart<das::ExprConstBool>(false))
-		->arg_init(3, das::make_smart<das::ExprConstEnumeration>(Node::InternalMode::INTERNAL_MODE_DISABLED, das::typeFactory<Node::InternalMode>::make(lib)));
-
-	using _Node_find_child = DAS_CALL_GODOT_MEMBER(Node::find_child);
-	das::addExtern<DAS_BIND_FUN(_Node_find_child::invoke)>(*this, lib, "find_child", _Node_find_child::effects, DAS_CALL_GODOT_MEMBER_CPP(Node::find_child))->
-    args({"this", "pattern", "recursive", "owned", "ctx", "at"})->
-    arg_init(2, das::make_smart<das::ExprConstBool>(false))->
-    arg_init(3, das::make_smart<das::ExprConstBool>(false));
 }

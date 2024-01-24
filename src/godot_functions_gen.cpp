@@ -14,12 +14,18 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     BIND_GODOT_CTOR(Object)
     // Node
     BIND_GODOT_CTOR(Node)
-    //BIND_GODOT_MEMBER(Node, find_child)
+    BIND_GODOT_MEMBER(Node, find_child, "pattern", "recursive", "owned")
+    SET_DEFAULT_ARG_BASE(Node, find_child, 2, true)
+    SET_DEFAULT_ARG_BASE(Node, find_child, 3, true)
     BIND_GODOT_MEMBER(Node, get_name)
     BIND_GODOT_MEMBER(Node, get_parent)
     BIND_GODOT_MEMBER(Node, get_child, "index", "include_internal")
+    SET_DEFAULT_ARG_BASE(Node, get_child, 2, false)
     BIND_GODOT_MEMBER(Node, get_child_count, "include_internal")
-    //BIND_GODOT_MEMBER(Node, add_child)
+    SET_DEFAULT_ARG_BASE(Node, get_child_count, 1, false)
+    BIND_GODOT_MEMBER(Node, add_child, "child", "force_readable_name", "internal")
+    SET_DEFAULT_ARG_BASE(Node, add_child, 2, false)
+    SET_DEFAULT_ARG_ENUM(Node, add_child, 3, Node::InternalMode, INTERNAL_MODE_DISABLED)
     BIND_GODOT_MEMBER(Node, get_window)
     // CanvasItem
     // note: cannot be created
