@@ -41,7 +41,7 @@ void generate_godot_casts_gen_das() {
     code << "def operator is Object(native: Object?)\n";
     code << "    return true\n";
     code << "\n";
-    for (auto& type : types) {
+    for (auto type : types) {
         code << "// " << type << "\n";
         code << "\n";
         code << "def operator as " << type << "(native: " << type << "?)\n";
@@ -100,7 +100,7 @@ void generate_godot_types_gen_cpp() {
     HashSet<StringName> added;
     code << "    BIND_NATIVE_BASE(Object)\n";
     added.insert("Object");
-    for (auto& type : types) {
+    for (auto type : types) {
         StringName parent = ClassDB::get_parent_class(type);
         // this allows to not bind types in the inheritance chain that are not needed
         while (!added.has(parent)) {
@@ -114,9 +114,58 @@ void generate_godot_types_gen_cpp() {
     code.close();
 }
 
+// void generate_godot_functions_gen_cpp() {
+//     std::ofstream code(SRC_PATH"godot_functions_gen.cpp", std::ios::out | std::ios::trunc);
+//     code << "// This file is complitely generated\n";
+//     code << "\n";
+//     code << "#include \"godot_module.h\"\n";
+//     code << "\n";
+//     code << "#include \"godot_types_gen.h\"\n";
+//     code << "#include \"godot_types_extra.h\"\n";
+//     code << "\n";
+//     code << "#include \"godot_functions_wrapper.h\"\n";
+//     code << "\n";
+//     code << "\n";
+//     code << "void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {\n";
+
+//     code << "    // Object\n";
+//     code << "    BIND_GODOT_CTOR(Object)\n";
+//     for (auto type : types) {
+//         code << "    // " << type << "\n";
+//         if (ClassDB::can_instantiate(type)) {
+//             code << "    BIND_GODOT_CTOR(" << type << ")\n";
+//         }
+//         List<MethodInfo> methods;
+//         ClassDB::get_method_list(type, &methods, true, false);
+//         for (int i = 0; i < methods.size(); i++) {
+//             auto& method = methods[i];
+//             if (method.flags & METHOD_FLAG_VIRTUAL) {
+//                 // virtual methods should not be called from script
+//                 continue;
+//             }
+//             if (method.flags & METHOD_FLAG_VARARG) {
+//                 // too complicated
+//                 continue;
+//             }
+//             if (static_cast<char32_t>(method.name[0]) == static_cast<char32_t>('_')) {
+//                 // private methods should not be called from script
+//                 continue;
+//             }
+//             if (method.flags & METHOD_FLAG_STATIC) {
+//                 // TODO
+//                 continue;
+//             }
+
+//             code << "    BIND_GODOT_MEMBER(" << type << ", " << method.name.utf8().get_data() << ")\n";
+//         }
+//     }
+//     code << "}\n";
+//     code.close();
+// }
+
 void check_types() {
     std::vector<const char*> filtered_types;
-    for (auto& type : types) {
+    for (auto type : types) {
         if (!ClassDB::class_exists(type)) {
             std::cerr << "Class " << type << " does not exist, skipping\n";
             continue;
@@ -132,4 +181,5 @@ void generate_godot_module_code() {
     generate_godot_types_gen_h();
     generate_godot_types_gen_cpp();
     generate_godot_casts_gen_das();
+    //generate_godot_functions_gen_cpp();
 }

@@ -48,6 +48,4 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     // InputEventMouseButton
     BIND_GODOT_MEMBER(InputEventMouseButton, get_button_index)
 
-    BIND_GODOT_SINGLETON_MEMBER(Engine, get_frames_per_second)
-    BIND_GODOT_BUILTIN_FUNCTION(VariantUtilityFunctions, randf_range)
 }
