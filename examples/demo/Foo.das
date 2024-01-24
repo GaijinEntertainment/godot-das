@@ -29,7 +29,7 @@ class Foo
 			let translation = Vector2(300, 0)
 			child as Node2D |> translate(translation)
 
-		center = parent |> find_child("Center", true, true) as Node2D
+		center = parent |> find_child("Center") as Node2D
 		print("parent is Node2D={parent is Node2D}")
 		print("{parent |> get_name()}, {native |> get_name()}, {center |> get_name()}")
 

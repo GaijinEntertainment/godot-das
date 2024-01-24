@@ -29,8 +29,8 @@ class Bunnymark
 	bunny_texture : Texture2D?
 
 	def _ready()
-		bunnies = native |> find_child("Bunnies", false, false) as Node2D
-		fps_counter = native |> find_child("FPS", false, false) as Label
+		bunnies = native |> find_child("Bunnies") as Node2D
+		fps_counter = native |> find_child("FPS") as Label
 
 		bunny_texture = native |> load("res://bunny.png") as Texture2D
 		top_left = bunny_texture |> get_size() * 0.5
@@ -53,7 +53,7 @@ class Bunnymark
 		bunny.native |> set_texture(bunny_texture)
 		bunny.native |> set_modulate(colors[generation % colors |> length()])
 		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5d, 1.5d))
-		bunnies |> add_child(bunny.native, false, Node_InternalMode INTERNAL_MODE_DISABLED)
+		bunnies |> add_child(bunny.native)
 
 	def _process(delta: float)
 		for node in bunnies |> get_children()

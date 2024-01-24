@@ -14,12 +14,12 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     BIND_GODOT_CTOR(Object)
     // Node
     BIND_GODOT_CTOR(Node)
-    BIND_GODOT_MEMBER(Node, find_child)
+    //BIND_GODOT_MEMBER(Node, find_child)
     BIND_GODOT_MEMBER(Node, get_name)
     BIND_GODOT_MEMBER(Node, get_parent)
     BIND_GODOT_MEMBER(Node, get_child)
     BIND_GODOT_MEMBER(Node, get_child_count)
-    BIND_GODOT_MEMBER(Node, add_child)
+    //BIND_GODOT_MEMBER(Node, add_child)
     BIND_GODOT_MEMBER(Node, get_window)
     // CanvasItem
     // note: cannot be created
