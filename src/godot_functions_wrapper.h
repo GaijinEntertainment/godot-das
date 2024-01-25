@@ -49,11 +49,8 @@ struct escape<const Ref<T>&> {
 #include "core/math/vector2i.h"
 // TODO just bind Vector2i lol
 template <>
-struct escape<Vector2i> {
+struct escape<Vector2i>: default_return<Vector2> {
     typedef Vector2 type;
-    _FORCE_INLINE_ static Vector2 ret(Vector2 t, das::Context *) {
-        return t;
-    }
 };
 
 #include "core/string/ustring.h"
@@ -92,7 +89,7 @@ struct das_call_godot_member < R (CC::*)(Args...),  func> {
         return escape<R>::ret( ((*THIS).*(func)) ( args... ) );
     }
     constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
-    typedef std::tuple<CC, Args...> args;
+    typedef std::tuple<CC, ESCAPE_ARGS> args;
 };
 
 // no const, no return
@@ -104,7 +101,7 @@ struct das_call_godot_member < void (CC::*)(Args...),  func> {
         ((*THIS).*(func)) ( args... );
     }
     constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
-    typedef std::tuple<CC, Args...> args;
+    typedef std::tuple<CC, ESCAPE_ARGS> args;
 };
 
 // const, return
@@ -116,7 +113,7 @@ struct das_call_godot_member < R (CC::*)(Args...) const,  func> {
         return escape<R>::ret( ((*THIS).*(func)) ( args... ), ctx);
     }
     constexpr static das::SideEffects effects = das::SideEffects::none;
-    typedef std::tuple<CC, Args...> args;
+    typedef std::tuple<CC, ESCAPE_ARGS> args;
 };
 
 // const, no return
@@ -128,7 +125,7 @@ struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
         ((*THIS).*(func)) ( args... );
     }
     constexpr static das::SideEffects effects = das::SideEffects::none;
-    typedef std::tuple<CC, Args...> args;
+    typedef std::tuple<CC, ESCAPE_ARGS> args;
 };
 
 // static variant
@@ -140,7 +137,7 @@ struct das_call_godot_static_member < R (*)(Args...), func> {
     }
     // modifyExternal - because, for example, random changes global random generator
     constexpr static das::SideEffects effects = das::SideEffects::modifyExternal;
-    typedef std::tuple<Args...> args;
+    typedef std::tuple<ESCAPE_ARGS> args;
 };
 
 // singleton variant
@@ -151,7 +148,7 @@ struct das_call_godot_singleton_member < R (CC::*)(Args...) const,  func> {
         RETURN( (CC::get_singleton()->*(func)) ( args... ) );
     }
     constexpr static das::SideEffects effects = das::SideEffects::accessExternal;
-    typedef std::tuple<Args...> args;
+    typedef std::tuple<ESCAPE_ARGS> args;
 };
 
 

@@ -103,6 +103,8 @@
         "ios": "cpp",
         "locale": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "__memory": "cpp",
+        "filesystem": "cpp"
     }
 }

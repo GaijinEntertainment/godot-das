@@ -74,22 +74,6 @@ def operator is Sprite2D(native: Sprite2D?)
 def operator is Sprite2D(native: Object?)
     return _check_native_type_Sprite2D(native)
 
-// Control
-
-def operator as Control(native: Control?)
-    return native
-
-def operator as Control(native: Object?)
-    if _check_native_type_Control(native)
-        return unsafe(reinterpret<Control?>(native))
-    return null
-
-def operator is Control(native: Control?)
-    return true
-
-def operator is Control(native: Object?)
-    return _check_native_type_Control(native)
-
 // Label
 
 def operator as Label(native: Label?)
@@ -105,22 +89,6 @@ def operator is Label(native: Label?)
 
 def operator is Label(native: Object?)
     return _check_native_type_Label(native)
-
-// Viewport
-
-def operator as Viewport(native: Viewport?)
-    return native
-
-def operator as Viewport(native: Object?)
-    if _check_native_type_Viewport(native)
-        return unsafe(reinterpret<Viewport?>(native))
-    return null
-
-def operator is Viewport(native: Viewport?)
-    return true
-
-def operator is Viewport(native: Object?)
-    return _check_native_type_Viewport(native)
 
 // Window
 

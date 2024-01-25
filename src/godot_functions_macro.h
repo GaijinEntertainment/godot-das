@@ -30,10 +30,12 @@ T *creator() {
     return memnew(T);
 }
 
-#define BIND_GODOT_MEMBER(CLASS, FUN, ...)\
+#define BIND_GODOT_MEMBER_RENAME(CLASS, FUN, DAS_FUN, ...)\
     using _##CLASS##_##FUN = DAS_CALL_GODOT_MEMBER(CLASS::FUN);\
-    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));\
+    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #DAS_FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));\
      _##CLASS##_##FUN##_func->args({"this", ##__VA_ARGS__, "ctx", "at"});
+
+#define BIND_GODOT_MEMBER(CLASS, FUN, ...) BIND_GODOT_MEMBER_RENAME(CLASS, FUN, FUN, ##__VA_ARGS__)
 
 #define BIND_GODOT_CTOR(CLASS)\
     das::addExtern<DAS_BIND_FUN(creator<CLASS>)>(*this, lib, #CLASS"`new", das::SideEffects::modifyExternal, "creator<"#CLASS">");
@@ -48,11 +50,21 @@ T *creator() {
     das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_STATIC_MEMBER_CPP(CLASS::FUN));
 
 
-template <typename T>
-struct ExprConstTyped { };
+template <typename T> struct ExprConstTyped { };
 
-template <>
-struct ExprConstTyped<bool> { typedef das::ExprConstBool type; };
+template <> struct ExprConstTyped<bool> { typedef das::ExprConstBool expr_type; };
+template <> struct ExprConstTyped<int> { typedef das::ExprConstInt expr_type; };
+template <> struct ExprConstTyped<double> { typedef das::ExprConstDouble expr_type; };
+template <> struct ExprConstTyped<float> { typedef das::ExprConstFloat expr_type; };
+template <> struct ExprConstTyped<const char*> { typedef das::ExprConstString expr_type; };
+template <> struct ExprConstTyped<das::float2> { typedef das::ExprConstFloat2 expr_type; };
+template <> struct ExprConstTyped<das::int2> { typedef das::ExprConstInt2 expr_type; };
+
+// tmp solution for aliases
+// these types are not converted to das types with `escape` because they are aliases
+// but they need to be converted here to form a proper const expr
+template <typename T> struct ExprAliasConv { typedef T type; };
+template <> struct ExprAliasConv<const Vector2&> { typedef das::float2 type; };
 
 template <typename T>
 struct ExprConstMakerEnum {
@@ -61,7 +73,7 @@ struct ExprConstMakerEnum {
 
 template <typename T>
 struct ExprConstMaker {
-    static auto make(T value, das::ModuleLibrary &) { return das::make_smart<typename ExprConstTyped<T>::type>(value); }
+    static auto make(T value, das::ModuleLibrary &) { return das::make_smart<typename ExprConstTyped<T>::expr_type>(value); }
 };
 
 template <typename T>
@@ -69,7 +81,7 @@ using ExprConstMakerCond = std::conditional_t<std::is_enum_v<T>, ExprConstMakerE
 
 
 #define SET_DEFAULT_ARG(CLASS, FUN, POSITION, VALUE)\
-using  _##CLASS##_##FUN##_##POSITION = std::tuple_element_t<POSITION, _##CLASS##_##FUN::args>;\
+using  _##CLASS##_##FUN##_##POSITION = ExprAliasConv<std::tuple_element_t<POSITION, _##CLASS##_##FUN::args>>::type;\
 _##CLASS##_##FUN##_func->arg_init(POSITION, ExprConstMakerCond<_##CLASS##_##FUN##_##POSITION>::make(static_cast<_##CLASS##_##FUN##_##POSITION>(VALUE), lib));
 
 
