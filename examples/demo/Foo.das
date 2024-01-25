@@ -19,11 +19,14 @@ class Foo
 				print("left")
 			if mouse_event |> get_button_index() == MouseButton RIGHT
 				print("right")
+			if mouse_event |> get_button_index() == MouseButton MIDDLE
+				print("parent is ready? {native |> get_parent() as Node |> is_node_ready()}")
 
 
 	def _ready()
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
+		print("parent is ready? {parent |> is_node_ready()}")
 
 		for child in parent |> iterate_children()
 			let translation = Vector2(300, 0)

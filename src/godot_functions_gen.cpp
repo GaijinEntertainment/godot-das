@@ -26,6 +26,7 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     SET_DEFAULT_ARG(Node, add_child, 2, false)
     SET_DEFAULT_ARG(Node, add_child, 3, 0)
     BIND_GODOT_MEMBER(Node, get_window)
+    BIND_GODOT_MEMBER_RENAME(Node, is_ready, is_node_ready)
     // CanvasItem
     BIND_GODOT_MEMBER(CanvasItem, get_global_mouse_position)
     BIND_GODOT_MEMBER(CanvasItem, set_modulate, "modulate")

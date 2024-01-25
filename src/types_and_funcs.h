@@ -16,6 +16,7 @@ static std::map<const char*, std::vector<const char*>> types = {
         "get_child_count",
         "add_child",
         "get_window",
+        "is_node_ready"
     }},
         {"CanvasItem", {
             "get_global_mouse_position",
@@ -48,6 +49,16 @@ static std::map<const char*, std::vector<const char*>> types = {
         {"Texture2D", {
             "get_size",
         }}
+};
+
+struct less_c_str {
+    bool operator()(const char* a, const char* b) const {
+        return strcmp(a, b) < 0;
+    }
+};
+
+static std::map<const char*, std::map<const char*, const char*>, less_c_str> exceptions = {
+    {"Node", {{"is_node_ready", "is_ready"}}},
 };
 
 #endif // TYPES_AND_FUNCS_H

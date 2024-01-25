@@ -150,8 +150,11 @@ void generate_godot_functions_gen_cpp() {
                 // TODO
                 continue;
             }
-
-            code << "    BIND_GODOT_MEMBER(" << type << ", " << STR(method.name);
+            if (exceptions.find(type) != exceptions.end() && exceptions[type].find(method_name) != exceptions[type].end()){
+                code << "    BIND_GODOT_MEMBER_RENAME(" << type << ", " << exceptions[type][method_name] << ", " << STR(method.name);
+            } else {
+                code << "    BIND_GODOT_MEMBER(" << type << ", " << STR(method.name);
+            }
             for (auto& arg: method.arguments) {
                 code << ", \"" << STR(arg.name) << '"';
             }
