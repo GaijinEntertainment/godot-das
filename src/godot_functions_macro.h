@@ -32,7 +32,7 @@ T *creator() {
 
 #define BIND_GODOT_MEMBER_RENAME(CLASS, FUN, DAS_FUN, ...)\
     using _##CLASS##_##FUN = DAS_CALL_GODOT_MEMBER(CLASS::FUN);\
-    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #DAS_FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));\
+    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke), _##CLASS##_##FUN::simnode::type>(*this, lib, #DAS_FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_MEMBER_CPP(CLASS::FUN));\
      _##CLASS##_##FUN##_func->args({"this", ##__VA_ARGS__, "ctx", "at"});
 
 #define BIND_GODOT_MEMBER(CLASS, FUN, ...) BIND_GODOT_MEMBER_RENAME(CLASS, FUN, FUN, ##__VA_ARGS__)

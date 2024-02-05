@@ -16,7 +16,8 @@ static std::map<const char*, std::vector<const char*>> types = {
         "get_child_count",
         "add_child",
         "get_window",
-        "is_node_ready"
+        "is_node_ready",
+        "get_children",
     }},
         {"CanvasItem", {
             "get_global_mouse_position",
@@ -30,6 +31,9 @@ static std::map<const char*, std::vector<const char*>> types = {
             }},
                 {"Sprite2D", {
                     "set_texture",
+                }},
+                {"Area2D", {
+                    "get_overlapping_areas",
                 }},
             {"Label", {
                 "set_text",

@@ -74,6 +74,22 @@ def operator is Sprite2D(native: Sprite2D?)
 def operator is Sprite2D(native: Object?)
     return _check_native_type_Sprite2D(native)
 
+// Area2D
+
+def operator as Area2D(native: Area2D?)
+    return native
+
+def operator as Area2D(native: Object?)
+    if _check_native_type_Area2D(native)
+        return unsafe(reinterpret<Area2D?>(native))
+    return null
+
+def operator is Area2D(native: Area2D?)
+    return true
+
+def operator is Area2D(native: Object?)
+    return _check_native_type_Area2D(native)
+
 // Label
 
 def operator as Label(native: Label?)

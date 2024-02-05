@@ -6,7 +6,7 @@
 #define MAKE_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE, TYPE)
 
 #define BIND_NATIVE_BASE(TYPE)\
-struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
+struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE, false, false> {\
     TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE, ml) { }\
     bool hasNonTrivialCtor() const override { return false; } /* tmp solution so types (not ptrs) can be returned */\
 };\
@@ -14,12 +14,12 @@ das::smart_ptr<TYPE##Annotation> TYPE##ManagedStructureAnnotation = das::make_sm
 addAnnotation(TYPE##ManagedStructureAnnotation);\
 
 #define BIND_NATIVE_TYPE(TYPE, PARENT)\
-struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE> {\
+struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE, false, false> {\
     das::TypeDeclPtr parentType;\
-    das::smart_ptr<das::ManagedStructureAnnotation<PARENT>> parent_annotation;\
+    das::smart_ptr<das::ManagedStructureAnnotation<PARENT, false, false>> parent_annotation;\
     \
     TYPE##Annotation(das::ModuleLibrary & ml,\
-                     das::smart_ptr<das::ManagedStructureAnnotation<PARENT>> parent_annotation) :\
+                     das::smart_ptr<das::ManagedStructureAnnotation<PARENT, false, false>> parent_annotation) :\
                      ManagedStructureAnnotation(#TYPE, ml),\
                      parent_annotation(parent_annotation),\
                      parentType(das::makeType<PARENT>(ml)) {}\

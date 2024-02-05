@@ -27,8 +27,9 @@ class Foo
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
 		print("parent is ready? {parent |> is_node_ready()}")
-
-		for child in parent |> iterate_children()
+		
+		var inscope children <- parent |> get_children()
+		for child in children
 			let translation = Vector2(300, 0)
 			child as Node2D |> translate(translation)
 

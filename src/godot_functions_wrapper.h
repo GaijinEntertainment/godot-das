@@ -10,6 +10,20 @@
 // 1. godot_functions_macro.h can be used elsewhere (it was used in godot_utils.cpp originally)
 // 2. if this file was merged into godot_functions_macro.h it would be too cluttered
 
+
+template <typename T>
+struct simnode_chooser {
+    template <typename FuncT, FuncT fun>
+    using type = das::SimNode_ExtFuncCall<FuncT, fun>;
+};
+
+template <typename TT>
+struct simnode_chooser<TypedArray<TT>> {
+    template <typename FuncT, FuncT fun>
+    using type = das::SimNode_ExtFuncCallAndCopyOrMove<FuncT, fun>;
+};
+
+
 template <typename T>
 struct default_return {
     _FORCE_INLINE_ static T&& ret(T&& t, das::Context *ctx) {
@@ -22,12 +36,35 @@ struct escape : default_return<T> {
     typedef T type;
 };
 
-
 template <typename T>
 struct escape<T*> {
     typedef T* type;
     _FORCE_INLINE_ static T* ret(T* t, das::Context *) {
         return t;
+    }
+};
+
+
+#include "core/variant/typed_array.h"
+
+template <typename T>
+struct escape<TypedArray<T>> {
+    typedef das::TArray<T*> type;
+
+    _FORCE_INLINE_ static das::TArray<T*> ret(const TypedArray<T>& t, das::Context *ctx) {
+        das::TArray<T*> array;
+        array.data = nullptr;
+        array.size = 0;
+        array.capacity = 0;
+        array.lock = 0;
+        int new_size = t.size();
+        if (new_size > 0) {
+            das::array_resize(*ctx, array, t.size(), sizeof(T), false, nullptr);
+            for (int i = 0; i < t.size(); i++) {
+                array[i] = reinterpret_cast<T*>(t[i].operator Object*());
+            }
+        }
+        return array;
     }
 };
 
@@ -73,6 +110,10 @@ struct escape<StringName> {
     }
 };
 
+// TODO escape const T& more generally
+template<>
+struct escape<const StringName&> : escape<StringName> {};
+
 #define RETURN(V) return escape<decltype(V)>::ret(V, ctx);
 #define ESCAPE(T) typename escape<T>::type
 #define ESCAPE_R ESCAPE(R)
@@ -86,10 +127,11 @@ template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) >
 struct das_call_godot_member < R (CC::*)(Args...),  func> {
     static ESCAPE_R invoke ( CC * THIS, ESCAPE_ARGS args, CTX_AT) {
         CHECK_IF_NULL(THIS)
-        return escape<R>::ret( ((*THIS).*(func)) ( args... ) );
+        RETURN( ((*THIS).*(func)) ( args... ) );
     }
     constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
     typedef std::tuple<CC, ESCAPE_ARGS> args;
+    typedef simnode_chooser<R> simnode;
 };
 
 // no const, no return
@@ -102,6 +144,7 @@ struct das_call_godot_member < void (CC::*)(Args...),  func> {
     }
     constexpr static das::SideEffects effects = das::SideEffects::modifyArgument;
     typedef std::tuple<CC, ESCAPE_ARGS> args;
+    typedef simnode_chooser<void> simnode;
 };
 
 // const, return
@@ -110,10 +153,11 @@ template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) cons
 struct das_call_godot_member < R (CC::*)(Args...) const,  func> {
     static ESCAPE_R invoke ( const CC * THIS, ESCAPE_ARGS args, CTX_AT) {
         CHECK_IF_NULL(THIS)
-        return escape<R>::ret( ((*THIS).*(func)) ( args... ), ctx);
+        RETURN( ((*THIS).*(func)) ( args... ) );
     }
     constexpr static das::SideEffects effects = das::SideEffects::none;
     typedef std::tuple<CC, ESCAPE_ARGS> args;
+    typedef simnode_chooser<R> simnode;
 };
 
 // const, no return
@@ -126,6 +170,7 @@ struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
     }
     constexpr static das::SideEffects effects = das::SideEffects::none;
     typedef std::tuple<CC, ESCAPE_ARGS> args;
+    typedef simnode_chooser<void> simnode;
 };
 
 // static variant
@@ -133,11 +178,11 @@ struct das_call_godot_member < void (CC::*)(Args...) const,  func> {
 template <typename R, typename ...Args, R (*func)(Args...) >
 struct das_call_godot_static_member < R (*)(Args...), func> {
     static ESCAPE_R invoke (ESCAPE_ARGS args, CTX_AT) {
-        return escape<R>::ret( (*func) ( args... ), ctx );
+        RETURN( (*func) ( args... ) );
     }
     // modifyExternal - because, for example, random changes global random generator
     constexpr static das::SideEffects effects = das::SideEffects::modifyExternal;
-    typedef std::tuple<ESCAPE_ARGS> args;
+    typedef typename std::tuple<ESCAPE_ARGS> args;
 };
 
 // singleton variant

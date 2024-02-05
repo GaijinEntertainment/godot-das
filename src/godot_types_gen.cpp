@@ -9,6 +9,7 @@ void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {
     BIND_NATIVE_TYPE(CanvasItem, Node)
     BIND_NATIVE_TYPE(Node2D, CanvasItem)
     BIND_NATIVE_TYPE(Sprite2D, Node2D)
+    BIND_NATIVE_TYPE(Area2D, Node2D)
     BIND_NATIVE_TYPE(Label, CanvasItem)
     BIND_NATIVE_TYPE(Window, Node)
     BIND_NATIVE_TYPE(Resource, Object)

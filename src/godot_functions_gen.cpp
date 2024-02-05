@@ -27,6 +27,8 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     SET_DEFAULT_ARG(Node, add_child, 3, 0)
     BIND_GODOT_MEMBER(Node, get_window)
     BIND_GODOT_MEMBER_RENAME(Node, is_ready, is_node_ready)
+    BIND_GODOT_MEMBER(Node, get_children, "include_internal")
+    SET_DEFAULT_ARG(Node, get_children, 1, false)
     // CanvasItem
     BIND_GODOT_MEMBER(CanvasItem, get_global_mouse_position)
     BIND_GODOT_MEMBER(CanvasItem, set_modulate, "modulate")
@@ -39,6 +41,9 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     // Sprite2D
     BIND_GODOT_CTOR(Sprite2D)
     BIND_GODOT_MEMBER(Sprite2D, set_texture, "texture")
+    // Area2D
+    BIND_GODOT_CTOR(Area2D)
+    BIND_GODOT_MEMBER(Area2D, get_overlapping_areas)
     // Label
     BIND_GODOT_CTOR(Label)
     BIND_GODOT_MEMBER(Label, set_text, "text")
