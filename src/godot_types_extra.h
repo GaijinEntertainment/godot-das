@@ -21,16 +21,6 @@ template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 DAS_BIND_ENUM_CAST(MouseButton)
 DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
 
-#include "scene/main/node.h"
-
-DAS_BIND_ENUM_CAST(Node::InternalMode)
-DAS_BASE_BIND_ENUM(Node::InternalMode, Node_InternalMode, INTERNAL_MODE_DISABLED, INTERNAL_MODE_FRONT, INTERNAL_MODE_BACK)
-
-#include "scene/resources/packed_scene.h"
-
-DAS_BIND_ENUM_CAST(PackedScene::GenEditState)
-DAS_BASE_BIND_ENUM(PackedScene::GenEditState, PackedScene_GenEditState, GEN_EDIT_STATE_DISABLED, GEN_EDIT_STATE_INSTANCE, GEN_EDIT_STATE_MAIN, GEN_EDIT_STATE_MAIN_INHERITED)
-
 #include "core/variant/variant_utility.h"
 #include "core/config/engine.h"
 

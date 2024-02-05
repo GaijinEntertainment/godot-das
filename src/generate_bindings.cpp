@@ -70,6 +70,23 @@ void generate_godot_types_gen_h() {
         const char* type = type_and_funcs.first;
         code << "MAKE_NATIVE_TYPE_FACTORY(" << type << ")\n";
         code << "\n";
+        List<StringName> enums;
+        ClassDB::get_enum_list(type, &enums, true);
+        for (auto& enum_name : enums) {
+            code << "DAS_BIND_ENUM_CAST(" << type << "::" << STR(enum_name) << ")\n";
+            // TODO fix DAS_BASE_BIND_ENUM macro so ` can be used in enum name (instead of _)
+            code << "DAS_BASE_BIND_ENUM(" << type << "::" << STR(enum_name) << ", " << type << "_" << STR(enum_name) << ", ";
+            List<StringName> enum_constants;
+            ClassDB::get_enum_constants(type, enum_name, &enum_constants, true);
+            for (int i = 0; i < enum_constants.size(); i++) {
+                code << STR(enum_constants[i]);
+                if (i != enum_constants.size() - 1) {
+                    code << ", ";
+                }
+            }
+            code << ")\n";
+            code << "\n";
+        }
     }
 
     code << "\n";
@@ -98,6 +115,11 @@ void generate_godot_types_gen_cpp() {
             parent = ClassDB::get_parent_class(parent);
         }
         code << "    BIND_NATIVE_TYPE(" << type << ", " << STR(parent) << ")\n";
+        List<StringName> enums;
+        ClassDB::get_enum_list(type, &enums, true);
+        for (auto& enum_name : enums) {
+            code << "    BIND_ENUM(" << type << ", " << STR(enum_name) << ")\n";
+        }
         added.insert(type);
     }
 

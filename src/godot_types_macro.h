@@ -51,4 +51,7 @@ struct das::typeFactory<TYPE>{\
     }\
 };
 
+#define BIND_ENUM(TYPE, ENUM) addEnumeration(das::make_smart<Enumeration##TYPE##_##ENUM>());
+
+
 #endif // GODOT_TYPES_H
