@@ -29,6 +29,7 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     BIND_GODOT_MEMBER_RENAME(Node, is_ready, is_node_ready)
     BIND_GODOT_MEMBER(Node, get_children, "include_internal")
     SET_DEFAULT_ARG(Node, get_children, 1, false)
+    BIND_GODOT_MEMBER(Node, queue_free)
     // CanvasItem
     BIND_GODOT_MEMBER(CanvasItem, get_global_mouse_position)
     BIND_GODOT_MEMBER(CanvasItem, set_modulate, "modulate")
@@ -38,6 +39,7 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     BIND_GODOT_MEMBER(Node2D, translate, "offset")
     BIND_GODOT_MEMBER(Node2D, get_position)
     BIND_GODOT_MEMBER(Node2D, set_position, "position")
+    BIND_GODOT_MEMBER(Node2D, set_rotation, "radians")
     // Sprite2D
     BIND_GODOT_CTOR(Sprite2D)
     BIND_GODOT_MEMBER(Sprite2D, set_texture, "texture")
@@ -51,6 +53,9 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     BIND_GODOT_CTOR(Window)
     BIND_GODOT_MEMBER(Window, get_size)
     // Resource
+    // PackedScene
+    BIND_GODOT_MEMBER(PackedScene, instantiate, "edit_state")
+    SET_DEFAULT_ARG(PackedScene, instantiate, 1, 0)
     // InputEvent
     BIND_GODOT_MEMBER(InputEvent, is_pressed)
     // InputEventMouseButton

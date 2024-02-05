@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <string.h>
 
 
 // TODO generate these automatically? How?
@@ -18,6 +19,7 @@ static std::map<const char*, std::vector<const char*>> types = {
         "get_window",
         "is_node_ready",
         "get_children",
+        "queue_free",
     }},
         {"CanvasItem", {
             "get_global_mouse_position",
@@ -28,6 +30,7 @@ static std::map<const char*, std::vector<const char*>> types = {
                 "translate",
                 "get_position",
                 "set_position",
+                "set_rotation",
             }},
                 {"Sprite2D", {
                     "set_texture",
@@ -44,6 +47,9 @@ static std::map<const char*, std::vector<const char*>> types = {
     {"Resource", {
         // TODO
     }},
+        {"PackedScene", {
+            "instantiate",
+        }},
         {"InputEvent", {
             "is_pressed",
         }},

@@ -44,6 +44,11 @@ struct escape<T*> {
     }
 };
 
+// tmp solution, let's just use floats everywhere
+template <>
+struct escape<double> : default_return<float>{
+    typedef float type;
+};
 
 #include "core/variant/typed_array.h"
 

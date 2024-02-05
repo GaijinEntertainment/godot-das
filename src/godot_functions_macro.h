@@ -40,9 +40,12 @@ T *creator() {
 #define BIND_GODOT_CTOR(CLASS)\
     das::addExtern<DAS_BIND_FUN(creator<CLASS>)>(*this, lib, #CLASS"`new", das::SideEffects::modifyExternal, "creator<"#CLASS">");
 
-#define BIND_GODOT_SINGLETON_MEMBER(CLASS, FUN)\
+#define REMOVE_FIRST_COMMA(_0, ...) __VA_ARGS__
+
+#define BIND_GODOT_SINGLETON_MEMBER(CLASS, FUN, ...)\
     using _##CLASS##_##FUN = DAS_CALL_GODOT_SINGLETON_MEMBER(CLASS::FUN);\
-    das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #CLASS"`"#FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_SINGLETON_MEMBER_CPP(CLASS::FUN));
+    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #CLASS"`"#FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_SINGLETON_MEMBER_CPP(CLASS::FUN));\
+    _##CLASS##_##FUN##_func->args({REMOVE_FIRST_COMMA(,##__VA_ARGS__, "ctx", "at")});
 
 // more examples of usage are needed
 #define BIND_GODOT_BUILTIN_FUNCTION(CLASS, FUN)\

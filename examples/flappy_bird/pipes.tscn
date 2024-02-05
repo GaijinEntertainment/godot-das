@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfut6ggpxmwim"]
+
+[ext_resource type="Script" path="res://Pipes.das" id="1_svets"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oqgue"]
+size = Vector2(100, 500)
+
+[node name="Pipes" type="Node2D"]
+script = ExtResource("1_svets")
+
+[node name="Upper" type="Area2D" parent="."]
+position = Vector2(0, -57)
+
+[node name="Shape" type="CollisionShape2D" parent="Upper"]
+shape = SubResource("RectangleShape2D_oqgue")
+
+[node name="Sprite" type="Polygon2D" parent="Upper"]
+color = Color(0, 0.769531, 0.0841675, 1)
+polygon = PackedVector2Array(-50, -250, -50, 250, 50, 250, 50, -250)
+
+[node name="Lower" type="Area2D" parent="."]
+position = Vector2(-2, 743)
+
+[node name="Shape" type="CollisionShape2D" parent="Lower"]
+shape = SubResource("RectangleShape2D_oqgue")
+
+[node name="Sprite" type="Polygon2D" parent="Lower"]
+color = Color(0, 0.769531, 0.0841675, 1)
+polygon = PackedVector2Array(-50, -250, -50, 250, 50, 250, 50, -250)

@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0ck5fwwdn3hh"]
+
+[ext_resource type="Script" path="res://Main.das" id="1_c4qn6"]
+[ext_resource type="PackedScene" uid="uid://caxudicqjb7ri" path="res://bird.tscn" id="1_pa2s4"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_4dj23"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_c4qn6")
+
+[node name="Bird" parent="." instance=ExtResource("1_pa2s4")]
+position = Vector2(589, 358)
+
+[node name="Ground" type="Area2D" parent="."]
+position = Vector2(574, 626)
+
+[node name="Shape" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("WorldBoundaryShape2D_4dj23")
+
+[node name="Sprite" type="Polygon2D" parent="Ground"]
+polygon = PackedVector2Array(-600, 0, 600, 0, 600, 100, -600, 100)
+
+[node name="Pipes" type="Node2D" parent="."]
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0

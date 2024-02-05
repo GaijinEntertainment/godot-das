@@ -138,6 +138,22 @@ def operator is Resource(native: Resource?)
 def operator is Resource(native: Object?)
     return _check_native_type_Resource(native)
 
+// PackedScene
+
+def operator as PackedScene(native: PackedScene?)
+    return native
+
+def operator as PackedScene(native: Object?)
+    if _check_native_type_PackedScene(native)
+        return unsafe(reinterpret<PackedScene?>(native))
+    return null
+
+def operator is PackedScene(native: PackedScene?)
+    return true
+
+def operator is PackedScene(native: Object?)
+    return _check_native_type_PackedScene(native)
+
 // InputEvent
 
 def operator as InputEvent(native: InputEvent?)
