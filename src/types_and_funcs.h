@@ -24,6 +24,7 @@ static std::map<const char*, std::vector<const char*>> types = {
         {"CanvasItem", {
             "get_global_mouse_position",
             "set_modulate",
+            "set_visible",
         }},
             {"Node2D", {
                 "rotate",

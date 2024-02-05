@@ -2,6 +2,7 @@
     "version": "0.2.0",
 
     "configurations": [
+
         // Consult https://docs.godotengine.org/en/stable/contributing/development/configuring_an_ide/visual_studio_code.html#debugging-the-project
         // for more info about debugging configurations
         {
@@ -10,7 +11,7 @@
             "request": "launch",
             // Change to your Godot binary path name if you are not on Linux
             "program": "${workspaceFolder}/bin/godot.linuxbsd.editor.dev.x86_64",
-            "args": [ "--editor", "--path", "${workspaceFolder}/modules/daslang/examples/demo"],
+            "args": [ "--editor", "--path", "${workspaceFolder}/modules/daslang/examples/flappy_bird"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

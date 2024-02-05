@@ -9,7 +9,7 @@
 script = ExtResource("1_c4qn6")
 
 [node name="Bird" parent="." instance=ExtResource("1_pa2s4")]
-position = Vector2(589, 358)
+position = Vector2(577, 336)
 
 [node name="Ground" type="Area2D" parent="."]
 position = Vector2(574, 626)
@@ -22,6 +22,29 @@ polygon = PackedVector2Array(-600, 0, 600, 0, 600, 100, -600, 100)
 
 [node name="Pipes" type="Node2D" parent="."]
 
-[node name="UI" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Points" type="Label" parent="HUD"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.125
+anchor_right = 0.5
+anchor_bottom = 0.125
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+
+[node name="GameOver" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "Game Over!
+Press any key to restart"
+horizontal_alignment = 1

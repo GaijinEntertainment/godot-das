@@ -3,27 +3,26 @@
 [ext_resource type="Script" path="res://Pipes.das" id="1_svets"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oqgue"]
-size = Vector2(100, 500)
+size = Vector2(50, 400)
 
 [node name="Pipes" type="Node2D"]
 script = ExtResource("1_svets")
 
 [node name="Upper" type="Area2D" parent="."]
-position = Vector2(0, -57)
 
 [node name="Shape" type="CollisionShape2D" parent="Upper"]
 shape = SubResource("RectangleShape2D_oqgue")
 
 [node name="Sprite" type="Polygon2D" parent="Upper"]
 color = Color(0, 0.769531, 0.0841675, 1)
-polygon = PackedVector2Array(-50, -250, -50, 250, 50, 250, 50, -250)
+polygon = PackedVector2Array(-25, -200, -25, 200, 25, 200, 25, -200)
 
 [node name="Lower" type="Area2D" parent="."]
-position = Vector2(-2, 743)
+position = Vector2(0, 648)
 
 [node name="Shape" type="CollisionShape2D" parent="Lower"]
 shape = SubResource("RectangleShape2D_oqgue")
 
 [node name="Sprite" type="Polygon2D" parent="Lower"]
 color = Color(0, 0.769531, 0.0841675, 1)
-polygon = PackedVector2Array(-50, -250, -50, 250, 50, 250, 50, -250)
+polygon = PackedVector2Array(-25, -200, -25, 200, 25, 200, 25, -200)

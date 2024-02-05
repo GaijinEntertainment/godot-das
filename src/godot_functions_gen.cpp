@@ -33,6 +33,7 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     // CanvasItem
     BIND_GODOT_MEMBER(CanvasItem, get_global_mouse_position)
     BIND_GODOT_MEMBER(CanvasItem, set_modulate, "modulate")
+    BIND_GODOT_MEMBER(CanvasItem, set_visible, "visible")
     // Node2D
     BIND_GODOT_CTOR(Node2D)
     BIND_GODOT_MEMBER(Node2D, rotate, "radians")
