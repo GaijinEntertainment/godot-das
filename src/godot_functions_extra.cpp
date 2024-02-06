@@ -55,11 +55,11 @@ void Module_Godot::bind_functions_extra(das::ModuleLibrary & lib) {
     das::addExtern<DAS_BIND_FUN(_Color_named::invoke), das::SimNode_ExtFuncCallAndCopyOrMove>(*this, lib, "Color`named", das::SideEffects::modifyExternal, DAS_CALL_GODOT_STATIC_MEMBER_CPP(Color::named));
 
     das::addExtern<DAS_BIND_FUN(connect)>(*this, lib, "connect", das::SideEffects::modifyArgument, "connect")
-    ->args({"obj", "name", "target", "func", "ctx", "at"});
+    ->args({"obj", "name", "target", "func", "__ctx__", "__at__"});
     das::addExtern<DAS_BIND_FUN(add_user_signal)>(*this, lib, "add_user_signal", das::SideEffects::modifyArgument, "add_user_signal")
-    ->args({"obj", "name", "ctx", "at"});
+    ->args({"obj", "name", "__ctx__", "__at__"});
     das::addExtern<DAS_BIND_FUN(emit)>(*this, lib, "emit", das::SideEffects::modifyArgument, "emit")
-    ->args({"obj", "name", "ctx", "at"});
+    ->args({"obj", "name", "__ctx__", "__at__"});
 
     BIND_GODOT_SINGLETON_MEMBER(Engine, get_frames_per_second)
     BIND_GODOT_SINGLETON_MEMBER(Input, is_action_just_pressed, "action", "exact_match")
