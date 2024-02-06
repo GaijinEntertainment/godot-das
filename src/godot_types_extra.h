@@ -16,12 +16,14 @@ template <> struct das::cast<Color> : das::cast_fVec<Color> {};
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 
+#include "core/variant/variant_utility.h"
+#include "core/config/engine.h"
+
+// For now, global enums must be defined by hand
 #include "core/input/input_enums.h"
 
 DAS_BIND_ENUM_CAST(MouseButton)
 DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
 
-#include "core/variant/variant_utility.h"
-#include "core/config/engine.h"
 
 #endif // GODOT_TYPES_EXTRA_H
