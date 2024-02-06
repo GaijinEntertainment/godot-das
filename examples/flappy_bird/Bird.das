@@ -11,6 +11,7 @@ class Bird
 	suspended : bool = true
 	crashed : bool = false
 	collided : bool = false
+	reset : bool = false
 
 	velocity : Vector2
 	initial_pos : Vector2
@@ -21,13 +22,18 @@ class Bird
 	collider : Area2D?
 	game : Main?
 
+	def _enter_tree()
+		native |> add_user_signal("bird_collided")
+
 	def _ready()
 		collider = native |> find_child("Collider") as Area2D
 		game = native |> get_parent() as Main
+		game.native |> connect("reset", native, "reset_bird")
+
 		initial_pos = native |> get_position()
 
 	def move(dt : float)
-		if !crashed && Input`is_action_just_pressed("jump")
+		if !crashed && !reset && Input`is_action_just_pressed("jump")
 			velocity = boost
 			ang_speed = -4. * PI
 			suspended = false
@@ -63,7 +69,7 @@ class Bird
 	def check_collision()
 		var inscope collisions <- collider |> get_overlapping_areas()
 		if collisions |> length() > 0
-			game->bird_collided()
+			native |> emit("bird_collided")
 			collided = true
 			suspended = false
 
@@ -71,6 +77,7 @@ class Bird
 		suspended = true
 		crashed = false
 		collided = false
+		reset = true
 		velocity = Vector2(0, 0)
 		native |> set_position(initial_pos)
 		rotation = 0.
@@ -82,10 +89,7 @@ class Bird
 		move(dt)
 		rotate(dt)
 
-
 	def _physics_process(dt : float)
-		if !collided
+		if !collided && !reset
 			check_collision()
-		if collided && game->is_game_reset()
-			reset_bird()
-
+		reset = false

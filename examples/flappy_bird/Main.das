@@ -6,6 +6,7 @@ let window_height = 648.
 let pipe_width = 50.
 let pipe_height = 200.
 
+let reset_signal = "reset"
 
 [godot_class(Node2D)]
 class Main
@@ -21,6 +22,10 @@ class Main
 	pipe_scene : PackedScene?
 	pipes : Node2D?
 	points_label : Label?
+	bird : Node2D?
+
+	def _enter_tree()
+		native |> add_user_signal(reset_signal)
 
 	def _ready()
 		pipe_scene = native |> load("res://pipes.tscn") as PackedScene
@@ -29,7 +34,9 @@ class Main
 		points_label = native |> find_child("Points") as Label
 
 		ground_level = (native |> find_child("Ground") as Node2D |> get_position()).y
-		bird_level = (native |> find_child("Bird") as Node2D |> get_position()).x
+		bird = native |> find_child("Bird") as Node2D
+		bird_level = (bird |> get_position()).x
+		bird |> connect("bird_collided", native, "bird_collided")
 
 	def _process(dt : float)
 		if game_over
@@ -45,18 +52,18 @@ class Main
 		var new_pipes = pipe_scene |> instantiate() as Node2D
 		let initial_pos = Vector2(window_width + pipe_width * .5, randf_range(-pipe_height, pipe_height))
 		new_pipes |> set_position(initial_pos)
+		bird |> connect("bird_collided", new_pipes, "stop")
 		pipes |> add_child(new_pipes)
 
 	def reset_game()
 		game_over = false
-		game_reset = true
 		timer = 0.
 		for pipe in pipes |> iterate_children()
 			pipe |> queue_free()
 		points = 0
 		points_label |> set_text("0")
 		native |> find_child("GameOver") as Label |> set_visible(false)
-
+		native |> emit(reset_signal)
 
 	def get_ground_level()
 		return ground_level
@@ -64,17 +71,8 @@ class Main
 	def get_bird_level()
 		return bird_level
 
-	def is_game_over()
-		// TODO put signal here instead
-		return game_over
-
-	def is_game_reset()
-		// TODO signal
-		return game_reset
-
 	def bird_collided()
 		game_over = true
-		game_reset = false
 		native |> find_child("GameOver") as Label |> set_visible(true)
 
 	def add_point()

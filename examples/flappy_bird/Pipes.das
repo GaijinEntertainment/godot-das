@@ -7,12 +7,16 @@ class Pipes
 
 	velocity = Vector2(-200, 0)
 	game : Main?
+	stopped : bool = false
 
 	def _ready()
 		game = native |> get_parent() |> get_parent() as Main
 
+	def stop()
+		stopped = true
+
 	def _process(dt : float)
-		if game->is_game_over()
+		if stopped
 			return
 
 		let prev_pos = native |> get_position()

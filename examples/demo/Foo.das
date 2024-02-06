@@ -24,6 +24,9 @@ class Foo
 
 
 	def _ready()
+		var timer = native |> find_child("Timer")
+		timer |> connect("timeout", native, "on_timeout")
+
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
 		print("parent is ready? {parent |> is_node_ready()}")
@@ -54,6 +57,9 @@ class Foo
 		velocity += get_acc() * dt
 		let translation = dt * velocity
 		native |> translate(translation)
+		
+	def on_timeout()
+		print("recieved signal from timer!")
 
 	// call to see error hadling
 	def i_am_error()
