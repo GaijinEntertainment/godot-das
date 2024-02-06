@@ -30,7 +30,9 @@ void generate_godot_casts_gen_das() {
     code << "def operator is Object(native: Object?)\n";
     code << "    return true\n";
     code << "\n";
-    for (auto& type_and_funcs : types) {
+    // Object is handled separately! hence i = 1
+    for (int i = 1; i < types.size(); i++) {
+        auto& type_and_funcs = types[i];
         const char* type = type_and_funcs.first;
         code << "// " << type << "\n";
         code << "\n";
@@ -52,7 +54,6 @@ void generate_godot_casts_gen_das() {
     code.close();
 }
 
-
 void generate_godot_types_gen_h() {
     std::ofstream code(SRC_PATH"godot_types_gen.h", std::ios::out | std::ios::trunc);
 
@@ -64,10 +65,9 @@ void generate_godot_types_gen_h() {
     code << "#include \"godot_types_macro.h\"\n";
     code << "#include \"godot_all_includes.h\"\n";
     code << "\n";
-    code << "MAKE_NATIVE_TYPE_FACTORY(Object)\n";
-    code << "\n";
-
-    for (auto& type_and_funcs : types) {
+    // Object is NOT handled separately! hence i = 0
+    for (int i = 0; i < types.size(); i++) {
+        auto& type_and_funcs = types[i];
         const char* type = type_and_funcs.first;
         code << "MAKE_NATIVE_TYPE_FACTORY(" << type << ")\n";
         code << "\n";
@@ -131,16 +131,20 @@ void generate_godot_types_gen_cpp() {
     code << "void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {\n";
 
     HashSet<StringName> added;
-    code << "    BIND_NATIVE_BASE(Object)\n";
-    added.insert("Object");
-    for (auto& type_and_funcs : types) {
+    // Object is NOT handled separately! hence i = 0
+    for (int i = 0; i < types.size(); i++) {
+        auto& type_and_funcs = types[i];
         const char* type = type_and_funcs.first;
-        StringName parent = ClassDB::get_parent_class(type);
-        // this allows to not bind types in the inheritance chain that are not needed
-        while (!added.has(parent)) {
-            parent = ClassDB::get_parent_class(parent);
+        if (i > 0) {
+            StringName parent = ClassDB::get_parent_class(type);
+            // this allows to not bind types in the inheritance chain that are not needed
+            while (!added.has(parent)) {
+                parent = ClassDB::get_parent_class(parent);
+            }
+            code << "    BIND_NATIVE_TYPE(" << type << ", " << STR(parent) << ")\n";
+        } else {
+            code << "    BIND_NATIVE_BASE(" << type << ")\n";
         }
-        code << "    BIND_NATIVE_TYPE(" << type << ", " << STR(parent) << ")\n";
         List<StringName> enums;
         ClassDB::get_enum_list(type, &enums, true);
         for (auto& enum_name : enums) {
@@ -167,9 +171,9 @@ void generate_godot_functions_gen_cpp() {
     code << "\n";
     code << "void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {\n";
 
-    code << "    // Object\n";
-    code << "    BIND_GODOT_CTOR(Object)\n";
-    for (auto& type_and_funcs : types) {
+    // Object is NOT handled separately! hence i = 0
+    for (int i = 0; i < types.size(); i++) {
+        auto& type_and_funcs = types[i];
         const char* type = type_and_funcs.first;
         std::vector<const char*>& funcs = type_and_funcs.second;
 

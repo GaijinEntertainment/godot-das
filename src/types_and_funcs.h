@@ -8,7 +8,8 @@
 
 // TODO generate these automatically? How?
 // all these types should inherit from Object
-static std::map<const char*, std::vector<const char*>> types = {
+static std::vector<std::pair<const char*, std::vector<const char*>>> types = {
+{"Object", {}},
     {"Node", {
         "find_child",
         "get_name",

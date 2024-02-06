@@ -5,6 +5,7 @@
 
 void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {
     BIND_NATIVE_BASE(Object)
+    BIND_ENUM(Object, ConnectFlags)
     BIND_NATIVE_TYPE(Node, Object)
     BIND_ENUM(Node, ProcessMode)
     BIND_ENUM(Node, ProcessThreadGroup)
