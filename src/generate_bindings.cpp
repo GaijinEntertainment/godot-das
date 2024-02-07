@@ -54,6 +54,45 @@ void generate_godot_casts_gen_das() {
     code.close();
 }
 
+void generate_godot_signals_gen_das() {
+    std::ofstream code(BOOST_PATH"godot_signals_gen.das", std::ios::out | std::ios::trunc);
+    code << "// This file is complitely generated\n";
+    code << "// TODO `operator . signal` as soon as operator . on pointers is supported\n";
+    code << "\n";
+    code << "require godot_native\n";
+    code << "require godot_signals\n";
+    code << "\n";
+    // Object is NOT handled separately! hence i = 0
+    for (int i = 0; i < types.size(); i++) {
+
+        auto& type_and_funcs = types[i];
+        const char* type = type_and_funcs.first;
+        List<MethodInfo> signals;
+        ClassDB::get_signal_list(type, &signals, true);
+
+        if (signals.size() == 0) {
+            continue;
+        }
+        code << "// " << type << "\n";
+        code << "\n";
+        for (auto& signal: signals) {
+            bool has_args = signal.arguments.size() != 0;
+            if (has_args) {
+                code << "/* TODO support signals with arguments\n";
+            }
+            code << "let " << type << "`" << STR(signal.name) << " = \"" << STR(signal.name) << "\"\n";
+            code << "\n";
+            code << "def get_" << STR(signal.name) << "(obj : " << type << "?)\n";
+            code << "    return [[Signal name = " << type << "`" << STR(signal.name) << ", owner = obj]]\n";
+            if (has_args) {
+                code << "*/\n";
+            }
+            code << "\n";
+        }
+    }
+    code.close();
+}
+
 void generate_godot_types_gen_h() {
     std::ofstream code(SRC_PATH"godot_types_gen.h", std::ios::out | std::ios::trunc);
 
@@ -241,8 +280,9 @@ void generate_godot_functions_gen_cpp() {
 }
 
 void generate_godot_module_code() {
+    generate_godot_casts_gen_das();
+    generate_godot_signals_gen_das();
     generate_godot_types_gen_h();
     generate_godot_types_gen_cpp();
-    generate_godot_casts_gen_das();
     generate_godot_functions_gen_cpp();
 }
