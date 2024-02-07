@@ -48,3 +48,7 @@ theme_override_font_sizes/font_size = 48
 text = "Game Over!
 Press any key to restart"
 horizontal_alignment = 1
+
+[node name="CanRestart" type="Timer" parent="."]
+wait_time = 0.25
+one_shot = true

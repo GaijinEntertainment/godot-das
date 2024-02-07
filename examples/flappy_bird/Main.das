@@ -23,6 +23,7 @@ class Main
 	pipes : Node2D?
 	points_label : Label?
 	bird : Node2D?
+	can_restart : Timer?
 
 	reset : Signal
 
@@ -37,9 +38,12 @@ class Main
 		bird_level = (bird |> get_position()).x
 		bird |> get_signal(Bird`collided) |> connect(native) <| "bird_collided"
 
+		can_restart = native |> find_child("CanRestart") as Timer
+		can_restart |> get_timeout() |> connect(native) <| "show_game_over"
+
 	def _process(dt : float)
 		if game_over
-			if Input`is_action_just_pressed("jump")
+			if can_restart |> is_stopped() && Input`is_action_just_pressed("jump")
 				reset_game()
 			return
 		if timer > spawn_interval
@@ -53,6 +57,9 @@ class Main
 		new_pipes |> set_position(initial_pos)
 		bird |> get_signal(Bird`collided) |> connect(new_pipes) <| "stop"
 		pipes |> add_child(new_pipes)
+
+	def show_game_over()
+		native |> find_child("GameOver") as Label |> set_visible(true)
 
 	def reset_game()
 		game_over = false
@@ -72,7 +79,7 @@ class Main
 
 	def bird_collided()
 		game_over = true
-		native |> find_child("GameOver") as Label |> set_visible(true)
+		can_restart |> start()
 
 	def add_point()
 		points += 1

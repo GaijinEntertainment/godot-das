@@ -21,7 +21,7 @@ class Bird
 
 	collider : Area2D?
 	game : Main?
-	
+
 	bird_collided : Signal
 
 	def _ready()
@@ -31,12 +31,15 @@ class Bird
 
 		initial_pos = native |> get_position()
 
+		native |> find_child("Collider") as Area2D |> get_area_entered() |> connect(native) <| "overlapped"
+
 	def move(dt : float)
-		if !crashed && !reset && Input`is_action_just_pressed("jump")
+		if !collided && !reset && Input`is_action_just_pressed("jump")
 			velocity = boost
 			ang_speed = -4. * PI
 			suspended = false
 			up_timer = 0.
+		reset = false
 
 		if !suspended && !crashed
 			velocity += gravity * dt
@@ -65,12 +68,10 @@ class Bird
 		rotation += ang_speed * dt
 		native |> set_rotation(rotation)
 
-	def check_collision()
-		var inscope collisions <- collider |> get_overlapping_areas()
-		if collisions |> length() > 0
-			bird_collided |> emit()
-			collided = true
-			suspended = false
+	def overlapped(with_who : Area2D?)
+		bird_collided |> emit()
+		collided = true
+		suspended = false
 
 	def reset_bird()
 		suspended = true
@@ -87,8 +88,3 @@ class Bird
 	def _process(dt : float)
 		move(dt)
 		rotate(dt)
-
-	def _physics_process(dt : float)
-		if !collided && !reset
-			check_collision()
-		reset = false
