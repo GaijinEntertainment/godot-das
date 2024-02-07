@@ -28,6 +28,11 @@ DAS_BASE_BIND_ENUM(Node::DuplicateFlags, Node_DuplicateFlags, DUPLICATE_SIGNALS,
 DAS_BIND_ENUM_CAST(Node::InternalMode)
 DAS_BASE_BIND_ENUM(Node::InternalMode, Node_InternalMode, INTERNAL_MODE_DISABLED, INTERNAL_MODE_FRONT, INTERNAL_MODE_BACK)
 
+MAKE_NATIVE_TYPE_FACTORY(Timer)
+
+DAS_BIND_ENUM_CAST(Timer::TimerProcessCallback)
+DAS_BASE_BIND_ENUM(Timer::TimerProcessCallback, Timer_TimerProcessCallback, TIMER_PROCESS_PHYSICS, TIMER_PROCESS_IDLE)
+
 MAKE_NATIVE_TYPE_FACTORY(CanvasItem)
 
 DAS_BIND_ENUM_CAST(CanvasItem::TextureFilter)

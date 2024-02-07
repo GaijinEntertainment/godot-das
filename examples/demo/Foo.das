@@ -17,6 +17,7 @@ class Foo
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton
+			test |> emit()
 			if mouse_event |> get_button_index() == MouseButton LEFT
 				print("left")
 			if mouse_event |> get_button_index() == MouseButton RIGHT
@@ -26,14 +27,14 @@ class Foo
 
 	def _ready()
 		print("Internal name of `test` signal is {test.name}")
-	
-		var timer = native |> find_child("Timer")
-		timer |> connect("timeout", native, "on_timeout")
+
+		var timer = native |> find_child("Timer") as Timer
+		timer |> get_timeout() |> connect(native) <| "on_timeout"
 
 		print("from Bar.das: {ABRACADABRA}")
 		var parent = native |> get_parent() as Node
 		print("parent is ready? {parent |> is_node_ready()}")
-		
+
 		var inscope children <- parent |> get_children()
 		for child in children
 			let translation = Vector2(300, 0)
@@ -60,7 +61,7 @@ class Foo
 		velocity += get_acc() * dt
 		let translation = dt * velocity
 		native |> translate(translation)
-		
+
 	def on_timeout()
 		print("recieved signal from timer!")
 

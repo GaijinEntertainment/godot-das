@@ -30,6 +30,8 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     BIND_GODOT_MEMBER(Node, get_children, "include_internal")
     SET_DEFAULT_ARG(Node, get_children, 1, false)
     BIND_GODOT_MEMBER(Node, queue_free)
+    // Timer
+    BIND_GODOT_CTOR(Timer)
     // CanvasItem
     BIND_GODOT_MEMBER(CanvasItem, get_global_mouse_position)
     BIND_GODOT_MEMBER(CanvasItem, set_modulate, "modulate")

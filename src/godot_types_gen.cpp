@@ -12,6 +12,8 @@ void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {
     BIND_ENUM(Node, ProcessThreadMessages)
     BIND_ENUM(Node, DuplicateFlags)
     BIND_ENUM(Node, InternalMode)
+    BIND_NATIVE_TYPE(Timer, Node)
+    BIND_ENUM(Timer, TimerProcessCallback)
     BIND_NATIVE_TYPE(CanvasItem, Node)
     BIND_ENUM(CanvasItem, TextureFilter)
     BIND_ENUM(CanvasItem, TextureRepeat)

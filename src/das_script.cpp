@@ -89,9 +89,14 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 
 	for (auto &signal : signals) {
 		p_this->add_user_signal(String(signal.first));
+		// probably not exactly safe
+		const size_t name_offset = 0;
+		const size_t owner_offset = 8;
 		// TODO move this to das inside constructor
-		const char** signal_name = (const char**)(class_ptr + signal.second);
+		const char** signal_name = (const char**)(class_ptr + signal.second + name_offset);
 		*signal_name = signal.first;
+		Object** signal_owner = (Object**)(class_ptr + signal.second + owner_offset);
+		*signal_owner = p_this;
 	}
 	// TODO more stuff
 

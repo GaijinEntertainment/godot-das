@@ -26,6 +26,22 @@ def operator is Node(native: Node?)
 def operator is Node(native: Object?)
     return _check_native_type_Node(native)
 
+// Timer
+
+def operator as Timer(native: Timer?)
+    return native
+
+def operator as Timer(native: Object?)
+    if _check_native_type_Timer(native)
+        return unsafe(reinterpret<Timer?>(native))
+    return null
+
+def operator is Timer(native: Timer?)
+    return true
+
+def operator is Timer(native: Object?)
+    return _check_native_type_Timer(native)
+
 // CanvasItem
 
 def operator as CanvasItem(native: CanvasItem?)

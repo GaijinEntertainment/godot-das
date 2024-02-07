@@ -22,6 +22,7 @@ static std::vector<std::pair<const char*, std::vector<const char*>>> types = {
         "get_children",
         "queue_free",
     }},
+        {"Timer", {}},
         {"CanvasItem", {
             "get_global_mouse_position",
             "set_modulate",
