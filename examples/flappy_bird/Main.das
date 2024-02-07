@@ -6,6 +6,8 @@ let window_height = 648.
 let pipe_width = 50.
 let pipe_height = 200.
 
+let Bird`collided = "bird_collided"
+
 [godot_class(Node2D)]
 class Main
 	spawn_interval = 1.1
@@ -33,7 +35,7 @@ class Main
 		ground_level = (native |> find_child("Ground") as Node2D |> get_position()).y
 		bird = native |> find_child("Bird") as Node2D
 		bird_level = (bird |> get_position()).x
-		bird |> connect("bird_collided", native, "bird_collided")
+		bird |> get_signal(Bird`collided) |> connect(native) <| "bird_collided"
 
 	def _process(dt : float)
 		if game_over
@@ -49,7 +51,7 @@ class Main
 		var new_pipes = pipe_scene |> instantiate() as Node2D
 		let initial_pos = Vector2(window_width + pipe_width * .5, randf_range(-pipe_height, pipe_height))
 		new_pipes |> set_position(initial_pos)
-		bird |> connect("bird_collided", new_pipes, "stop")
+		bird |> get_signal(Bird`collided) |> connect(new_pipes) <| "stop"
 		pipes |> add_child(new_pipes)
 
 	def reset_game()
@@ -60,7 +62,7 @@ class Main
 		points = 0
 		points_label |> set_text("0")
 		native |> find_child("GameOver") as Label |> set_visible(false)
-		native |> emit(reset)
+		reset |> emit()
 
 	def get_ground_level()
 		return ground_level

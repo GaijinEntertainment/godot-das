@@ -27,7 +27,7 @@ class Bird
 	def _ready()
 		collider = native |> find_child("Collider") as Area2D
 		game = native |> get_parent() as Main
-		game.native |> connect("reset", native, "reset_bird")
+		game.reset |> connect(native) <| "reset_bird"
 
 		initial_pos = native |> get_position()
 
@@ -68,7 +68,7 @@ class Bird
 	def check_collision()
 		var inscope collisions <- collider |> get_overlapping_areas()
 		if collisions |> length() > 0
-			native |> emit(bird_collided)
+			bird_collided |> emit()
 			collided = true
 			suspended = false
 
