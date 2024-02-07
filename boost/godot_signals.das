@@ -16,7 +16,7 @@ def get_signal(obj : Object?; name : string)
 // Connect to any signal
 // obj |> get_signal("pls add mutual require??") |> connect(obj) <| "on_timeout"
 def connect(signal : Signal; peer : Object?; func_name : string)
-    connect_signal(signal.owner, signal.name, peer, func_name)
+    connect_signal_to_func_str(signal.owner, signal.name, peer, func_name)
 // TODO make in macro connect with bound self
 
 // Emit custom signal
