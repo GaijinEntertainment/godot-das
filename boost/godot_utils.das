@@ -6,3 +6,11 @@ def iterate_children(node: Node?)
         for i in range(0, child_count)
             yield node |> get_child(i)
         return false
+
+
+struct Signal
+    name : string
+
+
+def emit(obj : Object?; signal : Signal&)
+    obj |> emit(signal.name)

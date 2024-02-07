@@ -21,9 +21,8 @@ class Bird
 
 	collider : Area2D?
 	game : Main?
-
-	def _enter_tree()
-		native |> add_user_signal("bird_collided")
+	
+	bird_collided : Signal
 
 	def _ready()
 		collider = native |> find_child("Collider") as Area2D
@@ -69,7 +68,7 @@ class Bird
 	def check_collision()
 		var inscope collisions <- collider |> get_overlapping_areas()
 		if collisions |> length() > 0
-			native |> emit("bird_collided")
+			native |> emit(bird_collided)
 			collided = true
 			suspended = false
 

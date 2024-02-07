@@ -6,8 +6,6 @@ let window_height = 648.
 let pipe_width = 50.
 let pipe_height = 200.
 
-let reset_signal = "reset"
-
 [godot_class(Node2D)]
 class Main
 	spawn_interval = 1.1
@@ -24,8 +22,7 @@ class Main
 	points_label : Label?
 	bird : Node2D?
 
-	def _enter_tree()
-		native |> add_user_signal(reset_signal)
+	reset : Signal
 
 	def _ready()
 		pipe_scene = native |> load("res://pipes.tscn") as PackedScene
@@ -63,7 +60,7 @@ class Main
 		points = 0
 		points_label |> set_text("0")
 		native |> find_child("GameOver") as Label |> set_visible(false)
-		native |> emit(reset_signal)
+		native |> emit(reset)
 
 	def get_ground_level()
 		return ground_level

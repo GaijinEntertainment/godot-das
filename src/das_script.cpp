@@ -87,6 +87,12 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 		instances.insert(p_this);
 	}
 
+	for (auto &signal : signals) {
+		p_this->add_user_signal(String(signal.first));
+		// TODO move this to das inside constructor
+		const char** signal_name = (const char**)(class_ptr + signal.second);
+		*signal_name = signal.first;
+	}
 	// TODO more stuff
 
 	return instance;
@@ -178,8 +184,14 @@ Error DasScript::reload(bool p_keep_state) {
 	struct_ctor = ctx->findFunction(class_name.c_str());
 	tool = program->options.getBoolOption("tool", false);
 
+
 	for (auto& field : main_structure->fields) {
 		offsets[StringName(field.name.c_str())] = field.offset;
+
+		if (field.type->structType && field.type->structType->name == "Signal") {
+			// filed name will be alive for the whole lifetime of the script
+			signals.emplace_back(field.name.c_str(), field.offset);
+		}
 	}
 
 	for (auto &instance_owner : instances) {

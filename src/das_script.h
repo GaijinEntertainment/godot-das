@@ -19,6 +19,7 @@ class DasScript : public Script {
 	std::string class_name;
 	das::StructurePtr main_structure;
 	das::SimFunction *struct_ctor = nullptr;
+	std::vector<std::pair<const char*, size_t>> signals;
 
 	// These four objects hold complete state of one script
 	das::ContextPtr ctx;

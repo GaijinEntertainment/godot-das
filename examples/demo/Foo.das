@@ -12,6 +12,8 @@ class Foo
 	velocity: Vector2
 	radius: float
 
+	test : Signal
+
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton
@@ -22,8 +24,9 @@ class Foo
 			if mouse_event |> get_button_index() == MouseButton MIDDLE
 				print("parent is ready? {native |> get_parent() as Node |> is_node_ready()}")
 
-
 	def _ready()
+		print("Internal name of `test` signal is {test.name}")
+	
 		var timer = native |> find_child("Timer")
 		timer |> connect("timeout", native, "on_timeout")
 

@@ -32,14 +32,6 @@ void connect(Object* obj, const char* name, Object* target, const char* func, CT
     obj->connect(name, c, 0); // TODO flags
 }
 
-void add_user_signal(Object* obj, const char* name, CTX_AT) {
-    CHECK_IF_NULL_VOID(obj)
-
-    MethodInfo mi;
-	mi.name = String(name);
-    obj->add_user_signal(mi);
-}
-
 void emit(Object* obj, const char* name, CTX_AT) {
     CHECK_IF_NULL_VOID(obj)
     obj->emit_signal(name);
@@ -56,8 +48,6 @@ void Module_Godot::bind_functions_extra(das::ModuleLibrary & lib) {
 
     das::addExtern<DAS_BIND_FUN(connect)>(*this, lib, "connect", das::SideEffects::modifyArgument, "connect")
     ->args({"obj", "name", "target", "func", "__ctx__", "__at__"});
-    das::addExtern<DAS_BIND_FUN(add_user_signal)>(*this, lib, "add_user_signal", das::SideEffects::modifyArgument, "add_user_signal")
-    ->args({"obj", "name", "__ctx__", "__at__"});
     das::addExtern<DAS_BIND_FUN(emit)>(*this, lib, "emit", das::SideEffects::modifyArgument, "emit")
     ->args({"obj", "name", "__ctx__", "__at__"});
 
