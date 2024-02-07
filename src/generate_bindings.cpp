@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <set>
 
 // Always run from godot root!
 #define SRC_PATH "modules/daslang/src/"
@@ -62,6 +63,9 @@ void generate_godot_signals_gen_das() {
     code << "require godot_native\n";
     code << "require godot_signals\n";
     code << "\n";
+
+    const std::set<Variant::Type> supported_args = {Variant::Type::FLOAT, Variant::Type::OBJECT, Variant::RID, Variant::Type::INT};
+
     // Object is NOT handled separately! hence i = 0
     for (int i = 0; i < types.size(); i++) {
 
@@ -76,15 +80,22 @@ void generate_godot_signals_gen_das() {
         code << "// " << type << "\n";
         code << "\n";
         for (auto& signal: signals) {
-            bool has_args = signal.arguments.size() != 0;
-            if (has_args) {
-                code << "/* TODO support signals with arguments\n";
+            bool supported = true;
+            for (auto& sig_arg : signal.arguments) {
+                if (supported_args.find(sig_arg.type) == supported_args.end()) {
+                    supported = false;
+                    break;
+                }
             }
+            if (!supported) {
+                code << "/* TODO support arguments\n";
+            }
+
             code << "let " << type << "`" << STR(signal.name) << " = \"" << STR(signal.name) << "\"\n";
             code << "\n";
             code << "def get_" << STR(signal.name) << "(obj : " << type << "?)\n";
             code << "    return [[Signal name = " << type << "`" << STR(signal.name) << ", owner = obj]]\n";
-            if (has_args) {
+            if (!supported) {
                 code << "*/\n";
             }
             code << "\n";

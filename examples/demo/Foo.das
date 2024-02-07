@@ -14,6 +14,20 @@ class Foo
 
 	test : Signal
 
+	def check_entered_child(node : Node2D?)
+		// Okay, I found a problem here
+		// callp only sends Object*, not SpecificNodeType*
+		// This means that you can unsafely recieve any derived type of Object
+		// For example, this function takes Node2D* (should take Node*)
+		// and `node is Node2D` always return true even though it's a Timer
+		// I could remove `is Type(obj : Type?)` so is always do a proper check
+		// but this is a nifty shortcut
+		// Probably we should somehow check function signature on connect
+		print("check_entered_child! got {node} {node is Timer} {node is Node2D}")
+
+	def _enter_tree()
+		native |> get_child_entered_tree() |> connect(native) <| "check_entered_child"
+
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton

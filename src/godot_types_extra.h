@@ -16,6 +16,11 @@ template <> struct das::cast<Color> : das::cast_fVec<Color> {};
 MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
 template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 
+#include "core/templates/rid.h"
+
+MAKE_TYPE_FACTORY_ALIAS(::RID, tUInt64);
+template <> struct das::cast<::RID> : das::cast <uint64_t>{};
+
 #include "core/variant/variant_utility.h"
 #include "core/config/engine.h"
 

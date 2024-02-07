@@ -43,31 +43,25 @@ let Node`tree_exited = "tree_exited"
 def get_tree_exited(obj : Node?)
     return [[Signal name = Node`tree_exited, owner = obj]]
 
-/* TODO support signals with arguments
 let Node`child_entered_tree = "child_entered_tree"
 
 def get_child_entered_tree(obj : Node?)
     return [[Signal name = Node`child_entered_tree, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Node`child_exiting_tree = "child_exiting_tree"
 
 def get_child_exiting_tree(obj : Node?)
     return [[Signal name = Node`child_exiting_tree, owner = obj]]
-*/
 
 let Node`child_order_changed = "child_order_changed"
 
 def get_child_order_changed(obj : Node?)
     return [[Signal name = Node`child_order_changed, owner = obj]]
 
-/* TODO support signals with arguments
 let Node`replacing_by = "replacing_by"
 
 def get_replacing_by(obj : Node?)
     return [[Signal name = Node`replacing_by, owner = obj]]
-*/
 
 // Timer
 
@@ -112,72 +106,54 @@ def get_texture_changed(obj : Sprite2D?)
 
 // Area2D
 
-/* TODO support signals with arguments
 let Area2D`body_shape_entered = "body_shape_entered"
 
 def get_body_shape_entered(obj : Area2D?)
     return [[Signal name = Area2D`body_shape_entered, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`body_shape_exited = "body_shape_exited"
 
 def get_body_shape_exited(obj : Area2D?)
     return [[Signal name = Area2D`body_shape_exited, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`body_entered = "body_entered"
 
 def get_body_entered(obj : Area2D?)
     return [[Signal name = Area2D`body_entered, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`body_exited = "body_exited"
 
 def get_body_exited(obj : Area2D?)
     return [[Signal name = Area2D`body_exited, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`area_shape_entered = "area_shape_entered"
 
 def get_area_shape_entered(obj : Area2D?)
     return [[Signal name = Area2D`area_shape_entered, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`area_shape_exited = "area_shape_exited"
 
 def get_area_shape_exited(obj : Area2D?)
     return [[Signal name = Area2D`area_shape_exited, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`area_entered = "area_entered"
 
 def get_area_entered(obj : Area2D?)
     return [[Signal name = Area2D`area_entered, owner = obj]]
-*/
 
-/* TODO support signals with arguments
 let Area2D`area_exited = "area_exited"
 
 def get_area_exited(obj : Area2D?)
     return [[Signal name = Area2D`area_exited, owner = obj]]
-*/
 
 // Window
 
-/* TODO support signals with arguments
 let Window`window_input = "window_input"
 
 def get_window_input(obj : Window?)
     return [[Signal name = Window`window_input, owner = obj]]
-*/
 
-/* TODO support signals with arguments
+/* TODO support arguments
 let Window`files_dropped = "files_dropped"
 
 def get_files_dropped(obj : Window?)

@@ -63,6 +63,12 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 			case Variant::Type::OBJECT:
 				arguments.push_back(das::cast<Object*>::from(p_args[i]->operator Object*()));
 				break;
+			case Variant::Type::RID:
+				arguments.push_back(das::cast<uint64_t>::from((p_args[i]->operator ::RID()).get_id()));
+				break;
+			case Variant::Type::INT:
+				arguments.push_back(das::cast<int64_t>::from(p_args[i]->operator int64_t()));
+				break;
 			default:
 				continue;
 		}

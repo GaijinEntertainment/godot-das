@@ -6,6 +6,7 @@ void Module_Godot::bind_types_extra(das::ModuleLibrary & lib) {
     BIND_NATIVE_BASE(Color)
 
     addAlias(das::typeFactory<Vector2>::make(lib));
+    addAlias(das::typeFactory<::RID>::make(lib));
 
     addEnumeration(das::make_smart<EnumerationMouseButton>());
 }
