@@ -11,14 +11,15 @@
 #include "generate_bindings.h"
 #endif
 
-const char * simple_template =R""""(require godot
+const char * simple_template =R""""(require boost/godot
 
+[godot_class(_BASE_)]
 class _CLASS_
 _TS_def _ready()
-_TS__TS_print("It's ready!")
+_TS__TS_pass
 
-_TS_def _enter_tree()
-_TS__TS_print("It's enter tree!")
+_TS_def _process(delta : float)
+_TS__TS_pass
 )"""";
 
 static const int DAS_TEMPLATES_ARRAY_SIZE = 1;
