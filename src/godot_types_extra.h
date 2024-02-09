@@ -24,11 +24,5 @@ template <> struct das::cast<::RID> : das::cast <uint64_t>{};
 #include "core/variant/variant_utility.h"
 #include "core/config/engine.h"
 
-// For now, global enums must be defined by hand
-#include "core/input/input_enums.h"
-
-DAS_BIND_ENUM_CAST(MouseButton)
-DAS_BASE_BIND_ENUM(MouseButton, MouseButton, NONE, LEFT, RIGHT, MIDDLE)
-
 
 #endif // GODOT_TYPES_EXTRA_H

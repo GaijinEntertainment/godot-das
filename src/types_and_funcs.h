@@ -78,4 +78,6 @@ static std::map<const char*, std::map<const char*, const char*>, less_c_str> exc
     {"Node", {{"is_node_ready", "is_ready"}}},
 };
 
+static std::vector<const char*> excluded_enums{"Variant.Type", "Variant.Operator"};
+
 #endif // TYPES_AND_FUNCS_H

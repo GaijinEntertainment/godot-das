@@ -53,5 +53,29 @@ struct das::typeFactory<TYPE>{\
 
 #define BIND_ENUM(TYPE, ENUM) addEnumeration(das::make_smart<Enumeration##TYPE##_##ENUM>());
 
+// Foe global enums
+
+#define DAS_BASE_BIND_ENUM_GODOT(enum_name) \
+class Enumeration##enum_name : public das::Enumeration {\
+public:\
+    Enumeration##enum_name() : das::Enumeration(#enum_name) {\
+        external = true;\
+        cppName = #enum_name; \
+        baseType = (das::Type) das::ToBasicType< das::underlying_type< enum_name >::type >::type; \
+        HashMap<StringName, int64_t> values; \
+        CoreConstants::get_enum_values(#enum_name, &values);\
+        for (auto& value : values) {\
+            addI(String(value.key).utf8().get_data(), int64_t(value.value), das::LineInfo());\
+        }\
+    }\
+};
+
+#define DAS_BIND_GLOBAL_GODOT_ENUM(enum_name)\
+    DAS_BIND_ENUM_CAST(enum_name)\
+    DAS_BASE_BIND_ENUM_GODOT(enum_name)\
+    DAS_BASE_BIND_ENUM_FACTORY(enum_name, #enum_name)
+
+#define BIND_GLOBAL_ENUM(ENUM) addEnumeration(das::make_smart<Enumeration##ENUM>());
+
 
 #endif // GODOT_TYPES_H

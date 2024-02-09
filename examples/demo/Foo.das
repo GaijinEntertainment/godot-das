@@ -32,11 +32,11 @@ class Foo
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton
 			test |> emit()
-			if mouse_event |> get_button_index() == MouseButton LEFT
+			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_LEFT
 				print("left")
-			if mouse_event |> get_button_index() == MouseButton RIGHT
+			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_RIGHT
 				print("right")
-			if mouse_event |> get_button_index() == MouseButton MIDDLE
+			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_MIDDLE
 				print("parent is ready? {native |> get_parent() as Node |> is_node_ready()}")
 
 	def _ready()

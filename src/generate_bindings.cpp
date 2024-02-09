@@ -1,7 +1,7 @@
 #include "generate_bindings.h"
 
 #include "core/object/class_db.h"
-// #include "core/core_constants.h"
+#include "core/core_constants.h"
 
 #include <fstream>
 #include <iostream>
@@ -140,31 +140,24 @@ void generate_godot_types_gen_h() {
             code << "\n";
         }
     }
-    // Doesn't work =(
-    // There's no way to differentiate between constants with prefixes and without them
-    // This is a job for libclang I'm afraid
 
-    // HashSet<StringName> added;
-    // for (int i = 0; i < CoreConstants::get_global_constant_count(); i++) {
-    //     auto enum_name = CoreConstants::get_global_constant_enum(i);
-    //     if (added.has(enum_name)) {
-    //         continue;
-    //     }
-    //     added.insert(enum_name);
-    //     code << "DAS_BIND_ENUM_CAST(" << STR(enum_name) << ")\n";
-    //     // static void get_enum_values(StringName p_enum, HashMap<StringName, int64_t> *p_values);
-    //     HashMap<StringName, int64_t> values;
-    //     CoreConstants::get_enum_values(enum_name, &values);
-    //     code << "DAS_BASE_BIND_ENUM(" << STR(enum_name) << ", " << STR(enum_name) << ", ";
-    //     for (auto& value : values) {
-    //         code << STR(value.key);
-    //         if (value.key != values.last()->key) {
-    //             code << ", ";
-    //         }
-    //     }
-    //     code << ")\n";
-    //     code << "\n";
-    // }
+    code << "// Global enums\n";
+    code << "\n";
+    code << "#include \"core/core_constants.h\"\n";
+    code << "\n";
+
+    HashSet<StringName> added;
+    for (auto excluded : excluded_enums) added.insert(excluded);
+
+    for (int i = 0; i < CoreConstants::get_global_constant_count(); i++) {
+        auto enum_name = CoreConstants::get_global_constant_enum(i);
+        if (added.has(enum_name)) {
+            continue;
+        }
+        added.insert(enum_name);
+        code << "DAS_BIND_GLOBAL_GODOT_ENUM(" << STR(enum_name) << ")\n";
+        code << "\n";
+    }
 
     code << "\n";
     code << "#endif // GODOT_TYPES_GEN_H\n";
@@ -181,7 +174,7 @@ void generate_godot_types_gen_cpp() {
     code << "\n";
     code << "void Module_Godot::bind_types_gen(das::ModuleLibrary & lib) {\n";
 
-    HashSet<StringName> added;
+    HashSet<StringName> added_obj;
     // Object is NOT handled separately! hence i = 0
     for (int i = 0; i < types.size(); i++) {
         auto& type_and_funcs = types[i];
@@ -189,7 +182,7 @@ void generate_godot_types_gen_cpp() {
         if (i > 0) {
             StringName parent = ClassDB::get_parent_class(type);
             // this allows to not bind types in the inheritance chain that are not needed
-            while (!added.has(parent)) {
+            while (!added_obj.has(parent)) {
                 parent = ClassDB::get_parent_class(parent);
             }
             code << "    BIND_NATIVE_TYPE(" << type << ", " << STR(parent) << ")\n";
@@ -201,7 +194,19 @@ void generate_godot_types_gen_cpp() {
         for (auto& enum_name : enums) {
             code << "    BIND_ENUM(" << type << ", " << STR(enum_name) << ")\n";
         }
-        added.insert(type);
+        added_obj.insert(type);
+    }
+    code << "\n";
+
+    HashSet<StringName> added_enums;
+    for (auto excluded : excluded_enums) added_enums.insert(excluded);
+    for (int i = 0; i < CoreConstants::get_global_constant_count(); i++) {
+        auto enum_name = CoreConstants::get_global_constant_enum(i);
+        if (added_enums.has(enum_name)) {
+            continue;
+        }
+        added_enums.insert(enum_name);
+        code << "    BIND_GLOBAL_ENUM(" << STR(enum_name) << ")\n";
     }
 
     code << "}\n";
