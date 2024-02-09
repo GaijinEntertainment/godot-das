@@ -125,8 +125,9 @@ void generate_godot_types_gen_h() {
         ClassDB::get_enum_list(type, &enums, true);
         for (auto& enum_name : enums) {
             code << "DAS_BIND_ENUM_CAST(" << type << "::" << STR(enum_name) << ")\n";
-            // TODO fix DAS_BASE_BIND_ENUM macro so ` can be used in enum name (instead of _)
-            code << "DAS_BASE_BIND_ENUM(" << type << "::" << STR(enum_name) << ", " << type << "_" << STR(enum_name) << ", ";
+            code << "DAS_BASE_BIND_ENUM_SAFE(" << type << "::" << STR(enum_name) << ", "
+                                               << type << "`" << STR(enum_name) << ", "
+                                               << type << "_" << STR(enum_name) << ", ";
             List<StringName> enum_constants;
             ClassDB::get_enum_constants(type, enum_name, &enum_constants, true);
             for (int i = 0; i < enum_constants.size(); i++) {

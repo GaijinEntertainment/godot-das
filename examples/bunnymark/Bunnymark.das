@@ -52,8 +52,8 @@ class Bunnymark
 		bunny.native |> set_position(position)
 		bunny.native |> set_texture(bunny_texture)
 		bunny.native |> set_modulate(colors[generation % colors |> length()])
-		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5d, 1.5d))
-		bunnies |> add_child(bunny.native)
+		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5, 1.5))
+		bunnies |> add_child(bunny.native, false, Node`InternalMode INTERNAL_MODE_FRONT)
 
 	def _process(delta: float)
 		for node in bunnies |> get_children()
