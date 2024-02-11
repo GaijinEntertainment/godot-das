@@ -151,6 +151,38 @@ Vector<ScriptLanguage::ScriptTemplate> DasScriptLanguage::get_built_in_templates
 	return templates;
 }
 
+Variant DasScriptLanguage::call_function(das::SimFunction *func, das::Context *ctx, void* self, const char* name, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
+	std::vector<vec4f> arguments;
+	arguments.push_back(das::cast<void*>::from(self));
+	for (int i = 0; i < p_argcount; i++) {
+		switch (p_args[i]->get_type()) {
+			case Variant::Type::FLOAT:
+				arguments.push_back(das::cast<float>::from(p_args[i]->operator float()));
+				break;
+			case Variant::Type::OBJECT:
+				arguments.push_back(das::cast<Object*>::from(p_args[i]->operator Object*()));
+				break;
+			case Variant::Type::RID:
+				arguments.push_back(das::cast<uint64_t>::from((p_args[i]->operator ::RID()).get_id()));
+				break;
+			case Variant::Type::INT:
+				arguments.push_back(das::cast<int64_t>::from(p_args[i]->operator int64_t()));
+				break;
+			default:
+				continue;
+		}
+	}
+	ctx->tryRestartAndLock();
+	ctx->evalWithCatch(func, arguments.data());
+	ctx->unlock();
+	if (const char* exception = ctx->getException()) {
+		const char* fileinfo_name = ctx->exceptionAt.fileInfo ? ctx->exceptionAt.fileInfo->name.c_str() : "(no file)";
+        // TODO print error in editor console as well!
+		_err_print_error(name, fileinfo_name, ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
+	}
+    return Variant();
+}
+
 das::ProgramPtr DasScriptLanguage::compile_script(const String& p_source, const String& p_path, das::FileAccessPtr p_access, das::TextPrinter& p_logs, das::ModuleGroup& p_libs) {
 	CharString global_file_path_utf8 = ProjectSettings::get_singleton()->globalize_path(p_path).utf8();
     const char* path_data = global_file_path_utf8.get_data();

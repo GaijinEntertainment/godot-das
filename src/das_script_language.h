@@ -35,7 +35,8 @@ public:
 	Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const override;
 	Vector<ScriptLanguage::ScriptTemplate> get_built_in_templates(StringName p_object) override;
 	bool is_using_templates() override { return true; }
-
+	// TODO put it inside GodotContext maybe?
+	static Variant call_function(das::SimFunction *func, das::Context *ctx, void* self, const char* name, const Variant **p_args, int p_argcount, Callable::CallError &r_error);
 	static das::ProgramPtr compile_script(const String& p_source, const String& p_path, das::FileAccessPtr p_access, das::TextPrinter& p_logs, das::ModuleGroup& p_libs);
 	bool validate(const String &p_script, const String &p_path = "", List<String> *r_functions = nullptr, List<ScriptError> *r_errors = nullptr, List<Warning> *r_warnings = nullptr, HashSet<int> *r_safe_lines = nullptr) const override;
 	Script *create_script() const override;

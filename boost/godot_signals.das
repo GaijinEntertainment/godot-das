@@ -19,6 +19,12 @@ def connect(signal : Signal; peer : Object?; func_name : string)
     connect_signal_to_func_str(signal.owner, signal.name, peer, func_name)
 // TODO make in macro connect with bound self
 
+// Connect lambda to signal
+// timer |> get_timeout() |> connect() <| @
+//     print("Hello")
+def connect(signal : Signal; lmd : lambda)
+    connect_signal_to_lambda(signal.owner, signal.name, lmd)
+
 // Emit custom signal
 // sig |> emit()
 // Emit native signal

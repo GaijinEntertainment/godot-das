@@ -53,34 +53,8 @@ Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_a
 	}
 	auto func_ptr = reinterpret_cast<das::Func*>(class_ptr + offset)->PTR;
 
-	std::vector<vec4f> arguments;
-	arguments.push_back(das::cast<void*>::from(class_ptr));
-	for (int i = 0; i < p_argcount; i++) {
-		switch (p_args[i]->get_type()) {
-			case Variant::Type::FLOAT:
-				arguments.push_back(das::cast<float>::from(p_args[i]->operator float()));
-				break;
-			case Variant::Type::OBJECT:
-				arguments.push_back(das::cast<Object*>::from(p_args[i]->operator Object*()));
-				break;
-			case Variant::Type::RID:
-				arguments.push_back(das::cast<uint64_t>::from((p_args[i]->operator ::RID()).get_id()));
-				break;
-			case Variant::Type::INT:
-				arguments.push_back(das::cast<int64_t>::from(p_args[i]->operator int64_t()));
-				break;
-			default:
-				continue;
-		}
-	}
-	ctx->tryRestartAndLock();
-	ctx->evalWithCatch(func_ptr, arguments.data());
-	ctx->unlock();
-	if (const char* exception = ctx->getException()) {
-		const char* fileinfo_name = ctx->exceptionAt.fileInfo ? ctx->exceptionAt.fileInfo->name.c_str() : "(no file)";
-		_err_print_error(String(p_method).utf8().get_data(), fileinfo_name, ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
-	}
-	return Variant();
+	auto ret = DasScriptLanguage::call_function(func_ptr, ctx.get(), class_ptr, String(p_method).utf8().get_data(), p_args, p_argcount, r_error);
+	return ret;
 }
 
 Ref<Script> DasScriptInstance::get_script() const {

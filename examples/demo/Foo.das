@@ -27,6 +27,8 @@ class Foo
 
 	def _enter_tree()
 		native |> get_child_entered_tree() |> connect(native) <| "check_entered_child"
+		native |> get_child_entered_tree() |> connect() <| @ (node : Node2D?)
+			print("LAMBDA check_entered_child! got {node} {node is Timer} {node is Node2D}")
 
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
