@@ -3,6 +3,8 @@
 
 
 void Module_Godot::bind_types_extra(das::ModuleLibrary & lib) {
+    BIND_ENUM(ResourceLoader, CacheMode)
+
     BIND_NATIVE_BASE(Color)
 
     addAlias(das::typeFactory<Vector2>::make(lib));

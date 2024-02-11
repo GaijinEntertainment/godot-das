@@ -76,7 +76,7 @@ struct escape<TypedArray<T>> {
 #include "core/object/ref_counted.h"
 
 template <typename T>
-struct escape<const Ref<T>&> {
+struct escape<Ref<T>> {
     typedef T* type;
     _FORCE_INLINE_ static T* ret(Ref<T> t, das::Context *) {
         // TODO THIS SOLUTION IS SUPER HACKY AND WILL CAUSE MEMORY LEAKS
@@ -85,6 +85,8 @@ struct escape<const Ref<T>&> {
     }
 };
 
+template <typename T>
+struct escape<const Ref<T>&> : escape<Ref<T>> { };
 
 
 #include "core/math/vector2.h"
@@ -190,7 +192,7 @@ struct das_call_godot_static_member < R (*)(Args...), func> {
     typedef typename std::tuple<ESCAPE_ARGS> args;
 };
 
-// singleton variant
+// singleton variant, const
 
 template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...) const>
 struct das_call_godot_singleton_member < R (CC::*)(Args...) const,  func> {
@@ -201,5 +203,15 @@ struct das_call_godot_singleton_member < R (CC::*)(Args...) const,  func> {
     typedef std::tuple<ESCAPE_ARGS> args;
 };
 
+// singleton variant, no const
+
+template <typename R, typename CC, typename ...Args, R (CC::*func)(Args...)>
+struct das_call_godot_singleton_member < R (CC::*)(Args...),  func> {
+    static ESCAPE_R invoke (ESCAPE_ARGS args, CTX_AT) {
+        RETURN( (CC::get_singleton()->*(func)) ( args... ) );
+    }
+    constexpr static das::SideEffects effects = das::SideEffects::accessExternal;
+    typedef std::tuple<ESCAPE_ARGS> args;
+};
 
 #endif // GODOT_FUNCTIONS_WRAPPER_H

@@ -43,10 +43,14 @@ T *creator() {
 
 #define REMOVE_FIRST_COMMA(_0, ...) __VA_ARGS__
 
-#define BIND_GODOT_SINGLETON_MEMBER(CLASS, FUN, ...)\
+#define BIND_GODOT_SINGLETON_MEMBER_BASE(CLASS, FUN, NAME, ...)\
     using _##CLASS##_##FUN = DAS_CALL_GODOT_SINGLETON_MEMBER(CLASS::FUN);\
-    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, #CLASS"`"#FUN, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_SINGLETON_MEMBER_CPP(CLASS::FUN));\
+    auto _##CLASS##_##FUN##_func = das::addExtern<DAS_BIND_FUN(_##CLASS##_##FUN::invoke)>(*this, lib, NAME, _##CLASS##_##FUN::effects, DAS_CALL_GODOT_SINGLETON_MEMBER_CPP(CLASS::FUN));\
     _##CLASS##_##FUN##_func->args({REMOVE_FIRST_COMMA(,##__VA_ARGS__, "__ctx__", "__at__")});
+
+#define BIND_GODOT_SINGLETON_MEMBER(CLASS, FUN, ...) BIND_GODOT_SINGLETON_MEMBER_BASE(CLASS, FUN, #CLASS"`"#FUN, ##__VA_ARGS__)
+
+#define BIND_GODOT_SINGLETON_MEMBER_BUILTIN(CLASS, FUN, ...) BIND_GODOT_SINGLETON_MEMBER_BASE(CLASS, FUN, #FUN, ##__VA_ARGS__)
 
 // more examples of usage are needed
 #define BIND_GODOT_BUILTIN_FUNCTION(CLASS, FUN)\

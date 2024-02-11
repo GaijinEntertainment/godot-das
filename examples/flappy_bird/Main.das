@@ -28,7 +28,7 @@ class Main
 	reset : Signal
 
 	def _ready()
-		pipe_scene = native |> load("res://pipes.tscn") as PackedScene
+		pipe_scene = load("res://pipes.tscn") as PackedScene
 		pipes = native |> find_child("Pipes") as Node2D
 		// TODO use get_node("HUD/Points")
 		points_label = native |> find_child("Points") as Label

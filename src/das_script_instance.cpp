@@ -29,12 +29,6 @@ char* DasScriptInstance::get_class_ptr() {
 	return class_ptr;
 }
 
-void DasScriptInstance::bind_resource(Ref<Resource> p_resource) {
-	if(bound_resources.find(p_resource) == -1) { // find uses overloaded == which compares pointers
-		bound_resources.push_back(p_resource);
-	}
-}
-
 void DasScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
 	script.ptr()->get_script_method_list(p_list);
 }

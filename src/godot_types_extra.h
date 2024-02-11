@@ -21,6 +21,11 @@ template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
 MAKE_TYPE_FACTORY_ALIAS(::RID, tUInt64);
 template <> struct das::cast<::RID> : das::cast <uint64_t>{};
 
+#include "core/core_bind.h"
+
+DAS_BIND_ENUM_CAST(core_bind::ResourceLoader::CacheMode)
+DAS_BASE_BIND_ENUM_SAFE(core_bind::ResourceLoader::CacheMode, ResourceLoader`CacheMode, ResourceLoader_CacheMode, CACHE_MODE_IGNORE, CACHE_MODE_REUSE, CACHE_MODE_REPLACE)
+
 #include "core/variant/variant_utility.h"
 #include "core/config/engine.h"
 

@@ -32,14 +32,14 @@ class Bunnymark
 		bunnies = native |> find_child("Bunnies") as Node2D
 		fps_counter = native |> find_child("FPS") as Label
 
-		bunny_texture = native |> load("res://bunny.png") as Texture2D
+		bunny_texture = load("res://bunny.png") as Texture2D
 		top_left = bunny_texture |> get_size() * 0.5
 		bottom_right = native |> get_window() |> get_size() - bunny_texture |> get_size() * 0.5
 
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
 			let mouse_event = event as InputEventMouseButton
-			if mouse_event |> get_button_index() == MouseButton LEFT
+			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_LEFT
 				add_bunnies(BUNNIES_PER_CLICK, native |> get_global_mouse_position())
 
 	def add_bunnies(count : int; position : Vector2)
@@ -53,10 +53,10 @@ class Bunnymark
 		bunny.native |> set_texture(bunny_texture)
 		bunny.native |> set_modulate(colors[generation % colors |> length()])
 		bunny.velocity = Vector2(cos(rotation), sin(rotation)) * BUNNY_VELOCITY * float(randf_range(0.5, 1.5))
-		bunnies |> add_child(bunny.native, false, Node`InternalMode INTERNAL_MODE_FRONT)
+		bunnies |> add_child(bunny.native)
 
 	def _process(delta: float)
-		for node in bunnies |> get_children()
+		for node in bunnies |> iterate_children()
 			var bunny = node as Bunny
 			var new_position = bunny.native |> get_position() + bunny.velocity * delta
 
