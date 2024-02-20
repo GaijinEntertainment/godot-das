@@ -3,6 +3,7 @@
 #include "godot_module.h"
 
 #include "godot_types_gen.h"
+#include "godot_types_aliases.h"
 #include "godot_types_extra.h"
 
 #include "godot_functions_wrapper.h"

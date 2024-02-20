@@ -87,15 +87,6 @@ struct escape<Ref<T>> {
 template <typename T>
 struct escape<const Ref<T>&> : escape<Ref<T>> { };
 
-
-#include "core/math/vector2.h"
-#include "core/math/vector2i.h"
-// TODO just bind Vector2i lol
-template <>
-struct escape<Vector2i>: default_return<Vector2> {
-    typedef Vector2 type;
-};
-
 #include "core/string/ustring.h"
 
 template<>

@@ -11,16 +11,6 @@ MAKE_NATIVE_TYPE_FACTORY(Color)
 
 template <> struct das::cast<Color> : das::cast_fVec<Color> {};
 
-#include "core/math/vector2.h"
-
-MAKE_TYPE_FACTORY_ALIAS(Vector2, tFloat2);
-template <> struct das::cast<Vector2> : das::cast_fVec_half<Vector2> {};
-
-#include "core/templates/rid.h"
-
-MAKE_TYPE_FACTORY_ALIAS(::RID, tUInt64);
-template <> struct das::cast<::RID> : das::cast <uint64_t>{};
-
 #include "core/core_bind.h"
 
 DAS_BIND_ENUM_CAST(core_bind::ResourceLoader::CacheMode)

@@ -16,6 +16,7 @@ DASLANG_INCLUDE_PATH = f"{DASLANG_PATH}/include"
 src_list = [
     "register_types.cpp",
     "src/godot_types_gen.cpp",
+    "src/godot_types_aliases.cpp",
     "src/godot_types_extra.cpp",
     "src/godot_functions_gen.cpp",
     "src/godot_functions_extra.cpp",

@@ -6,6 +6,7 @@
 
 class Module_Godot : public das::Module {
     void bind_types_gen(das::ModuleLibrary & lib);
+    void bind_types_aliases(das::ModuleLibrary & lib);
     void bind_types_extra(das::ModuleLibrary & lib);
     void bind_functions_gen(das::ModuleLibrary & lib);
     void bind_functions_extra(das::ModuleLibrary & lib);
@@ -16,6 +17,7 @@ public:
         options["tool"] = das::Type::tBool;
 
         bind_types_gen(lib);
+        bind_types_aliases(lib);
         bind_types_extra(lib);
 
         bind_functions_gen(lib);

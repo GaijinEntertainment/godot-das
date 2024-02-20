@@ -37,7 +37,9 @@ class Bunnymark
 
 		bunny_texture = load("res://bunny.png") as Texture2D
 		top_left = bunny_texture |> get_size() * 0.5
-		bottom_right = native |> get_window() |> get_size() - bunny_texture |> get_size() * 0.5
+		let size = native |> get_window() |> get_size()
+
+		bottom_right = Vector2(native |> get_window() |> get_size()) - bunny_texture |> get_size() * 0.5
 
 	def _input(event: InputEvent?)
 		if event is InputEventMouseButton && event |> is_pressed()
