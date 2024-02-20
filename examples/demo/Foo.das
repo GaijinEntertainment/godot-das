@@ -14,6 +14,9 @@ class Foo
 
 	test : Signal
 
+	def finalize()
+		print("i'm dead!")
+
 	def check_entered_child(node : Node2D?)
 		// Okay, I found a problem here
 		// callp only sends Object*, not SpecificNodeType*
@@ -37,7 +40,8 @@ class Foo
 			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_LEFT
 				print("left")
 			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_RIGHT
-				print("right")
+				print("right, btw killing foo")
+				native |> queue_free()
 			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_MIDDLE
 				print("parent is ready? {native |> get_parent() as Node |> is_node_ready()}")
 

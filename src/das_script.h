@@ -1,9 +1,13 @@
 #ifndef DAS_SCRIPT_H
 #define DAS_SCRIPT_H
 
+#include <daScript/daScript.h>
 #include "core/object/script_language.h"
 
-#include <daScript/daScript.h>
+class DasScript;
+
+#include "das_script_instance.h"
+
 
 static constexpr int INVALID_OFFSET = -1;
 
@@ -16,7 +20,6 @@ class DasScript : public Script {
     HashSet<Object *> instances{};
     String source{};
 	das::StructurePtr main_structure;
-	das::SimFunction *struct_ctor = nullptr;
 	std::vector<std::pair<const char*, size_t>> signals;
 
 	// These four objects hold complete state of one script
@@ -30,15 +33,17 @@ class DasScript : public Script {
 	// TODO reload stored as in _update_exports
 	HashSet<PlaceHolderScriptInstance *> placeholders{};
 #endif
-
-	HashMap<StringName, size_t> offsets{};
+	// for quick finding by Godot
+	HashMap<StringName, size_t> func_offsets{};
 public:
 	DasScript();
 	~DasScript();
 
 	das::ContextPtr get_ctx() const;
-	void erase_instance(Object *p_owner);
-	size_t get_field_offset(const StringName &p_field) const;
+	void free_instance(DasScriptInstance *p_instance);
+	size_t get_func_offset(const StringName &p_func) const;
+	size_t get_field_offset(const char *p_field) const;
+
 	const char* get_class_name() const;
 
 	bool can_instantiate() const override;

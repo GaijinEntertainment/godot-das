@@ -4,13 +4,7 @@
 
 
 DasScriptInstance::~DasScriptInstance() {
-	{
-		DasScriptLanguage::get_singleton()->acquire_lock();
-
-		if (script.is_valid() && owner) {
-			script->erase_instance(owner);
-		}
-	}
+	script->free_instance(this);
 }
 
 void DasScriptInstance::set_script(Ref<DasScript> p_script) {
@@ -40,7 +34,7 @@ bool DasScriptInstance::has_method(const StringName &p_method) const {
 
 Variant DasScriptInstance::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
 	das::ContextPtr ctx = script->get_ctx();
-	int offset = script->get_field_offset(p_method);
+	int offset = script->get_func_offset(p_method);
 	if (offset == INVALID_OFFSET) {
 		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
 		return Variant();

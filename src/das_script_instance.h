@@ -1,8 +1,9 @@
 #ifndef DAS_SCRIPT_INSTANCE
 #define DAS_SCRIPT_INSTANCE
 
-#include "das_script.h"
+class DasScriptInstance;
 
+#include "das_script.h"
 
 class DasScriptInstance : public ScriptInstance {
 	Object *owner = nullptr;

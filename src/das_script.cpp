@@ -38,14 +38,40 @@ das::ContextPtr DasScript::get_ctx() const {
 	return ctx;
 }
 
-void DasScript::erase_instance(Object *p_owner) {
-	instances.erase(p_owner);
+void DasScript::free_instance(DasScriptInstance *p_instance) {
+	{
+		DasScriptLanguage::get_singleton()->acquire_lock();
+		instances.erase(p_instance->get_owner());
+	}
+	int offset = get_field_offset("__finalize");
+	if (offset == INVALID_OFFSET) { return; }
+	char* class_ptr = p_instance->get_class_ptr();
+
+	auto func_ptr = reinterpret_cast<das::Func*>(class_ptr + offset)->PTR;
+	vec4f args[] = {das::cast<void*>::from(class_ptr)};
+	ctx->tryRestartAndLock();
+	ctx->evalWithCatch(func_ptr, args);
+	ctx->unlock();
+	if (const char* exception = ctx->getException()) {
+		const char* fileinfo_name = ctx->exceptionAt.fileInfo ? ctx->exceptionAt.fileInfo->name.c_str() : "(no file)";
+		_err_print_error("finalize", fileinfo_name, ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
+	}
+	ctx->heap->free(p_instance->get_class_ptr(), main_structure->getSizeOf64());
 }
 
-size_t DasScript::get_field_offset(const StringName &p_field) const {
+size_t DasScript::get_func_offset(const StringName &p_field) const {
 	// getptr because it's safe and calls `_lookup_pos` only once
-	auto ptr = offsets.getptr(p_field);
+	auto ptr = func_offsets.getptr(p_field);
 	return ptr ? *ptr : INVALID_OFFSET;
+}
+
+size_t DasScript::get_field_offset(const char *p_field) const {
+	for (auto &field : main_structure->fields) {
+		if (strcmp(field.name.c_str(), p_field) == 0) {
+			return field.offset;
+		}
+	}
+	return INVALID_OFFSET;
 }
 
 
@@ -69,6 +95,8 @@ ScriptInstance *DasScript::instance_create(Object *p_this) {
 	char* class_ptr = ctx->heap->allocate(main_structure->getSizeOf64());
 	instance->set_class_ptr(class_ptr);
 	vec4f args[1];
+	// TODO cache "__instance_ctor", "finalize" and "native" fields because they could be called a lot
+	auto struct_ctor = ctx->findFunction("__instance_ctor");
 	ctx->callWithCopyOnReturn(struct_ctor, args, class_ptr, nullptr);
 
 	int native_offset = get_field_offset("native");
@@ -178,18 +206,23 @@ Error DasScript::reload(bool p_keep_state) {
 
 	valid = true;
 
+	for (auto &instance_owner : instances) {
+		// important:
+		// all old instances must be destroyed before new `ctx` and `main_structure` are set
+		instance_owner->set_script_instance(nullptr);
+	}
+
 	lib_group = std::move(new_lib_group);
 	ctx = std::move(new_ctx);
 	program = std::move(new_program);
 	main_structure = std::move(new_main_structure);
 	file_access = std::move(new_file_access);
-
-	struct_ctor = ctx->findFunction("__instance_ctor");
 	tool = program->options.getBoolOption("tool", false);
 
-
 	for (auto& field : main_structure->fields) {
-		offsets[StringName(field.name.c_str())] = field.offset;
+		if (field.type->baseType == das::Type::tFunction) {
+			func_offsets[StringName(field.name.c_str())] = field.offset;
+		}
 
 		if (field.type->structType && field.type->structType->name == "Signal") {
 			// filed name will be alive for the whole lifetime of the script
@@ -206,8 +239,7 @@ Error DasScript::reload(bool p_keep_state) {
 }
 
 bool DasScript::has_method(const StringName &p_method) const {
-	// TODO precompute func search
-	return get_field_offset(p_method) != INVALID_OFFSET;
+	return func_offsets.has(p_method);
 }
 
 MethodInfo DasScript::get_method_info(const StringName &p_method) const {
