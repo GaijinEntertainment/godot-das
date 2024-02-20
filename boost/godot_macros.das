@@ -61,4 +61,12 @@ class GodotClassAnnotation : AstStructureAnnotation
         newFn.flags |= FunctionFlags generated
         compiling_module() |> add_function(newFn)
 
+        // Function that creates an instance which corresponds to the script
+
+        var inscope ctorFn <- qmacro_function("__instance_ctor") <| $() : $t(st)
+            return <- $c(typeName)()
+
+        ctorFn.flags |= FunctionFlags generated | FunctionFlags exports
+        compiling_module() |> add_function(ctorFn)
+
         return true

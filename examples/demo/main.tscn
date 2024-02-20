@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Foo.das" id="1_sq7uu"]
 [ext_resource type="Texture2D" uid="uid://cgwhexj46bt6v" path="res://icon.svg" id="1_uetd5"]
-[ext_resource type="Script" path="res://SignalReciever.das" id="3_tlb08"]
+[ext_resource type="Script" path="res://unrelated_name.das" id="3_tlb08"]
 
 [node name="Main" type="Node2D"]
 

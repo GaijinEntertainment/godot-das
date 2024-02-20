@@ -25,8 +25,6 @@ DasScript::DasScript() : script_list(this) {
 
 		DasScriptLanguage::get_singleton()->add_script(&script_list);
 	}
-
-	path = vformat("das://%d.gd", get_instance_id());
 }
 
 DasScript::~DasScript() {
@@ -138,7 +136,7 @@ void DasScript::set_source_code(const String &p_code) {
 }
 
 void DasScript::_print_errors(das::ProgramPtr p_program, const char* p_msg_begin) const {
-	CharString path_utf8 = path.utf8();
+	CharString path_utf8 = get_path().utf8();
 	for (auto &err : p_program->errors) {
 		std::string err_msg = p_msg_begin + err.what;
 		if (!err.fixme.empty())
@@ -157,7 +155,7 @@ Error DasScript::reload(bool p_keep_state) {
 	auto new_lib_group = std::make_unique<das::ModuleGroup>();
 	das::TextPrinter dummy_logs{};
 
-	auto new_program = DasScriptLanguage::compile_script(source, path, new_file_access, dummy_logs, *new_lib_group);
+	auto new_program = DasScriptLanguage::compile_script(source, get_path(), new_file_access, dummy_logs, *new_lib_group);
 	if (new_program->failed()) {
 		_print_errors(new_program, "Compilation Error: ");
 		return ERR_PARSE_ERROR;
@@ -170,13 +168,13 @@ Error DasScript::reload(bool p_keep_state) {
 		return ERR_PARSE_ERROR;
 	}
 
-	auto* rootModule = new_program->thisModule.get();
-	auto new_main_structure = rootModule->findStructure(class_name);
-	if (!new_main_structure) {
-		CharString path_utf8 = path.utf8();
-		_err_print_error("DasScript::reload", path_utf8.get_data(), 0, "Script must contain a class with the same name as the script", false, ERR_HANDLER_SCRIPT);
-		return ERR_PARSE_ERROR;
+	auto this_module = new_program->thisModule.get();
+	das::FunctionPtr new_struct_ctor = this_module->findFunction("__instance_ctor");
+
+	if (!new_struct_ctor) {
+		return OK;
 	}
+	auto new_main_structure = new_struct_ctor->result->structType;
 
 	valid = true;
 
@@ -186,7 +184,7 @@ Error DasScript::reload(bool p_keep_state) {
 	main_structure = std::move(new_main_structure);
 	file_access = std::move(new_file_access);
 
-	struct_ctor = ctx->findFunction(class_name.c_str());
+	struct_ctor = ctx->findFunction("__instance_ctor");
 	tool = program->options.getBoolOption("tool", false);
 
 
@@ -205,15 +203,6 @@ Error DasScript::reload(bool p_keep_state) {
 
 	return OK;
 
-}
-
-void DasScript::set_path(const String &p_path, bool p_take_over) {
-	// TODO more
-	Script::set_path(p_path, p_take_over);
-	path = p_path;
-	if (class_name.empty()) {
-		class_name = p_path.get_file().get_basename().utf8().get_data();
-	}
 }
 
 bool DasScript::has_method(const StringName &p_method) const {

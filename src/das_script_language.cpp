@@ -187,10 +187,8 @@ das::ProgramPtr DasScriptLanguage::compile_script(const String& p_source, const 
 	CharString global_file_path_utf8 = ProjectSettings::get_singleton()->globalize_path(p_path).utf8();
     const char* path_data = global_file_path_utf8.get_data();
 
-    // TODO inject `require godot` as well
-    // now it doesn't work because it is not injected when including from other scripts
-	CharString source_with_injection_utf8 = (p_source + "\noptions always_export_initializer = true\n").utf8();
-	const char*  source_data = source_with_injection_utf8.get_data();
+	CharString source_utf8 = p_source.utf8();
+	const char*  source_data = source_utf8.get_data();
     size_t source_len = strlen(source_data);
 
     p_access->setFileInfo(path_data,  das::make_unique<das::TextFileInfo>(source_data, source_len, false));

@@ -15,8 +15,6 @@ class DasScript : public Script {
 
     HashSet<Object *> instances{};
     String source{};
-	String path{};
-	std::string class_name;
 	das::StructurePtr main_structure;
 	das::SimFunction *struct_ctor = nullptr;
 	std::vector<std::pair<const char*, size_t>> signals;
@@ -61,8 +59,6 @@ public:
 	String get_source_code() const override;
 	void set_source_code(const String &p_code) override;
 	Error reload(bool p_keep_state = false) override;
-
-	void set_path(const String &p_path, bool p_take_over = false) override;
 
 #ifdef TOOLS_ENABLED
 	Vector<DocData::ClassDoc> get_documentation() const override { /* TODO */ return Vector<DocData::ClassDoc>{}; }
