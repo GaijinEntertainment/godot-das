@@ -59,6 +59,7 @@ void Module_Godot::bind_functions_gen(das::ModuleLibrary & lib) {
     // Window
     BIND_GODOT_CTOR(Window)
     BIND_GODOT_MEMBER(Window, get_size)
+    // RefCounted
     // Resource
     // PackedScene
     BIND_GODOT_MEMBER(PackedScene, instantiate, "edit_state")

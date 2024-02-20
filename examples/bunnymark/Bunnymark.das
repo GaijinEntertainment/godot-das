@@ -28,6 +28,9 @@ class Bunnymark
 
 	bunny_texture : Texture2D?
 
+	def finalize()
+		bunny_texture |> unload()
+
 	def _ready()
 		bunnies = native |> find_child("Bunnies") as Node2D
 		fps_counter = native |> find_child("FPS") as Label

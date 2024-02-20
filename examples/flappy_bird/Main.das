@@ -19,7 +19,7 @@ class Main
 	game_reset : bool = false
 	points : int = 0
 
-	pipe_scene : PackedScene?
+
 	pipes : Node2D?
 	points_label : Label?
 	bird : Node2D?
@@ -28,7 +28,6 @@ class Main
 	reset : Signal
 
 	def _ready()
-		pipe_scene = load("res://pipes.tscn") as PackedScene
 		pipes = native |> find_child("Pipes") as Node2D
 		// TODO use get_node("HUD/Points")
 		points_label = native |> find_child("Points") as Label
@@ -52,7 +51,9 @@ class Main
 		timer += dt
 
 	def spawn_pipes()
-		var new_pipes = pipe_scene |> instantiate() as Node2D
+		var new_pipes : Node2D?
+		load("res://pipes.tscn") <| $ (var pipe_scene : Resource?#)
+			new_pipes = pipe_scene as PackedScene |> instantiate() as Node2D
 		let initial_pos = Vector2(window_width + pipe_width * .5, randf_range(-pipe_height, pipe_height))
 		new_pipes |> set_position(initial_pos)
 		bird |> get_signal(Bird`collided) |> connect(new_pipes) <| "stop"

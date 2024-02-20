@@ -45,12 +45,26 @@ void generate_godot_casts_gen_das() {
         code << "        return unsafe(reinterpret<" << type << "?>(native))\n";
         code << "    return null\n";
         code << "\n";
-        code << "def operator is " << type << "(native: " << type << "?)\n";
+        code << "def operator is " << type << "(native: " << type << "? implicit)\n";
         code << "    return true\n";
         code << "\n";
-        code << "def operator is " << type << "(native: Object?)\n";
+        code << "def operator is " << type << "(native: Object? implicit)\n";
         code << "    return _check_native_type_" << type << "(native)\n";
         code << "\n";
+        // there's no point in generating extra code for anything else because you can get only Resource
+        if (ClassDB::is_parent_class(type, SNAME("Resource"))) {
+            code << "def operator as " << type << "(native: " << type << "?#)\n";
+            code << "    unsafe\n";
+            code << "        return native\n";
+            code << "\n";
+            code << "def operator as " << type << "(native: Object?#)\n";
+            code << "    unsafe\n";
+            code << "        if _check_native_type_" << type << "(native)\n";
+            code << "            return unsafe(reinterpret<" << type << "?#>(native))\n";
+            code << "        return null\n";
+            code << "\n";
+        }
+
     }
     code.close();
 }

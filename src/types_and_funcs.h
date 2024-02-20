@@ -51,21 +51,20 @@ static std::vector<std::pair<const char*, std::vector<const char*>>> types = {
             {"Window", {
                 "get_size",
             }},
-    {"Resource", {
-        // TODO
-    }},
-        {"PackedScene", {
-            "instantiate",
-        }},
-        {"InputEvent", {
-            "is_pressed",
-        }},
-            {"InputEventMouseButton", {
-                "get_button_index",
+    {"RefCounted", { }},
+        {"Resource", { }},
+            {"PackedScene", {
+                "instantiate",
             }},
-        {"Texture2D", {
-            "get_size",
-        }}
+            {"InputEvent", {
+                "is_pressed",
+            }},
+                {"InputEventMouseButton", {
+                    "get_button_index",
+                }},
+            {"Texture2D", {
+                "get_size",
+            }}
 };
 
 struct less_c_str {
